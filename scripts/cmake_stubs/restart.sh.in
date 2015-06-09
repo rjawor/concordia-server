@@ -1,0 +1,8 @@
+#!/bin/sh
+
+set -e
+
+echo "restarting concordia-server"
+
+@SCRIPTS_PATH@/stop.sh
+@SCRIPTS_PATH@/start.sh

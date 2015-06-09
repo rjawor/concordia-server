@@ -1,0 +1,42 @@
+#----------------------------
+# Concordia configuration file
+#---------------------------
+#
+
+#-------------------------------------------------------------------------------
+# The below set the paths for hashed index, markers array and word map files.
+# If all the files pointed by these paths exist, Concordia reads them to its
+# RAM index. When none of these files exist, a new empty index is created.
+# However, if any of these files exist and any other is missing, the index
+# is considered corrupt and Concordia does not start.
+
+hashed_index_path = "@INDEX_DIRECTORY@/@HASHED_INDEX_FILE@"
+markers_path = "@INDEX_DIRECTORY@/@MARKERS_FILE@"
+word_map_path = "@INDEX_DIRECTORY@/@WORD_MAP_FILE@"
+
+#-------------------------------------------------------------------------------
+# The following settings control the sentence anonymizer mechanism. It is used to
+# remove unnecessary symbols and possibly words from sentences added to index
+# and search patterns. Anonymizer removes html tags, substitutes predefined symbols
+# with a single space, removes stop words (if the option is enabled), as well as
+# named entities and special symbols. All these have to be listed in files.
+
+# File containing all html tags (one per line)
+html_tags_path = "@RESOURCES_DIRECTORY@/anonymizer/html_tags.txt"
+
+# File containing all symbols to be replaced by spaces
+space_symbols_path = "@RESOURCES_DIRECTORY@/anonymizer/space_symbols.txt"
+
+# If set to true, words from predefined list are removed
+stop_words_enabled = "@STOP_WORDS_ENABLED@"
+
+# If stop_words_enabled is true, set the path to the stop words file
+#stop_words_path = "@RESOURCES_DIRECTORY@/anonymizer/stop_words.txt"
+
+# File containing regular expressions that match named entities
+named_entities_path = "@RESOURCES_DIRECTORY@/anonymizer/named_entities.txt"
+
+# File containing special symbols (one per line) to be removed
+stop_symbols_path = "@RESOURCES_DIRECTORY@/anonymizer/stop_symbols.txt"
+
+### eof
