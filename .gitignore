@@ -1,4 +1,5 @@
 build/
 concordia.cfg
 index/
+scripts/concordia-server.PID
 
