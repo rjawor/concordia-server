@@ -11,7 +11,7 @@ IndexController::~IndexController() {
 }
 
 
-void IndexController::addSentence(rapidjson::Writer<rapidjson::StringBuffer> & jsonWriter, string & sentence) {
+void IndexController::addSentence(rapidjson::Writer<rapidjson::StringBuffer> & jsonWriter, std::string & sentence) {
 
     try {
         Example example(sentence, 0);
@@ -23,7 +23,7 @@ void IndexController::addSentence(rapidjson::Writer<rapidjson::StringBuffer> & j
         jsonWriter.String("success");
         jsonWriter.EndObject();
     } catch (ConcordiaException & e) {
-        stringstream errorstream;
+        std::stringstream errorstream;
         errorstream << "concordia error: " << e.what();
         JsonGenerator::signalError(jsonWriter, errorstream.str());        
     }

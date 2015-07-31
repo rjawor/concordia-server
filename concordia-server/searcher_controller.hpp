@@ -9,8 +9,6 @@
 #include "rapidjson/writer.h"
 
 
-using namespace std;
-
 class SearcherController {
 public:
     /*! Constructor.
@@ -21,9 +19,9 @@ public:
     */
     virtual ~SearcherController();
 
-    void simpleSearch(rapidjson::Writer<rapidjson::StringBuffer> & jsonWriter, string & pattern);
+    void simpleSearch(rapidjson::Writer<rapidjson::StringBuffer> & jsonWriter, std::string & pattern);
 
-    void concordiaSearch(rapidjson::Writer<rapidjson::StringBuffer> & jsonWriter, string & pattern);
+    void concordiaSearch(rapidjson::Writer<rapidjson::StringBuffer> & jsonWriter, std::string & pattern);
 
 private:
     boost::shared_ptr<Concordia> _concordia;

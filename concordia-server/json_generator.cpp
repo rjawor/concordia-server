@@ -8,7 +8,7 @@ JsonGenerator::~JsonGenerator() {
 }
 
 
-void JsonGenerator::signalError(rapidjson::Writer<rapidjson::StringBuffer> & jsonWriter, string  message) {
+void JsonGenerator::signalError(rapidjson::Writer<rapidjson::StringBuffer> & jsonWriter, std::string  message) {
     jsonWriter.StartObject();
     jsonWriter.String("status");
     jsonWriter.String("error");

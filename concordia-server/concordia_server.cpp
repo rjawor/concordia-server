@@ -23,11 +23,11 @@ ConcordiaServer::ConcordiaServer(const std::string & configFilePath)
 ConcordiaServer::~ConcordiaServer() {
 }
 
-string ConcordiaServer::handleRequest(string & requestString) {
+std::string ConcordiaServer::handleRequest(std::string & requestString) {
     rapidjson::StringBuffer outputJson;
     rapidjson::Writer<rapidjson::StringBuffer> jsonWriter(outputJson);
 
-    stringstream outputString;
+    std::stringstream outputString;
 
     try {
         outputString << "Content-type: application/json\r\n\r\n";
@@ -35,13 +35,13 @@ string ConcordiaServer::handleRequest(string & requestString) {
         bool hasError = d.Parse(requestString.c_str()).HasParseError();
 
         if (hasError) {
-            stringstream errorstream;
+            std::stringstream errorstream;
             errorstream << "json parse error at offset: " << d.GetErrorOffset() <<
                            ", description: " <<  GetParseError_En(d.GetParseError());
             JsonGenerator::signalError(jsonWriter, errorstream.str());
         } else { // json parsed
-            string operation = d[OPERATION_PARAM].GetString();
-            string sentence = d[SENTENCE_PARAM].GetString();
+            std::string operation = d[OPERATION_PARAM].GetString();
+            std::string sentence = d[SENTENCE_PARAM].GetString();
             if (operation == ADD_SENTENCE_OP) {
                 _indexController->addSentence(jsonWriter, sentence);
             } else if (operation == SIMPLE_SEARCH_OP) {
@@ -54,7 +54,7 @@ string ConcordiaServer::handleRequest(string & requestString) {
         }
              
     } catch (ConcordiaException & e) {
-        stringstream errorstream;
+        std::stringstream errorstream;
         errorstream << "concordia error: " << e.what();
         JsonGenerator::signalError(jsonWriter, errorstream.str());        
     }

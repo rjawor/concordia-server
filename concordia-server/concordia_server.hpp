@@ -14,8 +14,6 @@
 #include "index_controller.hpp"
 #include "searcher_controller.hpp"
 
-using namespace std;
-
 class ConcordiaServer {
 public:
     /*! Constructor.
@@ -28,7 +26,7 @@ public:
     */
     virtual ~ConcordiaServer();
 
-    string handleRequest(string & requestString);
+    std::string handleRequest(std::string & requestString);
 
 private:    
     boost::shared_ptr<IndexController> _indexController;

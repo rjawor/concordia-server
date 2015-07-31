@@ -12,8 +12,8 @@ SearcherController::~SearcherController() {
 }
 
 
-void SearcherController::simpleSearch(rapidjson::Writer<rapidjson::StringBuffer> & jsonWriter, string & pattern) {
-    vector<SubstringOccurence> result = _concordia->simpleSearch(pattern);
+void SearcherController::simpleSearch(rapidjson::Writer<rapidjson::StringBuffer> & jsonWriter, std::string & pattern) {
+    std::vector<SubstringOccurence> result = _concordia->simpleSearch(pattern);
 
     jsonWriter.StartObject();
     jsonWriter.String("status");
@@ -27,7 +27,7 @@ void SearcherController::simpleSearch(rapidjson::Writer<rapidjson::StringBuffer>
     jsonWriter.EndObject();            
 }
 
-void SearcherController::concordiaSearch(rapidjson::Writer<rapidjson::StringBuffer> & jsonWriter, string & pattern) {
+void SearcherController::concordiaSearch(rapidjson::Writer<rapidjson::StringBuffer> & jsonWriter, std::string & pattern) {
     jsonWriter.StartObject();
     jsonWriter.String("status");
     jsonWriter.String("error");

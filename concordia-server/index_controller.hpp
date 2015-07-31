@@ -8,9 +8,6 @@
 
 #include "rapidjson/writer.h"
 
-
-using namespace std;
-
 class IndexController {
 public:
     /*! Constructor.
@@ -21,7 +18,7 @@ public:
     */
     virtual ~IndexController();
 
-    void addSentence(rapidjson::Writer<rapidjson::StringBuffer> & jsonWriter, string & sentence);
+    void addSentence(rapidjson::Writer<rapidjson::StringBuffer> & jsonWriter, std::string & sentence);
 
 private:
     boost::shared_ptr<Concordia> _concordia;
