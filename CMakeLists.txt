@@ -126,6 +126,18 @@ if(EXISTS ${FASTCGIPP_LIB})
 endif(EXISTS ${FASTCGIPP_LIB})
 
 # ----------------------------------------------------
+# libpq
+# ----------------------------------------------------
+find_library(PQ_LIB NAMES pq REQUIRED)
+find_path(PQ_INCLUDE libpq-fe.h HINTS "/usr/include/postgresql")
+
+if(EXISTS ${PQ_LIB})
+  message(STATUS "Found libpq")
+  include_directories(${PQ_INCLUDE})
+  link_directories(${PQ_LIB})
+endif(EXISTS ${PQ_LIB})
+
+# ----------------------------------------------------
 # Concordia
 # ----------------------------------------------------
 find_library(CONCORDIA_LIB NAMES conconrdia REQUIRED)
