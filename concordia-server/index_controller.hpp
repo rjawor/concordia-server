@@ -6,6 +6,8 @@
 #include <concordia/concordia.hpp>
 #include <concordia/concordia_exception.hpp>
 
+#include "unit_dao.hpp"
+
 #include "rapidjson/writer.h"
 
 class IndexController {
@@ -18,11 +20,15 @@ public:
     */
     virtual ~IndexController();
 
-    void addSentence(rapidjson::Writer<rapidjson::StringBuffer> & jsonWriter, std::string & sentence);
+    void addSentence(rapidjson::Writer<rapidjson::StringBuffer> & jsonWriter,
+                     std::string & sourceSentence,
+                     std::string & targetSentence,
+                     int tmId);
 
 private:
     boost::shared_ptr<Concordia> _concordia;
-
+    
+    UnitDAO _unitDAO;
 };
 
 #endif

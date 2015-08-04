@@ -5,6 +5,7 @@ add_executable(concordia_server_process
                   searcher_controller.cpp
                   json_generator.cpp
                   unit_dao.cpp
+                  db_connection.cpp
               )
 target_link_libraries(concordia_server_process fcgi fcgi++ pq concordia config++ log4cpp ${Boost_LIBRARIES} divsufsort utf8case)
 

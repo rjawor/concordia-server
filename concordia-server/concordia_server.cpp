@@ -6,7 +6,10 @@
 #include "json_generator.hpp"
 
 #define OPERATION_PARAM "operation"
-#define SENTENCE_PARAM "sentence"
+#define PATTERN_PARAM "pattern"
+#define SOURCE_SENTENCE_PARAM "sourceSentence"
+#define TARGET_SENTENCE_PARAM "targetSentence"
+#define TM_ID_PARAM "tmId"
 
 #define ADD_SENTENCE_OP "addSentence"
 #define SIMPLE_SEARCH_OP "simpleSearch"
@@ -41,13 +44,17 @@ std::string ConcordiaServer::handleRequest(std::string & requestString) {
             JsonGenerator::signalError(jsonWriter, errorstream.str());
         } else { // json parsed
             std::string operation = d[OPERATION_PARAM].GetString();
-            std::string sentence = d[SENTENCE_PARAM].GetString();
             if (operation == ADD_SENTENCE_OP) {
-                _indexController->addSentence(jsonWriter, sentence);
+                std::string sourceSentence = d[SOURCE_SENTENCE_PARAM].GetString();
+                std::string targetSentence = d[TARGET_SENTENCE_PARAM].GetString();
+                int tmId = d[TM_ID_PARAM].GetInt();
+                _indexController->addSentence(jsonWriter, sourceSentence, targetSentence, tmId);
             } else if (operation == SIMPLE_SEARCH_OP) {
-                _searcherController->simpleSearch(jsonWriter, sentence);
+                std::string pattern = d[PATTERN_PARAM].GetString();
+                _searcherController->simpleSearch(jsonWriter, pattern);
             } else if (operation == CONCORDIA_SEARCH_OP) {
-                _searcherController->concordiaSearch(jsonWriter, sentence);         
+                std::string pattern = d[PATTERN_PARAM].GetString();
+                _searcherController->concordiaSearch(jsonWriter, pattern);         
             } else {
                 JsonGenerator::signalError(jsonWriter, "no such operation");            
             }

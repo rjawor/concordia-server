@@ -3,7 +3,9 @@
 
 #include <string>
 
+#include <concordia/tokenized_sentence.hpp>
 #include <concordia/common/config.hpp>
+#include <boost/shared_ptr.hpp>
 
 class UnitDAO {
 public:
@@ -14,7 +16,10 @@ public:
     */
     virtual ~UnitDAO();
 
-    SUFFIX_MARKER_TYPE addSentence(std::string & sentence);
+    SUFFIX_MARKER_TYPE addSentence(
+             boost::shared_ptr<TokenizedSentence> sourceSentence,
+             std::string & targetSentence,
+             int tmId);
 private:
 
 };

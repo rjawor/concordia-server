@@ -1,5 +1,6 @@
 #include "index_controller.hpp"
 
+#include <concordia/common/config.hpp>
 #include "json_generator.hpp"
 
 IndexController::IndexController(boost::shared_ptr<Concordia> concordia)
@@ -11,13 +12,18 @@ IndexController::~IndexController() {
 }
 
 
-void IndexController::addSentence(rapidjson::Writer<rapidjson::StringBuffer> & jsonWriter, std::string & sentence) {
+void IndexController::addSentence(
+                     rapidjson::Writer<rapidjson::StringBuffer> & jsonWriter,
+                     std::string & sourceSentence,
+                     std::string & targetSentence,
+                     int tmId) {
 
     try {
-        Example example(sentence, 0);
-        _concordia->addExample(example);
+        boost::shared_ptr<TokenizedSentence> tokenizedSentence = _concordia->tokenize(sourceSentence);
+        SUFFIX_MARKER_TYPE sentenceId = _unitDAO.addSentence(tokenizedSentence, targetSentence, tmId);     
+        _concordia->addTokenizedExample(tokenizedSentence, sentenceId);
         _concordia->refreshSAfromRAM();
-        
+
         jsonWriter.StartObject();
         jsonWriter.String("status");
         jsonWriter.String("success");

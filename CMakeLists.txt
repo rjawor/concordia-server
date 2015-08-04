@@ -45,6 +45,13 @@ configure_file (
   )
 
 set(CONFIG_FILE_PATH "${concordia-server_SOURCE_DIR}/concordia.cfg")
+
+# --------------
+# db settings
+# --------------
+set (DB_NAME "concordia_server")
+set (DB_USER "concordia")
+
 configure_file (
   "${concordia-server_SOURCE_DIR}/concordia-server/config.hpp.in"
   "${concordia-server_SOURCE_DIR}/concordia-server/config.hpp"

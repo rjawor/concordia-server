@@ -1,1 +1,5 @@
 #define CONFIG_FILE_PATH "@CONFIG_FILE_PATH@"
+
+// database connection information
+#define DB_NAME "@DB_NAME@"
+#define DB_USER "@DB_USER@"
