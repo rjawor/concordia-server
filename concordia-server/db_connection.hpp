@@ -7,6 +7,8 @@
 
 #include <concordia/concordia_exception.hpp>
 
+#include "query_param.hpp"
+
 class DBconnection {
 public:
     /*! Constructor.
@@ -23,7 +25,7 @@ public:
     PGresult * execute(std::string query) throw(ConcordiaException);
 
     PGresult * execute(std::string query,
-                       std::vector<std::string> params) throw(ConcordiaException);
+                       std::vector<QueryParam*> params) throw(ConcordiaException);
 private:
     void close();
     

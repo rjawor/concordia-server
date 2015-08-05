@@ -1,6 +1,11 @@
 #include "db_connection.hpp"
 
+#include <boost/foreach.hpp>
+#include <sstream>
+
+
 #include "config.hpp"
+#include "logger.hpp"
 
 DBconnection::DBconnection() throw(ConcordiaException) {
     std::string connectionInfo = "dbname="DB_NAME" user="DB_USER;
@@ -53,9 +58,12 @@ PGresult * DBconnection::execute(std::string query) throw(ConcordiaException) {
     if (_connection != NULL) {
         PGresult * result = PQexec(_connection, query.c_str());
         if (PQresultStatus(result) != PGRES_COMMAND_OK) {
+            std::stringstream ss;
+            ss << "query execution failed with message: ";
+            ss << PQresultErrorMessage(result) << std::endl;
             PQclear(result);
             close();
-            throw ConcordiaException("ending transaction failed");
+            throw ConcordiaException(ss.str());
         } else {
             return result;
         }
@@ -65,7 +73,42 @@ PGresult * DBconnection::execute(std::string query) throw(ConcordiaException) {
 }
 
 PGresult * DBconnection::execute(std::string query,
-                                 std::vector<std::string> params) throw(ConcordiaException) {
+                                 std::vector<QueryParam*> params) throw(ConcordiaException) {
+    if (_connection != NULL) {
+        const char * paramValues[params.size()];
+        int paramLengths[params.size()];
+        int paramFormats[params.size()];
+        int index = 0;
+        BOOST_FOREACH (QueryParam * param, params) {
+            paramValues[index] = param->getValue();
+            paramLengths[index] = param->getLength();
+            paramFormats[index] = param->isBinary();
+            index++;
+        }
+        
+        
+        PGresult * result = PQexecParams(_connection,
+                                         query.c_str(),
+                                         params.size(),
+                                         NULL,
+                                         paramValues,
+                                         paramLengths,
+                                         paramFormats,
+                                         0
+                            );
+        if (PQresultStatus(result) != PGRES_COMMAND_OK) {
+            std::stringstream ss;
+            ss << "parametrized query execution failed with message: ";
+            ss << PQresultErrorMessage(result) << std::endl;
+            PQclear(result);
+            close();
+            throw ConcordiaException(ss.str());
+        } else {
+            return result;
+        }
+    } else {
+        throw ConcordiaException("requested query execution but the database connection is not ready");
+    }
 }
 
 

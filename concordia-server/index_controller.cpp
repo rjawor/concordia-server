@@ -1,6 +1,5 @@
 #include "index_controller.hpp"
 
-#include <concordia/common/config.hpp>
 #include "json_generator.hpp"
 
 IndexController::IndexController(boost::shared_ptr<Concordia> concordia)
@@ -20,7 +19,7 @@ void IndexController::addSentence(
 
     try {
         boost::shared_ptr<TokenizedSentence> tokenizedSentence = _concordia->tokenize(sourceSentence);
-        SUFFIX_MARKER_TYPE sentenceId = _unitDAO.addSentence(tokenizedSentence, targetSentence, tmId);     
+        int sentenceId = _unitDAO.addSentence(tokenizedSentence, targetSentence, tmId);     
         _concordia->addTokenizedExample(tokenizedSentence, sentenceId);
         _concordia->refreshSAfromRAM();
 

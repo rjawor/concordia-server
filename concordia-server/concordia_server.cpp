@@ -31,7 +31,6 @@ std::string ConcordiaServer::handleRequest(std::string & requestString) {
     rapidjson::Writer<rapidjson::StringBuffer> jsonWriter(outputJson);
 
     std::stringstream outputString;
-
     try {
         outputString << "Content-type: application/json\r\n\r\n";
         rapidjson::Document d;

@@ -5,11 +5,16 @@ class QueryParam {
 public:
     /*! Constructor.
     */
-    QueryParam() throw(ConcordiaException);
+    QueryParam();
     /*! Destructor.
     */
     virtual ~QueryParam();
     
+    virtual const char * getValue();
+    
+    virtual const int getLength();
+    
+    virtual const int isBinary();
 private:
 
 };
