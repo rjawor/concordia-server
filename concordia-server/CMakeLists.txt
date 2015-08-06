@@ -10,6 +10,8 @@ add_executable(concordia_server_process
                   string_param.cpp
                   int_param.cpp
                   logger.cpp
+                  int_array_param.cpp
+                  simple_search_result.cpp
               )
 target_link_libraries(concordia_server_process fcgi fcgi++ pq concordia config++ log4cpp ${Boost_LIBRARIES} divsufsort utf8case)
 

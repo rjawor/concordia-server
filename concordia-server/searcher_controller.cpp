@@ -1,6 +1,5 @@
 #include "searcher_controller.hpp"
 
-#include <concordia/substring_occurence.hpp>
 #include <vector>
 
 SearcherController::SearcherController(boost::shared_ptr<Concordia> concordia)
@@ -13,17 +12,15 @@ SearcherController::~SearcherController() {
 
 
 void SearcherController::simpleSearch(rapidjson::Writer<rapidjson::StringBuffer> & jsonWriter, std::string & pattern) {
-    std::vector<SubstringOccurence> result = _concordia->simpleSearch(pattern);
+    std::vector<SubstringOccurence> results = _concordia->simpleSearch(pattern);
 
     jsonWriter.StartObject();
     jsonWriter.String("status");
     jsonWriter.String("success");
-    jsonWriter.String("count");
-    jsonWriter.Int(result.size());
-    jsonWriter.String("firstId");
-    jsonWriter.Int(result.at(0).getId());
-    jsonWriter.String("firstOffset");
-    jsonWriter.Int(result.at(0).getOffset());
+    jsonWriter.String("results");
+    jsonWriter.StartArray();
+    
+    jsonWriter.EndArray();
     jsonWriter.EndObject();            
 }
 

@@ -2,6 +2,7 @@
 #define UNIT_DAO_HDR
 
 #include <string>
+#include <vector>
 
 #include <concordia/tokenized_sentence.hpp>
 #include <boost/shared_ptr.hpp>
@@ -20,7 +21,7 @@ public:
              std::string & targetSentence,
              int tmId);
 private:
-
+    std::vector<int> _getTokenPositions(boost::shared_ptr<TokenizedSentence> ts);
 };
 
 #endif

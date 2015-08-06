@@ -18,6 +18,7 @@ CREATE TABLE unit (
     id SERIAL PRIMARY KEY,
     tm_id integer,
     source_segment text,
-    target_segment text
+    target_segment text,
+    source_tokens integer[]
 );
 

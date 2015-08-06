@@ -2,7 +2,7 @@
 
 #include <boost/foreach.hpp>
 #include <sstream>
-
+#include <stdlib.h>
 
 #include "config.hpp"
 #include "logger.hpp"
@@ -57,7 +57,9 @@ void DBconnection::endTransaction() throw(ConcordiaException) {
 PGresult * DBconnection::execute(std::string query) throw(ConcordiaException) {
     if (_connection != NULL) {
         PGresult * result = PQexec(_connection, query.c_str());
-        if (PQresultStatus(result) != PGRES_COMMAND_OK) {
+        if (PQresultStatus(result) != PGRES_COMMAND_OK &&
+            PQresultStatus(result) != PGRES_TUPLES_OK) {
+
             std::stringstream ss;
             ss << "query execution failed with message: ";
             ss << PQresultErrorMessage(result) << std::endl;
@@ -96,7 +98,9 @@ PGresult * DBconnection::execute(std::string query,
                                          paramFormats,
                                          0
                             );
-        if (PQresultStatus(result) != PGRES_COMMAND_OK) {
+        if (PQresultStatus(result) != PGRES_COMMAND_OK &&
+            PQresultStatus(result) != PGRES_TUPLES_OK) {
+
             std::stringstream ss;
             ss << "parametrized query execution failed with message: ";
             ss << PQresultErrorMessage(result) << std::endl;
@@ -109,6 +113,15 @@ PGresult * DBconnection::execute(std::string query,
     } else {
         throw ConcordiaException("requested query execution but the database connection is not ready");
     }
+}
+
+void DBconnection::clearResult(PGresult * result) {
+    PQclear(result);
+}
+
+int DBconnection::getIntValue(PGresult * result, int row, int col) {
+    char * valueStr = PQgetvalue(result,row,col);
+    return strtol(valueStr, NULL, 10);
 }
 
 

@@ -26,6 +26,11 @@ public:
 
     PGresult * execute(std::string query,
                        std::vector<QueryParam*> params) throw(ConcordiaException);
+
+    void clearResult(PGresult * result);
+    
+    int getIntValue(PGresult * result, int row, int col);
+    
 private:
     void close();
     
