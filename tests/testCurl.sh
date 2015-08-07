@@ -1,7 +1,7 @@
 #!/bin/sh
 
-curl -H "Content-Type: application/json" -X POST -d '{"operation":"addSentence", "sourceSentence":"zu\"pełnie nowe zdanie", "targetSentence":"zażółć gęślą jaźńZAŻÓŁĆ GĘŚLĄ JAŹŃ", "tmId":1234782314}' http://localhost
+#curl -H "Content-Type: application/json" -X POST -d '{"operation":"addSentence", "sourceSentence":"Marysia ma rysia", "targetSentence":"Mary has a bobcat", "tmId":1}' http://localhost
 
 
-#curl -H "Content-Type: application/json" -X POST -d '{"operation":"simpleSearch", "sentence":"zupełnie nowe"}' http://localhost
+curl -H "Content-Type: application/json" -X POST -d '{"operation":"simpleSearch", "pattern":"ma rysia"}' http://localhost
 

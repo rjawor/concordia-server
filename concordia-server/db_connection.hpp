@@ -31,6 +31,8 @@ public:
     
     int getIntValue(PGresult * result, int row, int col);
     
+    std::string getStringValue(PGresult * result, int row, int col);
+
 private:
     void close();
     

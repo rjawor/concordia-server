@@ -1,3 +1,0 @@
-http://chriswu.me/blog/writing-hello-world-in-fcgi-with-c-plus-plus/
-
-use the echo.cpp source as an example for concordia-server-starter. It works with the up-to-date version of test.html (the one that specifies UTF-8 as character encoding in the <form>)

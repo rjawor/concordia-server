@@ -6,6 +6,8 @@
 #include <concordia/concordia.hpp>
 #include <concordia/concordia_exception.hpp>
 
+#include "unit_dao.hpp"
+#include "simple_search_result.hpp"
 #include "rapidjson/writer.h"
 
 
@@ -24,8 +26,10 @@ public:
     void concordiaSearch(rapidjson::Writer<rapidjson::StringBuffer> & jsonWriter, std::string & pattern);
 
 private:
-    boost::shared_ptr<Concordia> _concordia;
 
+    boost::shared_ptr<Concordia> _concordia;
+    
+    UnitDAO _unitDAO;
 };
 
 #endif

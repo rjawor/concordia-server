@@ -124,4 +124,10 @@ int DBconnection::getIntValue(PGresult * result, int row, int col) {
     return strtol(valueStr, NULL, 10);
 }
 
+std::string DBconnection::getStringValue(PGresult * result, int row, int col) {
+    char * valueStr = PQgetvalue(result,row,col);
+    return std::string(valueStr);
+}
+
+
 
