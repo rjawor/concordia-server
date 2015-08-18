@@ -51,20 +51,16 @@ std::vector<SimpleSearchResult> UnitDAO::getSearchResults(std::vector<MatchedPat
     connection.startTransaction();
 
     BOOST_FOREACH(MatchedPatternFragment & fragment, concordiaResults) {
-        std::string query = "SELECT id, source_segment, target_segment, substring(source_segment,source_tokens[$1::integer*2+1]+1,source_tokens[$2::integer*2]-source_tokens[$1::integer*2+1]) as matched_fragment FROM unit WHERE id = $3::integer;";
+        std::string query = "SELECT id, source_segment, target_segment, source_tokens[$1::integer], source_tokens[$2::integer] FROM unit WHERE id = $3::integer;";
         std::vector<QueryParam*> params;
-        params.push_back(new IntParam(fragment.getExampleOffset()));
-        params.push_back(new IntParam(fragment.getExampleOffset()+fragment.getMatchedLength()));
+        params.push_back(new IntParam(2*fragment.getExampleOffset()+1));
+        params.push_back(new IntParam(2*(fragment.getExampleOffset()+fragment.getMatchedLength())));
         params.push_back(new IntParam(fragment.getExampleId()));
-        std::stringstream ss;
-        ss << "example offset: " << fragment.getExampleOffset()
-           << ", matched length: " << fragment.getMatchedLength()
-           << ", example id: " << fragment.getExampleId();
-        Logger::log(ss.str());
         PGresult * result = connection.execute(query, params);
         
         results.push_back(SimpleSearchResult(connection.getIntValue(result,0,0),
-                                             connection.getStringValue(result,0,3),
+                                             connection.getIntValue(result,0,3),
+                                             connection.getIntValue(result,0,4),
                                              connection.getStringValue(result,0,1),
                                              connection.getStringValue(result,0,2)));
         connection.clearResult(result);

@@ -24,8 +24,10 @@ void SearcherController::simpleSearch(rapidjson::Writer<rapidjson::StringBuffer>
         jsonWriter.StartObject();
         jsonWriter.String("id");
         jsonWriter.Int(result.getId());
-        jsonWriter.String("matchedFragment");
-        jsonWriter.String(result.getMatchedFragment().c_str());
+        jsonWriter.String("matchedFragmentStart");
+        jsonWriter.Int(result.getMatchedFragmentStart());
+        jsonWriter.String("matchedFragmentEnd");
+        jsonWriter.Int(result.getMatchedFragmentEnd());
         jsonWriter.String("sourceSegment");
         jsonWriter.String(result.getSourceSegment().c_str());
         jsonWriter.String("targetSegment");
