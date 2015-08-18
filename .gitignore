@@ -2,4 +2,6 @@ build/
 concordia.cfg
 index/
 scripts/concordia-server.PID
+db/pgbouncer.log
+db/pgbouncer.pid
 

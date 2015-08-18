@@ -1,3 +1,3 @@
 #!/bin/sh
 
-pgbouncer pgbouncer.ini
+pgbouncer pgbouncer.ini 2> pgbouncer.log &
