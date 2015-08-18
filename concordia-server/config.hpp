@@ -3,3 +3,6 @@
 // database connection information
 #define DB_NAME "concordia_server"
 #define DB_USER "concordia"
+#define DB_PASSWORD "concordia"
+#define DB_HOST "localhost"
+#define DB_PORT "6543"

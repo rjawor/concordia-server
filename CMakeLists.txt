@@ -51,6 +51,9 @@ set(CONFIG_FILE_PATH "${concordia-server_SOURCE_DIR}/concordia.cfg")
 # --------------
 set (DB_NAME "concordia_server")
 set (DB_USER "concordia")
+set (DB_PASSWORD "concordia")
+set (DB_HOST "localhost")
+set (DB_PORT "6543")
 
 configure_file (
   "${concordia-server_SOURCE_DIR}/concordia-server/config.hpp.in"

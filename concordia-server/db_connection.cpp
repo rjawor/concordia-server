@@ -8,11 +8,14 @@
 #include "logger.hpp"
 
 DBconnection::DBconnection() throw(ConcordiaException) {
-    std::string connectionInfo = "dbname="DB_NAME" user="DB_USER;
+    std::string connectionInfo = "dbname="DB_NAME" user="DB_USER" password="DB_PASSWORD" host="DB_HOST" port="DB_PORT;
     _connection = PQconnectdb(connectionInfo.c_str());
     if (PQstatus(_connection) != CONNECTION_OK) {
         close();
-        throw ConcordiaException("Could not establish connection with the database");
+        std::stringstream ss;
+        ss << "Could not establish connection with the database. ";
+        ss << "Connection string: " << connectionInfo;
+        throw ConcordiaException(ss.str());
     }
     
 }
