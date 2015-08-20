@@ -17,6 +17,7 @@
 
 #define ADD_SENTENCE_OP "addSentence"
 #define ADD_SENTENCES_OP "addSentences"
+#define REFRESH_INDEX_OP "refreshIndex"
 #define SIMPLE_SEARCH_OP "simpleSearch"
 #define CONCORDIA_SEARCH_OP "concordiaSearch"
 

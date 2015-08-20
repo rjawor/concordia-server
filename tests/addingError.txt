@@ -1,0 +1,20 @@
+Added 1101000 of 1254468 sentences. Time elapsed: 984.7707 s, current speed: 1118.0268 sentences/second
+Traceback (most recent call last):
+  File "./addFile.py", line 48, in <module>
+    add_data(data)
+  File "./addFile.py", line 19, in add_data
+    urllib2.urlopen(req, json.dumps(data)).read()
+  File "/usr/lib/python2.7/urllib2.py", line 127, in urlopen
+    return _opener.open(url, data, timeout)
+  File "/usr/lib/python2.7/urllib2.py", line 410, in open
+    response = meth(req, response)
+  File "/usr/lib/python2.7/urllib2.py", line 523, in http_response
+    'http', request, response, code, msg, hdrs)
+  File "/usr/lib/python2.7/urllib2.py", line 448, in error
+    return self._call_chain(*args)
+  File "/usr/lib/python2.7/urllib2.py", line 382, in _call_chain
+    result = func(*args)
+  File "/usr/lib/python2.7/urllib2.py", line 531, in http_error_default
+    raise HTTPError(req.get_full_url(), code, msg, hdrs, fp)
+urllib2.HTTPError: HTTP Error 413: Request Entity Too Large
+

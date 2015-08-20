@@ -30,6 +30,8 @@ public:
                      const std::vector<std::string> & targetSentences,
                      const std::vector<int> & tmIds);
 
+    void refreshIndexFromRAM(rapidjson::Writer<rapidjson::StringBuffer> & jsonWriter);
+
 private:
     boost::shared_ptr<Concordia> _concordia;
     

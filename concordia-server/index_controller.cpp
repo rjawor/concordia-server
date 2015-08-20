@@ -45,7 +45,6 @@ void IndexController::addSentences(
         std::vector<TokenizedSentence> tokenizedSentences = _concordia->tokenizeAll(sourceSentences);
         std::vector<SUFFIX_MARKER_TYPE> sentenceIds = _unitDAO.addSentences(tokenizedSentences, targetSentences, tmIds);     
         _concordia->addAllTokenizedExamples(tokenizedSentences, sentenceIds);
-        _concordia->refreshSAfromRAM();
 
         jsonWriter.StartObject();
         jsonWriter.String("status");
@@ -57,4 +56,21 @@ void IndexController::addSentences(
         JsonGenerator::signalError(jsonWriter, errorstream.str());        
     }
 }
+
+void IndexController::refreshIndexFromRAM(rapidjson::Writer<rapidjson::StringBuffer> & jsonWriter) {
+    try {
+        _concordia->refreshSAfromRAM();
+
+        jsonWriter.StartObject();
+        jsonWriter.String("status");
+        jsonWriter.String("success");
+        jsonWriter.EndObject();
+    } catch (ConcordiaException & e) {
+        std::stringstream errorstream;
+        errorstream << "concordia error: " << e.what();
+        JsonGenerator::signalError(jsonWriter, errorstream.str());        
+    }
+
+}
+
 

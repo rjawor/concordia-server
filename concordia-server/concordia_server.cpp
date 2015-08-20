@@ -57,6 +57,8 @@ std::string ConcordiaServer::handleRequest(std::string & requestString) {
                     }
                 }
                 _indexController->addSentences(jsonWriter, sourceSentences, targetSentences, tmIds);
+            } else if (operation == REFRESH_INDEX_OP) {
+                _indexController->refreshIndexFromRAM(jsonWriter);
             } else if (operation == SIMPLE_SEARCH_OP) {
                 std::string pattern = d[PATTERN_PARAM].GetString();
                 _searcherController->simpleSearch(jsonWriter, pattern);

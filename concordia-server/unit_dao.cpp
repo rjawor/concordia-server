@@ -64,6 +64,9 @@ std::vector<SimpleSearchResult> UnitDAO::getSearchResults(const std::vector<Matc
                                              connection.getStringValue(result,0,1),
                                              connection.getStringValue(result,0,2)));
         connection.clearResult(result);
+        BOOST_FOREACH (QueryParam * param, params) {
+            delete param;
+        }
     }    
     connection.endTransaction();
     return results;
