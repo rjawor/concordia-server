@@ -122,14 +122,26 @@ void DBconnection::clearResult(PGresult * result) {
     PQclear(result);
 }
 
-int DBconnection::getIntValue(PGresult * result, int row, int col) {
-    char * valueStr = PQgetvalue(result,row,col);
-    return strtol(valueStr, NULL, 10);
+int DBconnection::getIntValue(PGresult * result, int row, int col) throw (ConcordiaException) {
+    try {
+        char * valueStr = PQgetvalue(result,row,col);
+        return strtol(valueStr, NULL, 10);
+    } catch (std::exception & e) {
+        std::stringstream ss;
+        ss << "Error getting int value. Message: " << e.what();
+        throw ConcordiaException(ss.str());    
+    }
 }
 
-std::string DBconnection::getStringValue(PGresult * result, int row, int col) {
-    char * valueStr = PQgetvalue(result,row,col);
-    return std::string(valueStr);
+std::string DBconnection::getStringValue(PGresult * result, int row, int col)  throw (ConcordiaException) {
+    try {
+        char * valueStr = PQgetvalue(result,row,col);
+        return std::string(valueStr);
+    } catch (std::exception & e) {
+        std::stringstream ss;
+        ss << "Error getting string value. Message: " << e.what();
+        throw ConcordiaException(ss.str());
+    }
 }
 
 

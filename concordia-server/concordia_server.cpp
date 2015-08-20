@@ -4,17 +4,9 @@
 #include <string>
 
 #include "json_generator.hpp"
-
-#define OPERATION_PARAM "operation"
-#define PATTERN_PARAM "pattern"
-#define SOURCE_SENTENCE_PARAM "sourceSentence"
-#define TARGET_SENTENCE_PARAM "targetSentence"
-#define TM_ID_PARAM "tmId"
-
-#define ADD_SENTENCE_OP "addSentence"
-#define SIMPLE_SEARCH_OP "simpleSearch"
-#define CONCORDIA_SEARCH_OP "concordiaSearch"
-
+#include "config.hpp"
+#include "logger.hpp"
+#include "rapidjson/rapidjson.h"
 
 ConcordiaServer::ConcordiaServer(const std::string & configFilePath)
                                          throw(ConcordiaException) {
@@ -48,6 +40,23 @@ std::string ConcordiaServer::handleRequest(std::string & requestString) {
                 std::string targetSentence = d[TARGET_SENTENCE_PARAM].GetString();
                 int tmId = d[TM_ID_PARAM].GetInt();
                 _indexController->addSentence(jsonWriter, sourceSentence, targetSentence, tmId);
+            } else if (operation == ADD_SENTENCES_OP) {
+                std::vector<std::string> sourceSentences;
+                std::vector<std::string> targetSentences;
+                std::vector<int> tmIds;
+                // loading data from json
+                const rapidjson::Value & sentencesArray = d[SENTENCES_PARAM];
+                for (rapidjson::SizeType i = 0; i < sentencesArray.Size(); i++) {
+                    if (sentencesArray[i].Size() != 3) {
+                        JsonGenerator::signalError(jsonWriter, "sentence should be an array of 3 elements");
+                        break;
+                    } else {
+                        tmIds.push_back(sentencesArray[i][0].GetInt());
+                        sourceSentences.push_back(sentencesArray[i][1].GetString());
+                        targetSentences.push_back(sentencesArray[i][2].GetString());
+                    }
+                }
+                _indexController->addSentences(jsonWriter, sourceSentences, targetSentences, tmIds);
             } else if (operation == SIMPLE_SEARCH_OP) {
                 std::string pattern = d[PATTERN_PARAM].GetString();
                 _searcherController->simpleSearch(jsonWriter, pattern);

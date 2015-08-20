@@ -1,1 +1,2 @@
-- implement connection pooling with  PgBouncer
+DONE - check the parameters and return types (should be const ref)
+DONE - implement connection pooling with  PgBouncer

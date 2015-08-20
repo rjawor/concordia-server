@@ -6,3 +6,17 @@
 #define DB_PASSWORD "@DB_PASSWORD@"
 #define DB_HOST "@DB_HOST@"
 #define DB_PORT "@DB_PORT@"
+
+// json syntax
+#define OPERATION_PARAM "operation"
+#define PATTERN_PARAM "pattern"
+#define SOURCE_SENTENCE_PARAM "sourceSentence"
+#define TARGET_SENTENCE_PARAM "targetSentence"
+#define TM_ID_PARAM "tmId"
+#define SENTENCES_PARAM "sentences"
+
+#define ADD_SENTENCE_OP "addSentence"
+#define ADD_SENTENCES_OP "addSentences"
+#define SIMPLE_SEARCH_OP "simpleSearch"
+#define CONCORDIA_SEARCH_OP "concordiaSearch"
+

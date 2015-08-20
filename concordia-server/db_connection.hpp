@@ -29,9 +29,9 @@ public:
 
     void clearResult(PGresult * result);
     
-    int getIntValue(PGresult * result, int row, int col);
+    int getIntValue(PGresult * result, int row, int col)  throw (ConcordiaException);
     
-    std::string getStringValue(PGresult * result, int row, int col);
+    std::string getStringValue(PGresult * result, int row, int col) throw (ConcordiaException);
 
 private:
     void close();

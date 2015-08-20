@@ -21,9 +21,14 @@ public:
     virtual ~IndexController();
 
     void addSentence(rapidjson::Writer<rapidjson::StringBuffer> & jsonWriter,
-                     std::string & sourceSentence,
-                     std::string & targetSentence,
-                     int tmId);
+                     const std::string & sourceSentence,
+                     const std::string & targetSentence,
+                     const int tmId);
+
+    void addSentences(rapidjson::Writer<rapidjson::StringBuffer> & jsonWriter,
+                     const std::vector<std::string> & sourceSentences,
+                     const std::vector<std::string> & targetSentences,
+                     const std::vector<int> & tmIds);
 
 private:
     boost::shared_ptr<Concordia> _concordia;
