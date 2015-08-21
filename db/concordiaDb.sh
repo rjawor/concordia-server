@@ -1,3 +1,3 @@
 #!/bin/sh
 
-sudo -u concordia psql concordia_server
+psql -U concordia concordia_server

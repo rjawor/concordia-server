@@ -7,6 +7,8 @@ import urllib2
 import sys
 import time
 
+BUFFER_SIZE = 500
+
 def file_len(fname):
     with open(fname) as f:
         for i, l in enumerate(f):
@@ -26,8 +28,6 @@ totalLines = file_len(sourceFile)
 if file_len(targetFile) != totalLines:
     print "File lengths do not match"
     sys.exit(1)
-
-BUFFER_SIZE = 1000
 
 data = {
     'operation': 'addSentences'

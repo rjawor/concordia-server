@@ -1,2 +1,4 @@
+- report SA generation time and possible errors on concordia-server startup. Rethink the starting scripts.
+
 DONE - check the parameters and return types (should be const ref)
 DONE - implement connection pooling with  PgBouncer

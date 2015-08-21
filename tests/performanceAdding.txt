@@ -1,0 +1,7 @@
+Added 999500 of 1000000 sentences. Time elapsed: 1019.4110 s, current speed: 980.4681 sentences/second
+Added 1000000 of 1000000 sentences. Time elapsed: 1023.4541 s, current speed: 977.0834 sentences/second
+Added all 1000000 sentences. Time elapsed: 1023.4542 s, overall speed: 977.0832 sentences/second
+Generating index...
+Index regeneration complete. The operation took 9.2251 s
+
+memory: concordia_server 676MB
