@@ -5,6 +5,8 @@
 
 #include "rapidjson/writer.h"
 
+#include "simple_search_result.hpp"
+
 class JsonGenerator {
 public:
     /*! Constructor.
@@ -14,7 +16,11 @@ public:
     */
     virtual ~JsonGenerator();
 
-    static void signalError(rapidjson::Writer<rapidjson::StringBuffer> & jsonWriter, std::string  message);
+    static void signalError(rapidjson::Writer<rapidjson::StringBuffer> & jsonWriter,
+                            const std::string & message);
+
+    static void writeSearchResult(rapidjson::Writer<rapidjson::StringBuffer> & jsonWriter,
+                                  const SimpleSearchResult & result);
 
 private:
 

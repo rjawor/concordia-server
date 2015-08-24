@@ -3,6 +3,8 @@
 #include <boost/foreach.hpp>
 #include <vector>
 
+#include "json_generator.hpp"
+
 SearcherController::SearcherController(boost::shared_ptr<Concordia> concordia)
                                          throw(ConcordiaException):
                                          _concordia(concordia) {
@@ -21,29 +23,32 @@ void SearcherController::simpleSearch(rapidjson::Writer<rapidjson::StringBuffer>
     jsonWriter.String("results");
     jsonWriter.StartArray();
     BOOST_FOREACH(SimpleSearchResult & result, results) {
-        jsonWriter.StartObject();
-        jsonWriter.String("id");
-        jsonWriter.Int(result.getId());
-        jsonWriter.String("matchedFragmentStart");
-        jsonWriter.Int(result.getMatchedFragmentStart());
-        jsonWriter.String("matchedFragmentEnd");
-        jsonWriter.Int(result.getMatchedFragmentEnd());
-        jsonWriter.String("sourceSegment");
-        jsonWriter.String(result.getSourceSegment().c_str());
-        jsonWriter.String("targetSegment");
-        jsonWriter.String(result.getTargetSegment().c_str());                        
-        jsonWriter.EndObject();            
+        JsonGenerator::writeSearchResult(jsonWriter, result);        
     }    
     jsonWriter.EndArray();
-    jsonWriter.EndObject();            
+    jsonWriter.EndObject();
 }
 
 void SearcherController::concordiaSearch(rapidjson::Writer<rapidjson::StringBuffer> & jsonWriter, std::string & pattern) {
+
+    CompleteConcordiaSearchResult result = _unitDAO.getConcordiaResult(_concordia->concordiaSearch(pattern));
+    
     jsonWriter.StartObject();
     jsonWriter.String("status");
-    jsonWriter.String("error");
-    jsonWriter.String("data");
-    jsonWriter.String("concordia searching not yet implemented");
+    jsonWriter.String("success");
+    jsonWriter.String("result");
+    jsonWriter.StartObject();
+    jsonWriter.String("bestOverlayScore");
+    jsonWriter.Double(result.getBestOverlayScore());
+    jsonWriter.String("bestOverlay");
+    jsonWriter.StartArray();
+    BOOST_FOREACH(SimpleSearchResult & simpleResult, result.getBestOverlay()) {
+        JsonGenerator::writeSearchResult(jsonWriter, simpleResult);        
+    }    
+    jsonWriter.EndArray();
+    jsonWriter.EndObject();
+    
+    
     jsonWriter.EndObject();            
 }
 

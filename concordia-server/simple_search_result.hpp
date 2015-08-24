@@ -8,8 +8,10 @@ public:
     /*! Constructor.
     */
     SimpleSearchResult(const int id,
-                       const int matchedFragmentStart,
-                       const int matchedFragmentEnd,
+                       const int matchedPatternStart,
+                       const int matchedPatternEnd,
+                       const int matchedExampleStart,
+                       const int matchedExampleEnd,
                        const std::string & sourceSegment,
                        const std::string & targetSegment                       
                       );
@@ -17,32 +19,44 @@ public:
     */
     virtual ~SimpleSearchResult();
     
-    const int getId() {
+    int getId() const {
         return _id;
     }
 
-    const int getMatchedFragmentStart() {
-        return _matchedFragmentStart;
+    int getMatchedPatternStart() const {
+        return _matchedPatternStart;
     }
 
-    const int getMatchedFragmentEnd() {
-        return _matchedFragmentEnd;
+    int getMatchedPatternEnd() const {
+        return _matchedPatternEnd;
     }
 
-    const std::string & getSourceSegment() {
+    int getMatchedExampleStart() const {
+        return _matchedExampleStart;
+    }
+
+    int getMatchedExampleEnd() const {
+        return _matchedExampleEnd;
+    }
+
+    const std::string & getSourceSegment() const {
         return _sourceSegment;
     }
 
-    const std::string & getTargetSegment() {
+    const std::string & getTargetSegment() const {
         return _targetSegment;
     }
     
 private:
     int _id;
     
-    int _matchedFragmentStart;
+    int _matchedPatternStart;
 
-    int _matchedFragmentEnd;
+    int _matchedPatternEnd;
+
+    int _matchedExampleStart;
+
+    int _matchedExampleEnd;
 
     std::string _sourceSegment;
 

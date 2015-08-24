@@ -8,9 +8,11 @@
 #include <concordia/tokenized_sentence.hpp>
 #include <concordia/substring_occurence.hpp>
 #include <concordia/matched_pattern_fragment.hpp>
+#include <concordia/concordia_search_result.hpp>
 #include <boost/shared_ptr.hpp>
 
 #include "simple_search_result.hpp"
+#include "complete_concordia_search_result.hpp"
 #include "db_connection.hpp"
 
 class UnitDAO {
@@ -32,9 +34,15 @@ public:
              const std::vector<std::string> & targetSentences,
              const std::vector<int> & tmIds);
 
-    std::vector<SimpleSearchResult> getSearchResults(const std::vector<MatchedPatternFragment> & concordiaResults);
+    std::vector<SimpleSearchResult> getSearchResults(const std::vector<MatchedPatternFragment> & fragments);
+
+    CompleteConcordiaSearchResult getConcordiaResult(boost::shared_ptr<ConcordiaSearchResult> rawConcordiaResult);
 
 private:
+    void _getResultsFromFragments(std::vector<SimpleSearchResult> & results,
+                                  const std::vector<MatchedPatternFragment> & fragments,
+                                  const TokenizedSentence & tokenizedPattern);
+
     std::vector<int> _getTokenPositions(const TokenizedSentence & ts);
     
     int _addSingleSentence(

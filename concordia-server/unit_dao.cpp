@@ -45,31 +45,57 @@ std::vector<SUFFIX_MARKER_TYPE> UnitDAO::addSentences(
 }
 
 
-std::vector<SimpleSearchResult> UnitDAO::getSearchResults(const std::vector<MatchedPatternFragment> & concordiaResults) {
+std::vector<SimpleSearchResult> UnitDAO::getSearchResults(const std::vector<MatchedPatternFragment> & fragments) {
     std::vector<SimpleSearchResult> results;
+    TokenizedSentence ts("");
+    _getResultsFromFragments(results, fragments, ts);
+    return results;
+}
 
+CompleteConcordiaSearchResult UnitDAO::getConcordiaResult(boost::shared_ptr<ConcordiaSearchResult> rawConcordiaResult) {
+    CompleteConcordiaSearchResult result(rawConcordiaResult->getBestOverlayScore());
+    _getResultsFromFragments(result.getBestOverlay(),
+                             rawConcordiaResult->getBestOverlay(),
+                             rawConcordiaResult->getTokenizedPattern());
+    return result;
+}
+
+void UnitDAO::_getResultsFromFragments(
+                              std::vector<SimpleSearchResult> & results,
+                              const std::vector<MatchedPatternFragment> & fragments,
+                              const TokenizedSentence & tokenizedPattern) {
+    
     DBconnection connection;
     connection.startTransaction();
 
-    BOOST_FOREACH(const MatchedPatternFragment & fragment, concordiaResults) {
+    BOOST_FOREACH(const MatchedPatternFragment & fragment, fragments) {
+        int matchedPatternStart = 0;
+        int matchedPatternEnd = 0;
+        if (tokenizedPattern.getTokens().size() > 0) {
+            // if it is concordia searching
+            matchedPatternStart = tokenizedPattern.getTokens().at(fragment.getStart()).getStart();
+            matchedPatternEnd = tokenizedPattern.getTokens().at(fragment.getStart()+fragment.getMatchedLength() - 1).getEnd();
+        }
+        
         std::string query = "SELECT id, source_segment, target_segment, source_tokens[$1::integer], source_tokens[$2::integer] FROM unit WHERE id = $3::integer;";
         std::vector<QueryParam*> params;
         params.push_back(new IntParam(2*fragment.getExampleOffset()+1));
         params.push_back(new IntParam(2*(fragment.getExampleOffset()+fragment.getMatchedLength())));
         params.push_back(new IntParam(fragment.getExampleId()));
         PGresult * result = connection.execute(query, params);
-        results.push_back(SimpleSearchResult(connection.getIntValue(result,0,0),
-                                             connection.getIntValue(result,0,3),
-                                             connection.getIntValue(result,0,4),
-                                             connection.getStringValue(result,0,1),
-                                             connection.getStringValue(result,0,2)));
+        results.push_back(SimpleSearchResult(connection.getIntValue(result,0,0),      // example id
+                                             matchedPatternStart,
+                                             matchedPatternEnd,
+                                             connection.getIntValue(result,0,3),      // matched example start
+                                             connection.getIntValue(result,0,4),      // matched example end
+                                             connection.getStringValue(result,0,1),   // source segment
+                                             connection.getStringValue(result,0,2))); // target segment
         connection.clearResult(result);
         BOOST_FOREACH (QueryParam * param, params) {
             delete param;
         }
     }    
     connection.endTransaction();
-    return results;
 }
 
 

@@ -2,13 +2,17 @@
 
 SimpleSearchResult::SimpleSearchResult(
                        const int id,
-                       const int matchedFragmentStart,
-                       const int matchedFragmentEnd,
+                       const int matchedPatternStart,
+                       const int matchedPatternEnd,
+                       const int matchedExampleStart,
+                       const int matchedExampleEnd,
                        const std::string & sourceSegment,
                        const std::string & targetSegment):
                        _id(id),
-                       _matchedFragmentStart(matchedFragmentStart),
-                       _matchedFragmentEnd(matchedFragmentEnd),
+                       _matchedPatternStart(matchedPatternStart),
+                       _matchedPatternEnd(matchedPatternEnd),
+                       _matchedExampleStart(matchedExampleStart),
+                       _matchedExampleEnd(matchedExampleEnd),
                        _sourceSegment(sourceSegment),
                        _targetSegment(targetSegment) {
 }
