@@ -23,6 +23,10 @@ void JsonGenerator::writeSearchResult(rapidjson::Writer<rapidjson::StringBuffer>
     jsonWriter.StartObject();
     jsonWriter.String("id");
     jsonWriter.Int(result.getId());
+    jsonWriter.String("matchedPatternStart");
+    jsonWriter.Int(result.getMatchedPatternStart());
+    jsonWriter.String("matchedPatternEnd");
+    jsonWriter.Int(result.getMatchedPatternEnd());
     jsonWriter.String("matchedExampleStart");
     jsonWriter.Int(result.getMatchedExampleStart());
     jsonWriter.String("matchedExampleEnd");

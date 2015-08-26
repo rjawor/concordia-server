@@ -24,6 +24,7 @@ std::string ConcordiaServer::handleRequest(std::string & requestString) {
 
     std::stringstream outputString;
     try {
+        outputString << "Access-Control-Allow-Origin: *\r\n";
         outputString << "Content-type: application/json\r\n\r\n";
         rapidjson::Document d;
         bool hasError = d.Parse(requestString.c_str()).HasParseError();
