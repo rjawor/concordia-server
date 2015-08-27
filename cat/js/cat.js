@@ -43,7 +43,7 @@ function renderResult(data) {
         markedSentence += inputSentence.slice(lastInsertedEnd, fragment['matchedPatternStart']);
 
         //the marked fragment
-        markedSentence += '<span onclick="displayDetails('+i+')" class="matchedFragment">'+inputSentence.slice(fragment['matchedPatternStart'], fragment['matchedPatternEnd'])+'</span>';
+        markedSentence += '<span onclick="displayDetails(this, '+i+')" class="matchedFragment">'+inputSentence.slice(fragment['matchedPatternStart'], fragment['matchedPatternEnd'])+'</span>';
         
         lastInsertedEnd = fragment['matchedPatternEnd'];
         
@@ -74,7 +74,9 @@ function renderFragment(fragment, number) {
     return result;
 }
 
-function displayDetails(number) {
+function displayDetails(caller, number) {
+    $('#result-sentence .matchedFragmentSelected').attr("class","matchedFragment");
+    caller.className='matchedFragmentSelected';
     $('.fragmentDetails').css('display', 'none');
     $('#fragment'+number).css('display', 'block');
 }
