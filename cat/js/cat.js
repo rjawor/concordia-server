@@ -1,3 +1,5 @@
+var concordiaUrl = 'http://localhost';
+
 $(document).ready(function() {
     $('#searchInput').bind("enterKey",function(e){
         searchHandle();
@@ -16,7 +18,7 @@ function searchHandle() {
     }
 
     $.ajax({
-        url: 'http://localhost',
+        url: concordiaUrl,
         type: 'post',
         dataType: 'json',
         success: function (data) {
@@ -79,4 +81,13 @@ function displayDetails(caller, number) {
     caller.className='matchedFragmentSelected';
     $('.fragmentDetails').css('display', 'none');
     $('#fragment'+number).css('display', 'block');
+}
+
+function searchText(text) {
+    $("#searchInput").val(text);
+    searchHandle();
+}
+
+function showHideSuggestions() {
+    $('#suggestions').toggleClass('suggestionsInvisible');
 }

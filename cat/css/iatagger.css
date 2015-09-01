@@ -21,6 +21,16 @@
 	padding:0;
 }
 
+.suggestionsInvisible {
+    display:none;
+}
+
+.suggestion {
+	text-decoration: underline;
+	font-weight: bold;
+    color:#003d4c;
+    cursor:pointer;
+}
 
 .fragmentDetails {
     border-style: solid;
