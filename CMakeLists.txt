@@ -45,6 +45,7 @@ configure_file (
   )
 
 set(CONFIG_FILE_PATH "${concordia-server_SOURCE_DIR}/concordia.cfg")
+set(LOG_FILE_PATH "${concordia-server_SOURCE_DIR}/logs/concordia-server.log")
 
 # --------------
 # db settings

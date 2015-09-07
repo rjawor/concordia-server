@@ -2,9 +2,10 @@
 
 #include "log4cpp/Appender.hh"
 #include "log4cpp/FileAppender.hh"
-#include "log4cpp/BasicLayout.hh"
+#include "log4cpp/PatternLayout.hh"
 #include "log4cpp/Priority.hh"
 
+#include "config.hpp"
 #include <sstream>
 
 Logger::Logger() {
@@ -44,8 +45,10 @@ void Logger::logString(std::string name, std::string value) {
 }
 
 void Logger::_initialize(log4cpp::Category & root) {
-    log4cpp::Appender *appender = new log4cpp::FileAppender("default", "/tmp/concordia-server.log");
-    appender->setLayout(new log4cpp::BasicLayout());
+    log4cpp::Appender *appender = new log4cpp::FileAppender("default", LOG_FILE_PATH);
+    log4cpp::PatternLayout *layout = new log4cpp::PatternLayout();
+    layout->setConversionPattern("%d{%Y-%m-%d %H:%M:%S}%c %x: %m%n");
+    appender->setLayout(layout);
 
     root.setPriority(log4cpp::Priority::INFO);
     root.addAppender(appender);

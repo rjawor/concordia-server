@@ -65,6 +65,7 @@ std::string ConcordiaServer::handleRequest(std::string & requestString) {
                 _searcherController->simpleSearch(jsonWriter, pattern);
             } else if (operation == CONCORDIA_SEARCH_OP) {
                 std::string pattern = d[PATTERN_PARAM].GetString();
+                Logger::logString("concordia search pattern", pattern);
                 _searcherController->concordiaSearch(jsonWriter, pattern);         
             } else {
                 JsonGenerator::signalError(jsonWriter, "no such operation");            

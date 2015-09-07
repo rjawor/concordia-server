@@ -1,4 +1,5 @@
 build/
+logs/concordia-server.log
 concordia.cfg
 concordia-server/config.hpp
 index/
