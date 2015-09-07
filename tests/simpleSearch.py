@@ -13,7 +13,7 @@ data = {
 }
 
 start = time.time()
-req = urllib2.Request('http://localhost')
+req = urllib2.Request('http://localhost:8800')
 req.add_header('Content-Type', 'application/json')
 response = json.loads(urllib2.urlopen(req, json.dumps(data)).read())
 end = time.time()

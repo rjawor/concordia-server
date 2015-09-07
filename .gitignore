@@ -1,7 +1,11 @@
 build/
 concordia.cfg
+concordia-server/config.hpp
 index/
 scripts/concordia-server.PID
+scripts/start.sh
+scripts/stop.sh
+scripts/restart.sh
 db/pgbouncer.log
 db/pgbouncer.pid
 
