@@ -144,5 +144,13 @@ std::string DBconnection::getStringValue(PGresult * result, int row, int col)  t
     }
 }
 
-
+int DBconnection::getRowCount(PGresult * result) throw (ConcordiaException) {
+    try {
+        return PQntuples(result);
+    } catch (std::exception & e) {
+        std::stringstream ss;
+        ss << "Error getting int value. Message: " << e.what();
+        throw ConcordiaException(ss.str());    
+    }
+}
 

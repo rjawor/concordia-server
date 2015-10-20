@@ -32,7 +32,7 @@ public:
     std::vector<SUFFIX_MARKER_TYPE> addSentences(
              const std::vector<TokenizedSentence> & sourceSentences,
              const std::vector<std::string> & targetSentences,
-             const std::vector<int> & tmIds);
+             const int tmId);
 
     std::vector<SimpleSearchResult> getSearchResults(const std::vector<MatchedPatternFragment> & fragments);
 

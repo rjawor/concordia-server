@@ -1,0 +1,34 @@
+<html>
+    <head>
+        <script src="../js/jquery-1.11.3.min.js"></script>
+        <script src="../js/cat.js"></script>
+		<link rel="stylesheet" href="../css/iatagger.css" />
+        <meta charset="UTF-8">
+    </head>
+    <body>
+        <div id="header">
+        </div>
+        <div id="content">
+	        <a href="http://tmconcordia.sourceforge.net/" target="_blank"><img src="../images/banner.jpg" alt="Banner" /></a>
+	        <br/><br/><br/>
+	        <p>@desc@</p>
+	        <p>
+	        Enjoy your work with the system!
+	        </p>
+            <label for="searchInput">@prompt@</label>
+            <span class="suggestion" onclick="showHideSuggestions()">show/hide samples</span>
+            <br/><br/>
+            <div class="suggestionsInvisible" id="suggestions">
+                <ul>@suggestions@</ul>
+                <br/><br/>
+            </div>
+            <input id="searchInput" type="text" value="" />
+            <br/><br/>
+            <input type="button" value="search" onclick="searchHandle(@tmid@)" />
+            <br/><br/><br/><br/>
+            <div id="result">
+            
+            </div>
+        </div>
+    </body>
+</html>

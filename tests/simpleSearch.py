@@ -6,14 +6,20 @@ import json
 import urllib2
 import sys
 import time
+import host
 
 data = {
     'operation': 'simpleSearch',
-    'pattern':sys.argv[1]
+    'pattern':sys.argv[1],
+    'tmId':int(sys.argv[2])
 }
 
+address = 'http://'+host.concordia_host
+if len(host.concordia_port) > 0:
+    address += ':'+host.concordia_port
+
 start = time.time()
-req = urllib2.Request('http://localhost:8800')
+req = urllib2.Request(address)
 req.add_header('Content-Type', 'application/json')
 response = json.loads(urllib2.urlopen(req, json.dumps(data)).read())
 end = time.time()

@@ -18,10 +18,6 @@ set (STOP_WORDS_ENABLED "false")
 # ================================================
 
 set (INDEX_DIRECTORY "${concordia-server_SOURCE_DIR}/index")
-set (WORD_MAP_FILE "word_map.bin")
-set (HASHED_INDEX_FILE "hashed_index.bin")
-set (MARKERS_FILE "markers.bin")
-
 set (RESOURCES_DIRECTORY "${concordia-server_SOURCE_DIR}/resources")
 
 configure_file (

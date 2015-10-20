@@ -4,17 +4,6 @@
 #
 
 #-------------------------------------------------------------------------------
-# The below set the paths for hashed index, markers array and word map files.
-# If all the files pointed by these paths exist, Concordia reads them to its
-# RAM index. When none of these files exist, a new empty index is created.
-# However, if any of these files exist and any other is missing, the index
-# is considered corrupt and Concordia does not start.
-
-hashed_index_path = "@INDEX_DIRECTORY@/@HASHED_INDEX_FILE@"
-markers_path = "@INDEX_DIRECTORY@/@MARKERS_FILE@"
-word_map_path = "@INDEX_DIRECTORY@/@WORD_MAP_FILE@"
-
-#-------------------------------------------------------------------------------
 # The following settings control the sentence anonymizer mechanism. It is used to
 # remove unnecessary symbols and possibly words from sentences added to index
 # and search patterns. Anonymizer removes html tags, substitutes predefined symbols

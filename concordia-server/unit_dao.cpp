@@ -31,13 +31,13 @@ int UnitDAO::addSentence(
 std::vector<SUFFIX_MARKER_TYPE> UnitDAO::addSentences(
              const std::vector<TokenizedSentence> & sourceSentences,
              const std::vector<std::string> & targetSentences,
-             const std::vector<int> & tmIds) {
+             const int tmId) {
     DBconnection connection;
     std::vector<SUFFIX_MARKER_TYPE> newIds;
     connection.startTransaction();
     int index = 0;
     BOOST_FOREACH(const TokenizedSentence & sourceSentence, sourceSentences) {    
-        newIds.push_back(_addSingleSentence(connection, sourceSentence, targetSentences.at(index), tmIds.at(index)));
+        newIds.push_back(_addSingleSentence(connection, sourceSentence, targetSentences.at(index), tmId));
         index++;
     }
     connection.endTransaction();

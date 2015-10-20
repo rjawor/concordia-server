@@ -5,6 +5,8 @@
 #include <boost/shared_ptr.hpp>
 #include <concordia/concordia.hpp>
 #include <concordia/concordia_exception.hpp>
+#include <boost/ptr_container/ptr_map.hpp>
+
 
 #include "unit_dao.hpp"
 
@@ -14,8 +16,8 @@ class IndexController {
 public:
     /*! Constructor.
     */
-    explicit IndexController(boost::shared_ptr<Concordia> concordia)
-                                            throw(ConcordiaException);
+    explicit IndexController(boost::shared_ptr<boost::ptr_map<int,Concordia> >concordiasMap)
+                                                                   throw(ConcordiaException);
     /*! Destructor.
     */
     virtual ~IndexController();
@@ -28,12 +30,13 @@ public:
     void addSentences(rapidjson::Writer<rapidjson::StringBuffer> & jsonWriter,
                      const std::vector<std::string> & sourceSentences,
                      const std::vector<std::string> & targetSentences,
-                     const std::vector<int> & tmIds);
+                     const int tmId);
 
-    void refreshIndexFromRAM(rapidjson::Writer<rapidjson::StringBuffer> & jsonWriter);
-
+    void refreshIndexFromRAM(rapidjson::Writer<rapidjson::StringBuffer> & jsonWriter,
+                             const int tmId);
+    
 private:
-    boost::shared_ptr<Concordia> _concordia;
+    boost::shared_ptr<boost::ptr_map<int,Concordia> > _concordiasMap;
     
     UnitDAO _unitDAO;
 };

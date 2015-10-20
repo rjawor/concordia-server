@@ -11,9 +11,10 @@ $(document).ready(function() {
     });
 });
 
-function searchHandle() {
+function searchHandle(tmid) {
     var concordiaRequest = {
         operation: 'concordiaSearch',
+        tmId: tmid,
         pattern:$("#searchInput").val()
     }
 

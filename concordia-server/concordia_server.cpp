@@ -7,12 +7,21 @@
 #include "config.hpp"
 #include "logger.hpp"
 #include "rapidjson/rapidjson.h"
+#include <boost/foreach.hpp>
+#include <boost/ptr_container/ptr_map.hpp>
+#include <boost/filesystem/path.hpp>
 
 ConcordiaServer::ConcordiaServer(const std::string & configFilePath)
-                                         throw(ConcordiaException) {
-    boost::shared_ptr<Concordia> concordia(new Concordia(configFilePath));
-    _indexController = boost::shared_ptr<IndexController> (new IndexController(concordia));
-    _searcherController = boost::shared_ptr<SearcherController> (new SearcherController(concordia));
+                                         throw(ConcordiaException) :
+                                         _configFilePath(configFilePath) {
+    std::vector<int> tmIds = _tmDAO.getTmIds();
+    _concordiasMap = boost::shared_ptr<boost::ptr_map<int,Concordia> >(new boost::ptr_map<int,Concordia>());
+
+    BOOST_FOREACH(int & tmId, tmIds) {
+        _addTm(tmId);
+    }
+    _indexController = boost::shared_ptr<IndexController> (new IndexController(_concordiasMap));
+    _searcherController = boost::shared_ptr<SearcherController> (new SearcherController(_concordiasMap));    
 }
 
 ConcordiaServer::~ConcordiaServer() {
@@ -44,29 +53,48 @@ std::string ConcordiaServer::handleRequest(std::string & requestString) {
             } else if (operation == ADD_SENTENCES_OP) {
                 std::vector<std::string> sourceSentences;
                 std::vector<std::string> targetSentences;
-                std::vector<int> tmIds;
+                int tmId = d[TM_ID_PARAM].GetInt();
                 // loading data from json
                 const rapidjson::Value & sentencesArray = d[SENTENCES_PARAM];
+                Logger::log("addSentences");
+                Logger::logInt("sentences to add", sentencesArray.Size());
+                Logger::logInt("tm id", tmId);
                 for (rapidjson::SizeType i = 0; i < sentencesArray.Size(); i++) {
-                    if (sentencesArray[i].Size() != 3) {
-                        JsonGenerator::signalError(jsonWriter, "sentence should be an array of 3 elements");
+                    if (sentencesArray[i].Size() != 2) {
+                        JsonGenerator::signalError(jsonWriter, "sentence should be an array of 2 elements");
                         break;
                     } else {
-                        tmIds.push_back(sentencesArray[i][0].GetInt());
-                        sourceSentences.push_back(sentencesArray[i][1].GetString());
-                        targetSentences.push_back(sentencesArray[i][2].GetString());
+                        sourceSentences.push_back(sentencesArray[i][0].GetString());
+                        targetSentences.push_back(sentencesArray[i][1].GetString());
                     }
                 }
-                _indexController->addSentences(jsonWriter, sourceSentences, targetSentences, tmIds);
+                _indexController->addSentences(jsonWriter, sourceSentences, targetSentences, tmId);
             } else if (operation == REFRESH_INDEX_OP) {
-                _indexController->refreshIndexFromRAM(jsonWriter);
+                int tmId = d[TM_ID_PARAM].GetInt();
+                _indexController->refreshIndexFromRAM(jsonWriter, tmId);
             } else if (operation == SIMPLE_SEARCH_OP) {
                 std::string pattern = d[PATTERN_PARAM].GetString();
-                _searcherController->simpleSearch(jsonWriter, pattern);
+                int tmId = d[TM_ID_PARAM].GetInt();
+                _searcherController->simpleSearch(jsonWriter, pattern, tmId);
             } else if (operation == CONCORDIA_SEARCH_OP) {
                 std::string pattern = d[PATTERN_PARAM].GetString();
+                int tmId = d[TM_ID_PARAM].GetInt();
                 Logger::logString("concordia search pattern", pattern);
-                _searcherController->concordiaSearch(jsonWriter, pattern);         
+                _searcherController->concordiaSearch(jsonWriter, pattern, tmId);         
+            } else if (operation == ADD_TM_OP) {
+                int sourceLangId = d[SOURCE_LANG_PARAM].GetInt();
+                int targetLangId = d[TARGET_LANG_PARAM].GetInt();
+                std::string name = d[NAME_PARAM].GetString();
+                int newId = _tmDAO.addTm(sourceLangId, targetLangId, name);
+                _addTm(newId);
+                
+                jsonWriter.StartObject();
+                jsonWriter.String("status");
+                jsonWriter.String("success");
+                jsonWriter.String("newTmId");
+                jsonWriter.Int(newId);
+                jsonWriter.EndObject();
+                                
             } else {
                 JsonGenerator::signalError(jsonWriter, "no such operation");            
             }
@@ -83,3 +111,13 @@ std::string ConcordiaServer::handleRequest(std::string & requestString) {
     return outputString.str();
 
 }
+
+void ConcordiaServer::_addTm(int tmId) {
+    std::stringstream indexPath;
+    indexPath << INDEX_DIRECTORY << "/tm_" << tmId;
+    if (!boost::filesystem::exists(indexPath.str())) {
+        boost::filesystem::create_directories(indexPath.str());
+    }
+    _concordiasMap->insert(tmId, new Concordia(indexPath.str(), _configFilePath));
+}
+

@@ -33,6 +33,8 @@ public:
     
     std::string getStringValue(PGresult * result, int row, int col) throw (ConcordiaException);
 
+    int getRowCount(PGresult * result)  throw (ConcordiaException);
+
 private:
     void close();
     

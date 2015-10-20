@@ -1,5 +1,6 @@
 #define CONFIG_FILE_PATH "@CONFIG_FILE_PATH@"
 #define LOG_FILE_PATH "@LOG_FILE_PATH@"
+#define INDEX_DIRECTORY "@INDEX_DIRECTORY@"
 
 // database connection information
 #define DB_NAME "@DB_NAME@"
@@ -15,10 +16,14 @@
 #define TARGET_SENTENCE_PARAM "targetSentence"
 #define TM_ID_PARAM "tmId"
 #define SENTENCES_PARAM "sentences"
+#define SOURCE_LANG_PARAM "sourceLangId"
+#define TARGET_LANG_PARAM "targetLangId"
+#define NAME_PARAM "name"
 
 #define ADD_SENTENCE_OP "addSentence"
 #define ADD_SENTENCES_OP "addSentences"
 #define REFRESH_INDEX_OP "refreshIndex"
 #define SIMPLE_SEARCH_OP "simpleSearch"
 #define CONCORDIA_SEARCH_OP "concordiaSearch"
+#define ADD_TM_OP "addTm"
 
