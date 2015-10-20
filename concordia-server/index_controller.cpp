@@ -79,6 +79,7 @@ void IndexController::addSentences(
 void IndexController::refreshIndexFromRAM(rapidjson::Writer<rapidjson::StringBuffer> & jsonWriter,
                                           const int tmId) {
     try {
+        boost::ptr_map<int,Concordia>::iterator it = _concordiasMap->find(tmId);
         if (it != _concordiasMap->end()) {
             (*_concordiasMap)[tmId].refreshSAfromRAM();
 
