@@ -15,7 +15,7 @@ if len(host.concordia_port) > 0:
 
 data = {
     'operation': 'concordiaSearch',
-    'pattern':sys.argv[1]
+    'pattern':sys.argv[1],
     'tmId':int(sys.argv[2])
 }
 
