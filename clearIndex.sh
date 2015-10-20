@@ -1,5 +1,5 @@
 #!/bin/sh
 
-rm index/*
+rm -rf index/*
 cd db
 ./recreateDb.sh
