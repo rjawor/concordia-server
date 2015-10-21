@@ -71,9 +71,9 @@ function displayDetails(caller, number) {
     $('#fragment'+number).css('display', 'block');
 }
 
-function searchText(text) {
+function searchText(text, tmid) {
     $("#searchInput").val(text);
-    searchHandle();
+    searchHandle(tmid);
 }
 
 function showHideSuggestions() {

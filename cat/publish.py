@@ -20,6 +20,7 @@ if len(os.listdir(root_dir))>0:
 shutil.copytree('js', root_dir+'/js')
 shutil.copytree('css', root_dir+'/css')
 shutil.copytree('images', root_dir+'/images')
+shutil.copy('favicon.ico', root_dir+'/favicon.ico')
 
 
 versions_dir = 'versions'
@@ -48,7 +49,7 @@ for version in versions:
                     if field == 'suggestions':
                         suggestions_html = ''
                         for suggestion in value:
-                            suggestions_html+='<li>'+suggestion+'<span class="suggestion" onclick="searchText(\''+suggestion+'\');">apply</span></li>'
+                            suggestions_html+='<li>'+suggestion+' <span class="suggestion" onclick="searchText(\''+suggestion+'\', '+version['tmid']+');">apply</span></li>'
                         line = re.sub('@suggestions@', suggestions_html, line)
                     else:
                         line = re.sub('@'+field+'@', value, line)
