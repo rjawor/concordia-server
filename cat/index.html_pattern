@@ -6,6 +6,21 @@
         <meta charset="UTF-8">
     </head>
     <body>
+        <script>
+        var concordiaUrl = 'http://@concordia_host@:@concordia_port@';
+
+        $(document).ready(function() {
+            $('#searchInput').bind("enterKey",function(e){
+                searchHandle(@tmid@);
+            });
+            $('#searchInput').keyup(function(e){
+                if(e.keyCode == 13) {
+                    $(this).trigger("enterKey");
+                }
+            });
+        });
+
+        </script>
         <div id="header">
         </div>
         <div id="content">

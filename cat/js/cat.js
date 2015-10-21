@@ -1,16 +1,3 @@
-var concordiaUrl = 'http://localhost';
-
-$(document).ready(function() {
-    $('#searchInput').bind("enterKey",function(e){
-        searchHandle();
-    });
-    $('#searchInput').keyup(function(e){
-        if(e.keyCode == 13) {
-            $(this).trigger("enterKey");
-        }
-    });
-});
-
 function searchHandle(tmid) {
     var concordiaRequest = {
         operation: 'concordiaSearch',
