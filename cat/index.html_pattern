@@ -27,9 +27,7 @@
 	        <a href="http://tmconcordia.sourceforge.net/" target="_blank"><img src="../images/banner.jpg" alt="Banner" /></a>
 	        <br/><br/><br/>
 	        <p>@desc@</p>
-	        <p>
-	        Enjoy your work with the system!
-	        </p>
+	        <p>@enjoy@</p>
             <label for="searchInput">@prompt@</label>
             <span class="suggestion" onclick="showHideSuggestions()">show/hide samples</span>
             <br/><br/>
