@@ -9,6 +9,7 @@
 
 
 #include "unit_dao.hpp"
+#include "aligned_unit.hpp"
 
 #include "rapidjson/writer.h"
 
@@ -32,10 +33,18 @@ public:
                      const std::vector<std::string> & targetSentences,
                      const int tmId);
 
+    void addAlignedSentences(rapidjson::Writer<rapidjson::StringBuffer> & jsonWriter,
+                             const std::vector<std::string> & sourceSentences,
+                             const std::vector<std::string> & targetSentences,
+                             const int tmId);
+
     void refreshIndexFromRAM(rapidjson::Writer<rapidjson::StringBuffer> & jsonWriter,
                              const int tmId);
     
 private:
+    std::vector<AlignedUnit> _getAlignedUnits(const std::vector<std::string> & sourceSentences,
+                                              const std::vector<std::string> & targetSentences);
+
     boost::shared_ptr<boost::ptr_map<int,Concordia> > _concordiasMap;
     
     UnitDAO _unitDAO;

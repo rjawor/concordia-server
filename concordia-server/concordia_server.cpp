@@ -69,6 +69,25 @@ std::string ConcordiaServer::handleRequest(std::string & requestString) {
                     }
                 }
                 _indexController->addSentences(jsonWriter, sourceSentences, targetSentences, tmId);
+            } else if (operation == ADD_ALIGNED_SENTENCES_OP) {
+                std::vector<std::string> sourceSentences;
+                std::vector<std::string> targetSentences;
+                int tmId = d[TM_ID_PARAM].GetInt();
+                // loading data from json
+                const rapidjson::Value & sentencesArray = d[SENTENCES_PARAM];
+                Logger::log("addAlignedSentences");
+                Logger::logInt("sentences to add", sentencesArray.Size());
+                Logger::logInt("tm id", tmId);
+                for (rapidjson::SizeType i = 0; i < sentencesArray.Size(); i++) {
+                    if (sentencesArray[i].Size() != 2) {
+                        JsonGenerator::signalError(jsonWriter, "sentence should be an array of 2 elements");
+                        break;
+                    } else {
+                        sourceSentences.push_back(sentencesArray[i][0].GetString());
+                        targetSentences.push_back(sentencesArray[i][1].GetString());
+                    }
+                }
+                _indexController->addAlignedSentences(jsonWriter, sourceSentences, targetSentences, tmId);
             } else if (operation == REFRESH_INDEX_OP) {
                 int tmId = d[TM_ID_PARAM].GetInt();
                 _indexController->refreshIndexFromRAM(jsonWriter, tmId);

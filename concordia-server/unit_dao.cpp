@@ -44,6 +44,13 @@ std::vector<SUFFIX_MARKER_TYPE> UnitDAO::addSentences(
     return newIds;
 }
 
+std::vector<SUFFIX_MARKER_TYPE> UnitDAO::addAlignedUnits(
+         const std::vector<AlignedUnit> & alignedUnits,
+         const int tmId) {
+    //TODO
+    std::vector<SUFFIX_MARKER_TYPE> newIds;
+    return newIds;      
+}
 
 std::vector<SimpleSearchResult> UnitDAO::getSearchResults(const std::vector<MatchedPatternFragment> & fragments) {
     std::vector<SimpleSearchResult> results;

@@ -19,6 +19,8 @@ CREATE TABLE unit (
     tm_id integer,
     source_segment text,
     target_segment text,
-    source_tokens integer[]
+    source_tokens integer[],
+    target_tokens integer[],
+    alignments integer[][]
 );
 

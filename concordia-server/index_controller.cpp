@@ -76,6 +76,36 @@ void IndexController::addSentences(
     }
 }
 
+void IndexController::addAlignedSentences(
+                 rapidjson::Writer<rapidjson::StringBuffer> & jsonWriter,
+                 const std::vector<std::string> & sourceSentences,
+                 const std::vector<std::string> & targetSentences,
+                 const int tmId) {
+    try {
+        boost::ptr_map<int,Concordia>::iterator it = _concordiasMap->find(tmId);
+        if (it != _concordiasMap->end()) {
+            std::vector<AlignedUnit> alignedUnits = _getAlignedUnits(sourceSentences, targetSentences);
+            std::vector<SUFFIX_MARKER_TYPE> sentenceIds = _unitDAO.addAlignedUnits(alignedUnits, tmId);
+            int index = 0;
+            for(std::vector<AlignedUnit>::iterator it = alignedUnits.begin(); it != alignedUnits.end(); ++it) {
+                (*_concordiasMap)[tmId].addTokenizedExample(*(it->getSourceSentence()), sentenceIds.at(index));
+                index++;
+            }            
+
+            jsonWriter.StartObject();
+            jsonWriter.String("status");
+            jsonWriter.String("success");
+            jsonWriter.EndObject();
+        } else {
+            JsonGenerator::signalError(jsonWriter, "no such tm!");        
+        }
+    } catch (ConcordiaException & e) {
+        std::stringstream errorstream;
+        errorstream << "concordia error: " << e.what();
+        JsonGenerator::signalError(jsonWriter, errorstream.str());        
+    }
+}
+
 void IndexController::refreshIndexFromRAM(rapidjson::Writer<rapidjson::StringBuffer> & jsonWriter,
                                           const int tmId) {
     try {
@@ -97,6 +127,12 @@ void IndexController::refreshIndexFromRAM(rapidjson::Writer<rapidjson::StringBuf
     }
 
 }
+
+std::vector<AlignedUnit> IndexController::_getAlignedUnits(const std::vector<std::string> & sourceSentences,
+                                                           const std::vector<std::string> & targetSentences) {
+    //TODO
+}
+
 
 
 
