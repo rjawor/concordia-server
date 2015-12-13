@@ -6,13 +6,13 @@ function searchHandle(tmid) {
     }
 
     $.ajax({
-        url: concordiaUrl,
+        url: '/concordia_gate.php',
         type: 'post',
         dataType: 'json',
         success: function (data) {
             $('#result').html(renderResult(data));
         },
-        data: JSON.stringify(concordiaRequest)
+        data: concordiaRequest
     });
 }
 

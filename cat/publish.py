@@ -21,6 +21,7 @@ shutil.copytree('js', root_dir+'/js')
 shutil.copytree('css', root_dir+'/css')
 shutil.copytree('images', root_dir+'/images')
 shutil.copy('favicon.ico', root_dir+'/favicon.ico')
+shutil.copy('concordia_gate.php', root_dir+'/concordia_gate.php')
 
 
 versions_dir = 'versions'
