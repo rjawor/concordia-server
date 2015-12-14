@@ -7,6 +7,8 @@ scripts/concordia-server.PID
 scripts/start.sh
 scripts/stop.sh
 scripts/restart.sh
+scripts/watchdog.sh
+scripts/watchdog.log
 db/pgbouncer.log
 db/pgbouncer.pid
 

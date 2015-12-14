@@ -39,6 +39,10 @@ configure_file (
   "${concordia-server_SOURCE_DIR}/scripts/cmake_stubs/restart.sh.in"
   "${concordia-server_SOURCE_DIR}/scripts/restart.sh"
   )
+configure_file (
+  "${concordia-server_SOURCE_DIR}/scripts/cmake_stubs/watchdog.sh.in"
+  "${concordia-server_SOURCE_DIR}/scripts/watchdog.sh"
+  )
 
 set(CONFIG_FILE_PATH "${concordia-server_SOURCE_DIR}/concordia.cfg")
 set(LOG_FILE_PATH "${concordia-server_SOURCE_DIR}/logs/concordia-server.log")
