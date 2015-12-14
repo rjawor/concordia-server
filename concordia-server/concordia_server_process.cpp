@@ -6,6 +6,7 @@
 #include <stdlib.h>
 #include <unistd.h>
 
+#include "logger.hpp"
 #include "config.hpp"
 #include "concordia_server.hpp"
 
@@ -48,6 +49,7 @@ static std::string get_request_content(const FCGX_Request & request) {
 }
 
 int main(int argc, char** argv) {
+    Logger::log("Concordia server process start");
 
     // Backup the stdio streambufs
     std::streambuf * cin_streambuf  = std::cin.rdbuf();
@@ -55,6 +57,7 @@ int main(int argc, char** argv) {
     std::streambuf * cerr_streambuf = std::cerr.rdbuf();
 
     ConcordiaServer concordiaServer(CONFIG_FILE_PATH);
+    Logger::log("Concordia server initiated successfully, waiting for requests");
 
     FCGX_Request request;
 
@@ -82,6 +85,8 @@ int main(int argc, char** argv) {
     std::cin.rdbuf(cin_streambuf);
     std::cout.rdbuf(cout_streambuf);
     std::cerr.rdbuf(cerr_streambuf);
+ 
+    Logger::log("Shutting down Concordia server process");
 
     return 0;
 }
