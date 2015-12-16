@@ -12,6 +12,7 @@ set(BASE_TARGETS concordia-server)
 
 set (STOP_WORDS_ENABLED "false")
 
+set (UNIX_USER $ENV{USER})
 
 # ================================================
 # Config
