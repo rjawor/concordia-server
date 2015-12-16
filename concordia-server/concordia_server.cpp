@@ -32,9 +32,8 @@ std::string ConcordiaServer::handleRequest(std::string & requestString) {
     rapidjson::Writer<rapidjson::StringBuffer> jsonWriter(outputJson);
 
     std::stringstream outputString;
+    outputString << "Content-type: application/json\r\n\r\n";
     try {
-        outputString << "Access-Control-Allow-Origin: *\r\n";
-        outputString << "Content-type: application/json\r\n\r\n";
         rapidjson::Document d;
         bool hasError = d.Parse(requestString.c_str()).HasParseError();
 
@@ -44,16 +43,16 @@ std::string ConcordiaServer::handleRequest(std::string & requestString) {
                            ", description: " <<  GetParseError_En(d.GetParseError());
             JsonGenerator::signalError(jsonWriter, errorstream.str());
         } else { // json parsed
-            std::string operation = d[OPERATION_PARAM].GetString();
-            if (operation == ADD_SENTENCE_OP) {
-                std::string sourceSentence = d[SOURCE_SENTENCE_PARAM].GetString();
-                std::string targetSentence = d[TARGET_SENTENCE_PARAM].GetString();
-                int tmId = d[TM_ID_PARAM].GetInt();
+            std::string operation = _getStringParameter(d, OPERATION_PARAM);
+            if (operation == ADD_SENTENCE_OP) {                    
+                std::string sourceSentence = _getStringParameter(d, SOURCE_SENTENCE_PARAM);
+                std::string targetSentence = _getStringParameter(d, TARGET_SENTENCE_PARAM);
+                int tmId = _getIntParameter(d, TM_ID_PARAM);
                 _indexController->addSentence(jsonWriter, sourceSentence, targetSentence, tmId);
             } else if (operation == ADD_SENTENCES_OP) {
                 std::vector<std::string> sourceSentences;
                 std::vector<std::string> targetSentences;
-                int tmId = d[TM_ID_PARAM].GetInt();
+                int tmId = _getIntParameter(d, TM_ID_PARAM);
                 // loading data from json
                 const rapidjson::Value & sentencesArray = d[SENTENCES_PARAM];
                 Logger::log("addSentences");
@@ -89,21 +88,21 @@ std::string ConcordiaServer::handleRequest(std::string & requestString) {
                 }
                 _indexController->addAlignedSentences(jsonWriter, sourceSentences, targetSentences, tmId);
             } else if (operation == REFRESH_INDEX_OP) {
-                int tmId = d[TM_ID_PARAM].GetInt();
+                int tmId = _getIntParameter(d, TM_ID_PARAM);
                 _indexController->refreshIndexFromRAM(jsonWriter, tmId);
             } else if (operation == SIMPLE_SEARCH_OP) {
-                std::string pattern = d[PATTERN_PARAM].GetString();
-                int tmId = d[TM_ID_PARAM].GetInt();
+                std::string pattern = _getStringParameter(d, PATTERN_PARAM);
+                int tmId = _getIntParameter(d, TM_ID_PARAM);
                 _searcherController->simpleSearch(jsonWriter, pattern, tmId);
             } else if (operation == CONCORDIA_SEARCH_OP) {
-                std::string pattern = d[PATTERN_PARAM].GetString();
-                int tmId = d[TM_ID_PARAM].GetInt();
+                std::string pattern = _getStringParameter(d, PATTERN_PARAM);
+                int tmId = _getIntParameter(d, TM_ID_PARAM);
                 Logger::logString("concordia search pattern", pattern);
                 _searcherController->concordiaSearch(jsonWriter, pattern, tmId);         
             } else if (operation == ADD_TM_OP) {
-                int sourceLangId = d[SOURCE_LANG_PARAM].GetInt();
-                int targetLangId = d[TARGET_LANG_PARAM].GetInt();
-                std::string name = d[NAME_PARAM].GetString();
+                int sourceLangId = _getIntParameter(d, SOURCE_LANG_PARAM);
+                int targetLangId = _getIntParameter(d, TARGET_LANG_PARAM);
+                std::string name = _getStringParameter(d, NAME_PARAM);
                 int newId = _tmDAO.addTm(sourceLangId, targetLangId, name);
                 _addTm(newId);
                 
@@ -115,7 +114,7 @@ std::string ConcordiaServer::handleRequest(std::string & requestString) {
                 jsonWriter.EndObject();
                                 
             } else {
-                JsonGenerator::signalError(jsonWriter, "no such operation");            
+                JsonGenerator::signalError(jsonWriter, "no such operation: " + operation);
             }
         }
              
@@ -129,6 +128,28 @@ std::string ConcordiaServer::handleRequest(std::string & requestString) {
 
     return outputString.str();
 
+}
+
+std::string ConcordiaServer::_getStringParameter(rapidjson::Document & d, const char * name)
+                                                                  throw (ConcordiaException) {
+    rapidjson::Value::ConstMemberIterator itr = d.FindMember(name);
+    if (itr != d.MemberEnd()) {
+        std::string value = itr->value.GetString();
+        return value;
+    } else {
+        throw ConcordiaException("missing parameter: " + std::string(name));
+    }
+}
+
+int ConcordiaServer::_getIntParameter(rapidjson::Document & d, const char * name)
+                                                       throw (ConcordiaException) {
+    rapidjson::Value::ConstMemberIterator itr = d.FindMember(name);
+    if (itr != d.MemberEnd()) {
+        int value = itr->value.GetInt();
+        return value;
+    } else {
+        throw ConcordiaException("missing parameter: " + std::string(name));
+    }
 }
 
 void ConcordiaServer::_addTm(int tmId) {

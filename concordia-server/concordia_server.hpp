@@ -30,6 +30,10 @@ public:
     std::string handleRequest(std::string & requestString);
 
 private:
+    std::string _getStringParameter(rapidjson::Document & d, const char * name) throw (ConcordiaException);
+
+    int _getIntParameter(rapidjson::Document & d, const char * name) throw (ConcordiaException);
+
     void _addTm(int tmId);
 
     std::string _configFilePath;

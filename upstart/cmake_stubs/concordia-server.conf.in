@@ -1,0 +1,24 @@
+# concordia server
+#
+# This service maintains concordia server
+# started until it is shut down again.
+
+description concordia-server
+
+# When to start the service
+start on started pgbouncer
+
+# When to stop the service
+stop on runlevel [016]
+
+# Automatically restart process if crashed
+respawn
+
+# Essentially lets upstart know the process will detach itself to the background
+expect fork
+
+# Start the process
+script
+    exec spawn-fcgi -p 8000 -n @COMPILED_BINARIES_PATH@/concordia_server_process &
+end script
+

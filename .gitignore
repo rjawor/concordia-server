@@ -1,5 +1,6 @@
 build/
 logs/concordia-server.log
+logs/pgbouncer.log
 concordia.cfg
 concordia-server/config.hpp
 index/
@@ -9,6 +10,7 @@ scripts/stop.sh
 scripts/restart.sh
 scripts/watchdog.sh
 scripts/watchdog.log
-db/pgbouncer.log
 db/pgbouncer.pid
-
+db/pgbouncer.ini
+upstart/concordia-server.conf
+upstart/pgbouncer.conf

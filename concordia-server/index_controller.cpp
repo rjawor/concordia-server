@@ -131,6 +131,9 @@ void IndexController::refreshIndexFromRAM(rapidjson::Writer<rapidjson::StringBuf
 std::vector<AlignedUnit> IndexController::_getAlignedUnits(const std::vector<std::string> & sourceSentences,
                                                            const std::vector<std::string> & targetSentences) {
     //TODO
+    std::vector<AlignedUnit> result;
+
+    return result;
 }
 
 

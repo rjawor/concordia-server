@@ -1,0 +1,20 @@
+# PgBouncer Upstart script
+
+description "pgbouncer"
+
+start on (net-device-up
+          and local-filesystems
+          and runlevel [2345])
+
+stop on runlevel [016]
+
+respawn
+
+respawn limit 10 30
+
+expect fork
+
+script
+    exec pgbouncer -u rafalj @concordia-server_SOURCE_DIR@/db/pgbouncer.ini &
+    sleep 4
+end script

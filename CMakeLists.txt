@@ -44,6 +44,21 @@ configure_file (
   "${concordia-server_SOURCE_DIR}/scripts/watchdog.sh"
   )
 
+configure_file (
+  "${concordia-server_SOURCE_DIR}/upstart/cmake_stubs/concordia-server.conf.in"
+  "${concordia-server_SOURCE_DIR}/upstart/concordia-server.conf"
+  )
+
+configure_file (
+  "${concordia-server_SOURCE_DIR}/upstart/cmake_stubs/pgbouncer.conf.in"
+  "${concordia-server_SOURCE_DIR}/upstart/pgbouncer.conf"
+  )
+
+configure_file (
+  "${concordia-server_SOURCE_DIR}/db/pgbouncer.ini.in"
+  "${concordia-server_SOURCE_DIR}/db/pgbouncer.ini"
+  )
+
 set(CONFIG_FILE_PATH "${concordia-server_SOURCE_DIR}/concordia.cfg")
 set(LOG_FILE_PATH "${concordia-server_SOURCE_DIR}/logs/concordia-server.log")
 
