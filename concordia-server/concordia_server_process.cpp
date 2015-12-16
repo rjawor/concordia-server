@@ -1,5 +1,6 @@
 #include <iostream>
 #include <sstream>
+#include <clocale>
 #include <string>
 #include <boost/algorithm/string/replace.hpp>
 #include <fcgio.h>
@@ -50,6 +51,7 @@ static std::string get_request_content(const FCGX_Request & request) {
 
 int main(int argc, char** argv) {
     Logger::log("Concordia server process start");
+    std::setlocale(LC_ALL, "en_US.UTF-8");
 
     // Backup the stdio streambufs
     std::streambuf * cin_streambuf  = std::cin.rdbuf();
