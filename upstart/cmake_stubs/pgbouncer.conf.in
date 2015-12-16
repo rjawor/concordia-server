@@ -16,5 +16,5 @@ expect fork
 
 script
     exec pgbouncer -u @UNIX_USER@ @concordia-server_SOURCE_DIR@/db/pgbouncer.ini &
-    sleep 4
+    sleep 6
 end script
