@@ -20,3 +20,8 @@ SimpleSearchResult::SimpleSearchResult(
 SimpleSearchResult::~SimpleSearchResult() {
 }
 
+void SimpleSearchResult::addMatchedTargetFragment(const std::pair<int,int> & targetFragment) {
+    _targetFragments.push_back(targetFragment);
+}
+
+

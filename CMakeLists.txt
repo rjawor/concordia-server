@@ -100,6 +100,20 @@ if(WITH_PCRE)
 endif(WITH_PCRE)
 
 # ----------------------------------------------------
+# ICU (I feeeeel youuuuu...)
+# ----------------------------------------------------
+find_library(ICU_LIB NAMES icui18n)
+find_path(ICU_INCLUDE unicode)
+
+if(EXISTS ${ICU_LIB} AND EXISTS ${ICU_INCLUDE})
+  message(STATUS "Found ICU: ${ICU_LIB}")
+  include_directories(${ICU_INCLUDE})
+  link_directories(${ICU_LIB})
+else()
+  message(FATAL_ERROR "ICU not found")
+endif(EXISTS ${ICU_LIB} AND EXISTS ${ICU_INCLUDE})
+
+# ----------------------------------------------------
 # Boost
 # ----------------------------------------------------
 set(Boost_USE_STATIC_LIBS OFF)

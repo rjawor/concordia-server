@@ -2,6 +2,7 @@
 #define SIMPLE_SEARCH_RESULT_HDR
 
 #include <string>
+#include <vector>
 
 class SimpleSearchResult {
 public:
@@ -47,6 +48,12 @@ public:
         return _targetSegment;
     }
     
+    const std::vector<std::pair<int,int> > & getTargetFragments() const {
+        return _targetFragments;
+    }
+    
+    void addMatchedTargetFragment(const std::pair<int,int> & targetFragment);
+    
 private:
     int _id;
     
@@ -61,6 +68,8 @@ private:
     std::string _sourceSegment;
 
     std::string _targetSegment;
+    
+    std::vector<std::pair<int,int> > _targetFragments;
 };
 
 #endif

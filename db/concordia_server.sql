@@ -20,7 +20,14 @@ CREATE TABLE unit (
     source_segment text,
     target_segment text,
     source_tokens integer[],
-    target_tokens integer[],
-    alignments integer[][]
+    target_tokens integer[]
+);
+
+DROP TABLE IF EXISTS alignment;
+CREATE TABLE alignment (
+    id SERIAL PRIMARY KEY,
+    unit_id integer,
+    source_token_pos integer,
+    target_token_pos integer
 );
 

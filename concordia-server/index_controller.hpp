@@ -6,6 +6,7 @@
 #include <concordia/concordia.hpp>
 #include <concordia/concordia_exception.hpp>
 #include <boost/ptr_container/ptr_map.hpp>
+#include <concordia/token_annotation.hpp>
 
 
 #include "unit_dao.hpp"
@@ -43,8 +44,11 @@ public:
     
 private:
     std::vector<AlignedUnit> _getAlignedUnits(const std::vector<std::string> & sourceSentences,
-                                              const std::vector<std::string> & targetSentences);
+                                              const std::vector<std::string> & targetSentences,
+                                              const int tmId);
 
+    std::string _trim(std::string & str);
+    
     boost::shared_ptr<boost::ptr_map<int,Concordia> > _concordiasMap;
     
     UnitDAO _unitDAO;

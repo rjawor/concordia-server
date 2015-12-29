@@ -19,7 +19,7 @@ void SearcherController::simpleSearch(rapidjson::Writer<rapidjson::StringBuffer>
                                       const int tmId) {
     boost::ptr_map<int,Concordia>::iterator it = _concordiasMap->find(tmId);
     if (it != _concordiasMap->end()) {
-        std::vector<SimpleSearchResult> results = _unitDAO.getSearchResults((*_concordiasMap)[tmId].simpleSearch(pattern));
+        std::vector<SimpleSearchResult> results = _unitDAO.getSearchResults(it->second->simpleSearch(pattern));
 
         jsonWriter.StartObject();
         jsonWriter.String("status");
@@ -42,7 +42,7 @@ void SearcherController::concordiaSearch(rapidjson::Writer<rapidjson::StringBuff
 
     boost::ptr_map<int,Concordia>::iterator it = _concordiasMap->find(tmId);
     if (it != _concordiasMap->end()) {
-        CompleteConcordiaSearchResult result = _unitDAO.getConcordiaResult((*_concordiasMap)[tmId].concordiaSearch(pattern));
+        CompleteConcordiaSearchResult result = _unitDAO.getConcordiaResult(it->second->concordiaSearch(pattern));
         
         jsonWriter.StartObject();
         jsonWriter.String("status");

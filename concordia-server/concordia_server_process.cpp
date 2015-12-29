@@ -58,37 +58,43 @@ int main(int argc, char** argv) {
     std::streambuf * cout_streambuf = std::cout.rdbuf();
     std::streambuf * cerr_streambuf = std::cerr.rdbuf();
 
-    ConcordiaServer concordiaServer(CONFIG_FILE_PATH);
-    Logger::log("Concordia server initiated successfully, waiting for requests");
+    try {
+        ConcordiaServer concordiaServer(CONFIG_FILE_PATH);
+        Logger::log("Concordia server initiated successfully, waiting for requests");
 
-    FCGX_Request request;
+        FCGX_Request request;
 
-    FCGX_Init();
-    FCGX_InitRequest(&request, 0, 0);
+        FCGX_Init();
+        FCGX_InitRequest(&request, 0, 0);
 
-    while (FCGX_Accept_r(&request) == 0) {
-        fcgi_streambuf cin_fcgi_streambuf(request.in);
-        fcgi_streambuf cout_fcgi_streambuf(request.out);
-        fcgi_streambuf cerr_fcgi_streambuf(request.err);
+        while (FCGX_Accept_r(&request) == 0) {
+            fcgi_streambuf cin_fcgi_streambuf(request.in);
+            fcgi_streambuf cout_fcgi_streambuf(request.out);
+            fcgi_streambuf cerr_fcgi_streambuf(request.err);
 
-        std::cin.rdbuf(&cin_fcgi_streambuf);
-        std::cout.rdbuf(&cout_fcgi_streambuf);
-        std::cerr.rdbuf(&cerr_fcgi_streambuf);
+            std::cin.rdbuf(&cin_fcgi_streambuf);
+            std::cout.rdbuf(&cout_fcgi_streambuf);
+            std::cerr.rdbuf(&cerr_fcgi_streambuf);
 
-        std::string content = get_request_content(request);
+            std::string content = get_request_content(request);
+            
+            std::string requestString(content);
+            std::cout << concordiaServer.handleRequest(requestString);
+            
+            // Note: the fcgi_streambuf destructor will auto flush
+        }
+
+        // restore stdio streambufs
+        std::cin.rdbuf(cin_streambuf);
+        std::cout.rdbuf(cout_streambuf);
+        std::cerr.rdbuf(cerr_streambuf);
+
+        Logger::log("Gracefully shutting down Concordia server process");
         
-        std::string requestString(content);
-        std::cout << concordiaServer.handleRequest(requestString);
-        
-        // Note: the fcgi_streambuf destructor will auto flush
+    } catch (ConcordiaException & e) {
+        std::stringstream errorstream;
+        errorstream << "FATAL CONCORDIA ERROR: " << e.what()<< " - shutting down";
+        Logger::log(errorstream.str());
     }
-
-    // restore stdio streambufs
-    std::cin.rdbuf(cin_streambuf);
-    std::cout.rdbuf(cout_streambuf);
-    std::cerr.rdbuf(cerr_streambuf);
- 
-    Logger::log("Shutting down Concordia server process");
-
     return 0;
 }

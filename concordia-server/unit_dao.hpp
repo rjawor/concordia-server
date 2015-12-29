@@ -56,6 +56,10 @@ private:
          const std::string & targetSentence,
          const int tmId);
 
+    int _addAlignedUnit(
+         DBconnection & connection,
+         const AlignedUnit & alignedUnit,
+         const int tmId);
 };
 
 #endif
