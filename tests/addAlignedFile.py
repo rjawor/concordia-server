@@ -24,8 +24,7 @@ def file_len(fname):
 def add_data(data):
     req = urllib2.Request(address)
     req.add_header('Content-Type', 'application/json')
-    response = json.loads(urllib2.urlopen(req, json.dumps(data)).read())
-    #print response
+    json.loads(urllib2.urlopen(req, json.dumps(data)).read())
     
 sourceFile = sys.argv[1]
 sourceLangId = int(sys.argv[2])
@@ -71,7 +70,8 @@ with open(sourceFile) as sourceLines:
                 data['sentences'] = sentences
                 add_data(data)
                 mark = time.time()
-                print "Added %d of %d sentences. Time elapsed: %.4f s, current speed: %.4f sentences/second" % ( (lineNumber+1)/3, totalLines/3, mark-start, (lineNumber+1)/3*(mark-start))
+                print "Added %d of %d sentences. Time elapsed: %.4f s, current speed: %.4f sentences/second" % ( (lineNumber+1)/3, totalLines/3, mark-start, (lineNumber+1)/(3*(mark-start)))
+                sentences = []
         lineNumber += 1
                 
 
