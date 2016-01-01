@@ -87,20 +87,23 @@ void IndexController::addSentences(
 
 void IndexController::addAlignedSentences(
                  rapidjson::Writer<rapidjson::StringBuffer> & jsonWriter,
-                 const std::vector<std::string> & sourceSentences,
+                 const std::vector<std::string> & rawSourceSentences,
                  const std::vector<std::string> & targetSentences,
                  const int tmId) {
     try {
         boost::ptr_map<int,Concordia>::iterator it = _concordiasMap->find(tmId);
         if (it != _concordiasMap->end()) {
-            std::vector<AlignedUnit> alignedUnits = _getAlignedUnits(sourceSentences, targetSentences, tmId);
-            std::vector<SUFFIX_MARKER_TYPE> sentenceIds = _unitDAO.addAlignedUnits(alignedUnits, tmId);
-            int index = 0;
-            for(std::vector<AlignedUnit>::iterator ait = alignedUnits.begin(); ait != alignedUnits.end(); ++ait) {
-                it->second->addTokenizedExample(ait->getSourceSentence(), sentenceIds.at(index));
-                index++;
-            } 
+            std::vector<std::string> sourceSentences;
+            std::vector<std::vector<std::vector<int> > > allAlignments;
+            _getSourceSentencesAndAlignments(sourceSentences, allAlignments, rawSourceSentences);
+            
+            std::vector<TokenizedSentence> tokenizedSourceSentences = it->second->tokenizeAll(sourceSentences, true, true);            
+            std::vector<TokenizedSentence> tokenizedTargetSentences = it->second->tokenizeAll(targetSentences, true, false);
 
+            std::vector<SUFFIX_MARKER_TYPE> sentenceIds = _unitDAO.addAlignedSentences(tokenizedSourceSentences, tokenizedTargetSentences, allAlignments, tmId);
+            for(int index = 0; index < tokenizedSourceSentences.size(); index++) {
+                it->second->addTokenizedExample(tokenizedSourceSentences.at(index), sentenceIds.at(index));
+            } 
             jsonWriter.StartObject();
             jsonWriter.String("status");
             jsonWriter.String("success");
@@ -137,19 +140,18 @@ void IndexController::refreshIndexFromRAM(rapidjson::Writer<rapidjson::StringBuf
 
 }
 
-std::vector<AlignedUnit> IndexController::_getAlignedUnits(const std::vector<std::string> & sourceSentences,
-                                                           const std::vector<std::string> & targetSentences,
-                                                           const int tmId) {
-    std::vector<AlignedUnit> result;
-    for (int i = 0; i<sourceSentences.size(); i++) {
-        std::string sourceSentence = sourceSentences[i];
-        std::string targetSentence = targetSentences[i];
+void IndexController::_getSourceSentencesAndAlignments(
+                        std::vector<std::string> & sourceSentences,
+                        std::vector<std::vector<std::vector<int> > > & allAlignments,
+                        const std::vector<std::string> & rawSourceSentences) {
+
+    for (int i = 0; i<rawSourceSentences.size(); i++) {
+        std::string rawSourceSentence = rawSourceSentences[i];
         
-        std::string rawSourceSentence;
-        std::vector<TokenAnnotation> sourceTokens;
+        std::string sourceSentence = "";
         std::vector<std::vector<int> > alignments;
         
-        UnicodeString s(sourceSentence.c_str());
+        UnicodeString s(rawSourceSentence.c_str());
         boost::u32regex_iterator<const UChar*> begin(
                            boost::make_u32regex_iterator(
                                s,
@@ -177,27 +179,14 @@ std::vector<AlignedUnit> IndexController::_getAlignedUnits(const std::vector<std
                     tokenAlignments.push_back(n);
                 }
                 alignments.push_back(tokenAlignments);
-                rawSourceSentence += token + " ";
+                sourceSentence += token + " ";
             }
         }
         
-        rawSourceSentence = _trim(rawSourceSentence);
+        sourceSentence = sourceSentence.substr(0, sourceSentence.length()-1);
         
-        
-        boost::ptr_map<int,Concordia>::iterator it = _concordiasMap->find(tmId);
-        if (it != _concordiasMap->end()) {
-            TokenizedSentence sourceTS = it->second->tokenize(rawSourceSentence, true);
-            TokenizedSentence targetTS = it->second->tokenize(targetSentence, true);
-                    
-            result.push_back(AlignedUnit(sourceTS, targetTS, alignments));
-        }
+        sourceSentences.push_back(sourceSentence);
+        allAlignments.push_back(alignments);
     }
-    return result;
-}
-
-std::string IndexController::_trim(std::string & str) {
-    size_t first = str.find_first_not_of(' ');
-    size_t last = str.find_last_not_of(' ');
-    return str.substr(first, (last-first+1));
 }
 

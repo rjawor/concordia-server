@@ -11,7 +11,6 @@
 #include <concordia/concordia_search_result.hpp>
 #include <boost/shared_ptr.hpp>
 
-#include "aligned_unit.hpp"
 #include "simple_search_result.hpp"
 #include "complete_concordia_search_result.hpp"
 #include "db_connection.hpp"
@@ -35,8 +34,10 @@ public:
              const std::vector<std::string> & targetSentences,
              const int tmId);
              
-    std::vector<SUFFIX_MARKER_TYPE> addAlignedUnits(
-             const std::vector<AlignedUnit> & alignedUnits,
+    std::vector<SUFFIX_MARKER_TYPE> addAlignedSentences(
+             const std::vector<TokenizedSentence> & sourceSentences,
+             const std::vector<TokenizedSentence> & targetSentences,
+             const std::vector<std::vector<std::vector<int> > > & allAlignments,
              const int tmId);
     
     std::vector<SimpleSearchResult> getSearchResults(const std::vector<MatchedPatternFragment> & fragments);
@@ -58,7 +59,9 @@ private:
 
     int _addAlignedUnit(
          DBconnection & connection,
-         const AlignedUnit & alignedUnit,
+         const TokenizedSentence & sourceSentence,
+         const TokenizedSentence & targetSentence,
+         const std::vector<std::vector<int> > & alignments,
          const int tmId);
 };
 

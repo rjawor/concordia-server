@@ -14,7 +14,6 @@ add_executable(concordia_server_process
                   simple_search_result.cpp
                   complete_concordia_search_result.cpp
                   tm_dao.cpp
-                  aligned_unit.cpp
               )
 target_link_libraries(concordia_server_process fcgi fcgi++ pq concordia config++ log4cpp ${Boost_LIBRARIES} divsufsort utf8case icuuc)
 

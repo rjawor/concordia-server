@@ -46,18 +46,18 @@ std::vector<SUFFIX_MARKER_TYPE> UnitDAO::addSentences(
     return newIds;
 }
 
-std::vector<SUFFIX_MARKER_TYPE> UnitDAO::addAlignedUnits(
-         const std::vector<AlignedUnit> & alignedUnits,
+std::vector<SUFFIX_MARKER_TYPE> UnitDAO::addAlignedSentences(
+         const std::vector<TokenizedSentence> & sourceSentences,
+         const std::vector<TokenizedSentence> & targetSentences,
+         const std::vector<std::vector<std::vector<int> > > & allAlignments,
          const int tmId) {
-    //TODO
-
 
     DBconnection connection;
     std::vector<SUFFIX_MARKER_TYPE> newIds;
     connection.startTransaction();
 
-    BOOST_FOREACH(const AlignedUnit & alignedUnit, alignedUnits) {
-        newIds.push_back(_addAlignedUnit(connection, alignedUnit, tmId));
+    for (int i=0; i< sourceSentences.size(); i++) {
+        newIds.push_back(_addAlignedUnit(connection, sourceSentences.at(i), targetSentences.at(i), allAlignments.at(i), tmId));
     }
     
     connection.endTransaction();
@@ -194,17 +194,19 @@ int UnitDAO::_addSingleSentence(
 
 
 int UnitDAO::_addAlignedUnit(
-         DBconnection & connection,
-         const AlignedUnit & alignedUnit,
-         const int tmId) {
+     DBconnection & connection,
+     const TokenizedSentence & sourceSentence,
+     const TokenizedSentence & targetSentence,
+     const std::vector<std::vector<int> > & alignments,
+     const int tmId) {
         
     std::string query = "INSERT INTO unit(source_segment, target_segment, tm_id, source_tokens, target_tokens) values($1::text,$2::text,$3::integer,$4,$5) RETURNING id";
     std::vector<QueryParam*> params;
-    params.push_back(new StringParam(alignedUnit.getSourceSentence().getSentence()));
-    params.push_back(new StringParam(alignedUnit.getTargetSentence().getSentence()));
+    params.push_back(new StringParam(sourceSentence.getSentence()));
+    params.push_back(new StringParam(targetSentence.getSentence()));
     params.push_back(new IntParam(tmId));
-    params.push_back(new IntArrayParam(_getTokenPositions(alignedUnit.getSourceSentence())));
-    params.push_back(new IntArrayParam(_getTokenPositions(alignedUnit.getTargetSentence())));
+    params.push_back(new IntArrayParam(_getTokenPositions(sourceSentence)));
+    params.push_back(new IntArrayParam(_getTokenPositions(targetSentence)));
     
     PGresult * result = connection.execute(query, params);
     int newId = connection.getIntValue(result, 0, 0);
@@ -214,23 +216,23 @@ int UnitDAO::_addAlignedUnit(
     }
     
     // add alignments
-    for(int i=0;i<alignedUnit.getAlignments().size();i++) {
-        for (int j=0;j<alignedUnit.getAlignments()[i].size();j++) {
-            std::string query = "INSERT INTO alignment(unit_id, source_token_pos, target_token_pos) values($1::integer,$2::integer,$3::integer)";
-            std::vector<QueryParam*> params;
-            params.push_back(new IntParam(newId));
-            params.push_back(new IntParam(i));
-            params.push_back(new IntParam(alignedUnit.getAlignments()[i][j]));
-            
-            PGresult * result = connection.execute(query, params);
-            connection.clearResult(result);
-            BOOST_FOREACH (QueryParam * param, params) {
-                delete param;
-            }
+    bool nonEmpty = false;
+    std::stringstream alignmentsQuery;
+    alignmentsQuery << "INSERT INTO alignment(unit_id, source_token_pos, target_token_pos) values ";
+
+    for(int i=0;i<alignments.size();i++) {
+        for (int j=0;j<alignments[i].size();j++) {
+            nonEmpty = true;
+            alignmentsQuery << "(" << newId << "," << i << "," << alignments[i][j] << "),";
         }
     }
+    if (nonEmpty) {
+        query = alignmentsQuery.str();
+        query = query.substr(0, query.length()-1);
+        PGresult * result = connection.execute(query);
+        connection.clearResult(result);    
+    }
 
-    
     return newId;
 }
 

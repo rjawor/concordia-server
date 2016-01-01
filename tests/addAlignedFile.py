@@ -43,7 +43,6 @@ data = {
 req = urllib2.Request(address)
 req.add_header('Content-Type', 'application/json')
 response = json.loads(urllib2.urlopen(req, json.dumps(data)).read())
-print response
 tmId = int(response['newTmId'])
 print "Added new tm: %d" % tmId
 
@@ -80,7 +79,7 @@ if len(sentences) > 0:
     add_data(data)
     
 end = time.time()
-print "Added all %d sentences. Time elapsed: %.4f s, overall speed: %.4f sentences/second" % ((lineNumber+1)/3, end-start, (lineNumber+1)/3*(end-start))
+print "Added all %d sentences. Time elapsed: %.4f s, overall speed: %.4f sentences/second" % ((lineNumber+1)/3, end-start, (lineNumber+1)/(3*(end-start)))
 
 print "Generating index..."
 start = time.time()
