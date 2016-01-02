@@ -31,3 +31,4 @@ CREATE TABLE alignment (
     target_token_pos integer
 );
 
+CREATE INDEX ON alignment(unit_id, source_token_pos);

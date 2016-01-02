@@ -53,6 +53,7 @@ function renderResult(data) {
 function renderFragment(fragment, number) {
     var result = '<div style="display:none" id="fragment'+number+'" class="fragmentDetails"><table><tr><td>';
 
+    // source segment
     var sourceSegment = fragment['sourceSegment'];
     result += sourceSegment.slice(0, fragment['matchedExampleStart']);
     result += '<span class="matchedFragment">';
@@ -60,7 +61,19 @@ function renderFragment(fragment, number) {
     result += '</span>';
     result += sourceSegment.slice(fragment['matchedExampleEnd']);
     
-    result += '</td></tr><tr><td>'+fragment['targetSegment']+'</td></tr></table></div>';
+    // target segment
+    result += '</td></tr><tr><td>';
+    var targetSegment = fragment['targetSegment'];
+    var currStart = 0;
+    for (i=0;i<fragment['targetFragments'].length;i++) {
+        result += targetSegment.slice(currStart, fragment['targetFragments'][i][0]);
+        result += '<span class="matchedFragment">';
+        result += targetSegment.slice(fragment['targetFragments'][i][0], fragment['targetFragments'][i][1]);
+        result += '</span>';
+        currStart = fragment['targetFragments'][i][1];
+    }
+    result += targetSegment.slice(currStart);
+    result += '</td></tr></table></div>';
     return result;
 }
 
