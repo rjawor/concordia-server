@@ -1,3 +1,7 @@
+function toggleHelp() {
+    $('#help').toggleClass('hidden');
+}
+
 function searchHandle(tmid) {
     var concordiaRequest = {
         operation: 'concordiaSearch',

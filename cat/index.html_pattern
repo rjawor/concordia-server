@@ -24,21 +24,25 @@
         <div id="header">
         </div>
         <div id="content">
-	        <a href="http://tmconcordia.sourceforge.net/" target="_blank"><img src="../images/banner.jpg" alt="Banner" /></a>
-	        <br/><br/><br/>
-	        <p>@desc@</p>
-	        <p>@enjoy@</p>
-            <label for="searchInput">@prompt@</label>
-            <span class="suggestion" onclick="showHideSuggestions()">show/hide samples</span>
-            <br/><br/>
-            <div class="suggestionsInvisible" id="suggestions">
-                <ul>@suggestions@</ul>
+          	<section id="banner">
+		        <h1>Concordia</h1>
+		        <img class="banner-bg" src="../images/banner-thin.png" alt="Banner">
+		        <img class="banner-icon" src="../images/concordia-thin.png" alt="Banner">
+	        </section><!-- // end #banner -->
+            <div id="help" class="hidden">
+	            <p>@desc@</p>
+	            <p>@enjoy@</p>
+                <span class="suggestion" onclick="showHideSuggestions()">show/hide samples</span>
                 <br/><br/>
+                <div class="suggestionsInvisible" id="suggestions">
+                    <ul>@suggestions@</ul>
+                    <br/><br/>
+                </div>
+                <label for="searchInput">@prompt@</label>
             </div>
             <input id="searchInput" type="text" value="" />
-            <br/><br/>
             <input type="button" value="search" onclick="searchHandle(@tmid@)" />
-            <br/><br/><br/><br/>
+            <img id="help-icon" src="../images/help.png" alt="help" onclick="toggleHelp()" title="show/hide help"/>
             <div id="result">
             
             </div>
