@@ -6,7 +6,7 @@ function searchHandle(tmid) {
     var concordiaRequest = {
         operation: 'concordiaSearch',
         tmId: tmid,
-        pattern:$("#searchInput").val()
+        pattern:$("#search-input").val()
     }
 
     $.ajax({
@@ -26,8 +26,9 @@ function renderResult(data) {
     var score = data['result']['bestOverlayScore']*100;
     
     res += '<div id="result-score">Concordia score: <b>'+score.toFixed(0)+'%</b></div>';
+    res += '<div id="phrase-selection"><img id="phrase-icon" src="../images/phrase.png" alt="phrase search" onclick="togglePhraseSearchMode()" title="search for phrases"/><span id="phrase-prompt" class="hidden">Select continuous phrase: <img id="cancel-button" src="../images/cancel-button.png" alt="cancel phrase search" onclick="togglePhraseSearchMode()" title="cancel searching for phrases"/></span></div>';
     
-    var inputSentence = $('#searchInput').val();
+    var inputSentence = $('#search-input').val();
     var markedSentence = '';
     var fragments = '';
     lastInsertedEnd = 0;
@@ -47,7 +48,7 @@ function renderResult(data) {
     //remaining unmarked fragment
     markedSentence += inputSentence.slice(lastInsertedEnd);
     
-    res += '<div id="result-sentence">'+markedSentence+'</div>';
+    res += '<div id="result-sentence" onMouseUp="phraseSearch(this)">'+markedSentence+'</div>';
     
     res += '<br/><br/><br/>'+fragments;
     
@@ -81,18 +82,99 @@ function renderFragment(fragment, number) {
     return result;
 }
 
+function togglePhraseSearchMode() {
+    $('#result-sentence').toggleClass('phrase-mode');
+    $('#phrase-icon').toggleClass('hidden');
+    $('#phrase-prompt').toggleClass('hidden');
+    clearTextSelections();
+}
+
 function displayDetails(caller, number) {
-    $('#result-sentence .matchedFragmentSelected').attr("class","matchedFragment");
-    caller.className='matchedFragmentSelected';
-    $('.fragmentDetails').css('display', 'none');
-    $('#fragment'+number).css('display', 'block');
+    if (!$('#result-sentence').hasClass('phrase-mode')) {
+        $('#result-sentence .matchedFragmentSelected').attr("class","matchedFragment");
+        caller.className='matchedFragmentSelected';
+        $('.fragmentDetails').css('display', 'none');
+        $('#fragment'+number).css('display', 'block');
+    }
 }
 
 function searchText(text, tmid) {
-    $("#searchInput").val(text);
+    $("#search-input").val(text);
     searchHandle(tmid);
 }
 
 function showHideSuggestions() {
     $('#suggestions').toggleClass('suggestionsInvisible');
+}
+
+function phraseSearch(caller) {
+    if ($('#result-sentence').hasClass('phrase-mode')) {
+        var phrase = getSelectedTextWithin(caller);
+        console.log('phrase search for: '+phrase);
+        console.log(getIndicesOf(phrase, $("#search-input").val(), true));
+        var phrases = $('phrase-prompt').data();
+    }
+}
+
+function getSelectedTextWithin(el) {
+    var selectedText = "";
+    if (typeof window.getSelection != "undefined") {
+        var sel = window.getSelection(), rangeCount;
+        if ( (rangeCount = sel.rangeCount) > 0 ) {
+            var range = document.createRange();
+            for (var i = 0, selRange; i < rangeCount; ++i) {
+                range.selectNodeContents(el);
+                selRange = sel.getRangeAt(i);
+                if (selRange.compareBoundaryPoints(range.START_TO_END, range) == 1 && selRange.compareBoundaryPoints(range.END_TO_START, range) == -1) {
+                    if (selRange.compareBoundaryPoints(range.START_TO_START, range) == 1) {
+                        range.setStart(selRange.startContainer, selRange.startOffset);
+                    }
+                    if (selRange.compareBoundaryPoints(range.END_TO_END, range) == -1) {
+                        range.setEnd(selRange.endContainer, selRange.endOffset);
+                    }
+                    selectedText += range.toString();
+                }
+            }
+        }
+    } else if (typeof document.selection != "undefined" && document.selection.type == "Text") {
+        var selTextRange = document.selection.createRange();
+        var textRange = selTextRange.duplicate();
+        textRange.moveToElementText(el);
+        if (selTextRange.compareEndPoints("EndToStart", textRange) == 1 && selTextRange.compareEndPoints("StartToEnd", textRange) == -1) {
+            if (selTextRange.compareEndPoints("StartToStart", textRange) == 1) {
+                textRange.setEndPoint("StartToStart", selTextRange);
+            }
+            if (selTextRange.compareEndPoints("EndToEnd", textRange) == -1) {
+                textRange.setEndPoint("EndToEnd", selTextRange);
+            }
+            selectedText = textRange.text;
+        }
+    }
+    return selectedText;
+}
+
+function clearTextSelections() {
+    if (window.getSelection) {
+      if (window.getSelection().empty) {  // Chrome
+        window.getSelection().empty();
+      } else if (window.getSelection().removeAllRanges) {  // Firefox
+        window.getSelection().removeAllRanges();
+      }
+    } else if (document.selection) {  // IE?
+      document.selection.empty();
+    }
+}
+
+function getIndicesOf(searchStr, str, caseSensitive) {
+    var startIndex = 0, searchStrLen = searchStr.length;
+    var index, indices = [];
+    if (!caseSensitive) {
+        str = str.toLowerCase();
+        searchStr = searchStr.toLowerCase();
+    }
+    while ((index = str.indexOf(searchStr, startIndex)) > -1) {
+        indices.push(index);
+        startIndex = index + searchStrLen;
+    }
+    return indices;
 }

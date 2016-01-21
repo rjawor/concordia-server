@@ -21,9 +21,35 @@
 	padding:0;
 }
 
+#cancel-button {
+    cursor:pointer;
+    vertical-align:middle;
+}
+
+#phrase-selection {
+    height:50px;
+}
+
 .hidden {
     display:none;
 }
+
+#phrase-icon {
+    cursor:pointer;
+    vertical-align:middle;
+    margin-right:20px;
+}
+
+#reset-icon {
+    cursor:pointer;
+    vertical-align:middle;
+    margin-right:20px;
+}
+
+#search-icon {
+    cursor:pointer;
+}
+
 
 #help-icon {
     margin-left:20px;
@@ -34,7 +60,7 @@
     margin-top:10px;
 }
 
-#searchInput {
+#search-input {
     margin-bottom:10px;
 }
 
@@ -99,6 +125,12 @@
 
 #result-sentence .matchedFragment {
     cursor:pointer;
+}
+
+#result-sentence.phrase-mode .matchedFragment {
+    background-color:#e5e5ff;
+    border-color:#e5e5ff;
+    cursor:text;
 }
 
 .matchedFragment {

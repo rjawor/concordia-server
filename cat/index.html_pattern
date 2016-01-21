@@ -10,10 +10,10 @@
         var concordiaUrl = 'http://@concordia_host@:@concordia_port@';
 
         $(document).ready(function() {
-            $('#searchInput').bind("enterKey",function(e){
+            $('#search-input').bind("enterKey",function(e){
                 searchHandle(@tmid@);
             });
-            $('#searchInput').keyup(function(e){
+            $('#search-input').keyup(function(e){
                 if(e.keyCode == 13) {
                     $(this).trigger("enterKey");
                 }
@@ -32,16 +32,14 @@
             <div id="help" class="hidden">
 	            <p>@desc@</p>
 	            <p>@enjoy@</p>
-                <span class="suggestion" onclick="showHideSuggestions()">show/hide samples</span>
-                <br/><br/>
-                <div class="suggestionsInvisible" id="suggestions">
+                <div id="suggestions">
                     <ul>@suggestions@</ul>
                     <br/><br/>
                 </div>
-                <label for="searchInput">@prompt@</label>
+                <label for="search-input">@prompt@</label>
             </div>
-            <input id="searchInput" type="text" value="" />
-            <input type="button" value="search" onclick="searchHandle(@tmid@)" />
+            <input id="search-input" type="text" value="" />
+            <img id="search-icon" src="../images/search.png" alt="search" onclick="searchHandle(@tmid@)" title="search"/>
             <img id="help-icon" src="../images/help.png" alt="help" onclick="toggleHelp()" title="show/hide help"/>
             <div id="result">
             
