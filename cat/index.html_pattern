@@ -8,10 +8,11 @@
     <body>
         <script>
         var concordiaUrl = 'http://@concordia_host@:@concordia_port@';
+        var currentTmId = @tmid@;
 
         $(document).ready(function() {
             $('#search-input').bind("enterKey",function(e){
-                searchHandle(@tmid@);
+                searchHandle(currentTmId);
             });
             $('#search-input').keyup(function(e){
                 if(e.keyCode == 13) {
@@ -39,7 +40,7 @@
                 <label for="search-input">@prompt@</label>
             </div>
             <input id="search-input" type="text" value="" />
-            <img id="search-icon" src="../images/search.png" alt="search" onclick="searchHandle(@tmid@)" title="search"/>
+            <img id="search-icon" src="../images/search.png" alt="search" onclick="searchHandle(currentTmId)" title="search"/>
             <img id="help-icon" src="../images/help.png" alt="help" onclick="toggleHelp()" title="show/hide help"/>
             <div id="result">
             

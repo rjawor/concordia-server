@@ -21,7 +21,21 @@ shutil.copytree('js', root_dir+'/js')
 shutil.copytree('css', root_dir+'/css')
 shutil.copytree('images', root_dir+'/images')
 shutil.copy('favicon.ico', root_dir+'/favicon.ico')
-shutil.copy('concordia_gate.php', root_dir+'/concordia_gate.php')
+
+
+with open('host.cfg', 'r') as host_file:
+    for line in host_file:
+        field, value = line.strip().split('@#@')
+        if field == 'concordia_host':
+            concordia_host = value
+        elif field == 'concordia_port':
+            concordia_port = value
+
+with open('concordia_gate.php_pattern', 'r') as gate_pattern_file, open(root_dir+'/concordia_gate.php', 'w') as gate_file:
+    for line in gate_pattern_file:
+        line = re.sub('@concordia_host@', concordia_host, line)
+        line = re.sub('@concordia_port@', concordia_port, line)
+        gate_file.write(line)
 
 
 versions_dir = 'versions'
@@ -39,6 +53,11 @@ for version_file in os.listdir(versions_dir):
             else:
                 version[field] = value
     versions.append(version)
+
+        
+            
+                
+
 
 for version in versions:
     version_dir = root_dir+'/'+version['dir']

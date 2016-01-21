@@ -133,6 +133,12 @@
     cursor:text;
 }
 
+#result-sentence.phrase-mode .matchedFragmentSelected {
+    background-color:#e5e5ff;
+    border-color:#e5e5ff;
+    cursor:text;
+}
+
 .matchedFragment {
     background-color:#99CCFF;
     border-style: solid;

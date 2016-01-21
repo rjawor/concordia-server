@@ -14,3 +14,4 @@ db/pgbouncer.pid
 db/pgbouncer.ini
 upstart/concordia-server.conf
 upstart/pgbouncer.conf
+cat/host.cfg

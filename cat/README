@@ -1,0 +1,5 @@
+1. Prepare host.cfg file with the address and port number of Concordia. See host.cfg_example. WARNING there should not be any empty lines in the .cfg files.
+2. Prepare version file for each tm in Concordia in teh "versions: directory.
+3. Clean a directory on your webserver (that supports PHP).
+4. sudo ./publish.py PATH_ON_SERVER.
+

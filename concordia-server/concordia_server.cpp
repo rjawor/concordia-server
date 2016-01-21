@@ -3,6 +3,8 @@
 #include <sstream>
 #include <string>
 
+#include <concordia/interval.hpp>
+
 #include "json_generator.hpp"
 #include "config.hpp"
 #include "logger.hpp"
@@ -35,6 +37,7 @@ std::string ConcordiaServer::handleRequest(std::string & requestString) {
     outputString << "Content-type: application/json\r\n\r\n";
     try {
         rapidjson::Document d;
+        Logger::logString("concordia request string", requestString);
         bool hasError = d.Parse(requestString.c_str()).HasParseError();
 
         if (hasError) {
@@ -99,6 +102,19 @@ std::string ConcordiaServer::handleRequest(std::string & requestString) {
                 int tmId = _getIntParameter(d, TM_ID_PARAM);
                 Logger::logString("concordia search pattern", pattern);
                 _searcherController->concordiaSearch(jsonWriter, pattern, tmId);         
+            } else if (operation == CONCORDIA_PHRASE_SEARCH_OP) {
+                std::string pattern = _getStringParameter(d, PATTERN_PARAM);
+                int tmId = _getIntParameter(d, TM_ID_PARAM);
+                Logger::logString("concordia phrase search pattern", pattern);
+                std::vector<Interval> intervals;
+                const rapidjson::Value & intervalsArray = d[INTERVALS_PARAM];
+                for (rapidjson::SizeType i = 0; i < intervalsArray.Size(); i++) {
+                    Logger::logInt("interval size", intervalsArray[i].Size());
+                    Logger::logInt("search interval start", intervalsArray[i][0].GetInt());
+                    Logger::logInt("search interval end", intervalsArray[i][1].GetInt());
+                }                
+                
+                //_searcherController->concordiaPhraseSearch(jsonWriter, pattern, tmId);         
             } else if (operation == ADD_TM_OP) {
                 int sourceLangId = _getIntParameter(d, SOURCE_LANG_PARAM);
                 int targetLangId = _getIntParameter(d, TARGET_LANG_PARAM);

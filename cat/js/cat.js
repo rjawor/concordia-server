@@ -20,6 +20,26 @@ function searchHandle(tmid) {
     });
 }
 
+function phraseSearchHandle(tmid, intervals) {
+    var concordiaRequest = {
+        operation: 'concordiaPhraseSearch',
+        tmId: tmid,
+        pattern:$("#search-input").val(),
+        intervals: intervals
+    }
+
+
+    $.ajax({
+        url: '/concordia_gate.php',
+        type: 'post',
+        dataType: 'json',
+        success: function (data) {
+            $('#result').html(renderResult(data));
+        },
+        data: concordiaRequest
+    });
+}
+
 function renderResult(data) {
     var res = '';
     
@@ -110,9 +130,18 @@ function showHideSuggestions() {
 function phraseSearch(caller) {
     if ($('#result-sentence').hasClass('phrase-mode')) {
         var phrase = getSelectedTextWithin(caller);
-        console.log('phrase search for: '+phrase);
-        console.log(getIndicesOf(phrase, $("#search-input").val(), true));
-        var phrases = $('phrase-prompt').data();
+        if (phrase.length > 0) {
+        
+            var intervalStarts = getIndicesOf(phrase, $("#search-input").val(), true);
+            var intervals = [];
+            
+            for (var i=0;i<intervalStarts.length;i++) {
+                
+                intervals.push([intervalStarts[i], intervalStarts[i]+phrase.length])
+            }
+            
+            phraseSearchHandle(currentTmId, intervals);
+        }
     }
 }
 

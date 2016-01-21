@@ -19,6 +19,7 @@
 #define SOURCE_LANG_PARAM "sourceLangId"
 #define TARGET_LANG_PARAM "targetLangId"
 #define NAME_PARAM "name"
+#define INTERVALS_PARAM "intervals"
 
 #define ADD_SENTENCE_OP "addSentence"
 #define ADD_SENTENCES_OP "addSentences"
@@ -26,5 +27,6 @@
 #define REFRESH_INDEX_OP "refreshIndex"
 #define SIMPLE_SEARCH_OP "simpleSearch"
 #define CONCORDIA_SEARCH_OP "concordiaSearch"
+#define CONCORDIA_PHRASE_SEARCH_OP "concordiaPhraseSearch"
 #define ADD_TM_OP "addTm"
 
