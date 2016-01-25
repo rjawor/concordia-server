@@ -23,6 +23,8 @@ public:
         return _bestOverlay;
     }
     
+    void offsetPattern(int offset);
+    
 private:
     double _bestOverlayScore;
     

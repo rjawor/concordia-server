@@ -24,4 +24,8 @@ void SimpleSearchResult::addMatchedTargetFragment(const std::pair<int,int> & tar
     _targetFragments.push_back(targetFragment);
 }
 
+void SimpleSearchResult::offsetPattern(int offset) {
+    _matchedPatternStart += offset;
+    _matchedPatternEnd += offset;
+}
 

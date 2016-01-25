@@ -34,7 +34,12 @@ function phraseSearchHandle(tmid, intervals) {
         type: 'post',
         dataType: 'json',
         success: function (data) {
-            $('#result').html(renderResult(data));
+            if (data['found']) {
+                $('#result').html(renderResult(data));
+            } else {
+               $('#phrase-prompt').html('<b>Your phrase was not found. Try selecting another phrase: </b>').fadeOut(200).fadeIn(200);
+               clearTextSelections();
+            }
         },
         data: concordiaRequest
     });
@@ -43,10 +48,13 @@ function phraseSearchHandle(tmid, intervals) {
 function renderResult(data) {
     var res = '';
     
-    var score = data['result']['bestOverlayScore']*100;
-    
-    res += '<div id="result-score">Concordia score: <b>'+score.toFixed(0)+'%</b></div>';
-    res += '<div id="phrase-selection"><img id="phrase-icon" src="../images/phrase.png" alt="phrase search" onclick="togglePhraseSearchMode()" title="search for phrases"/><span id="phrase-prompt" class="hidden">Select continuous phrase: <img id="cancel-button" src="../images/cancel-button.png" alt="cancel phrase search" onclick="togglePhraseSearchMode()" title="cancel searching for phrases"/></span></div>';
+    if (typeof(data['result']['bestOverlayScore']) === 'undefined') {
+        // ignore    
+    } else {
+        var score = data['result']['bestOverlayScore']*100;
+        res += '<div id="result-score">Concordia score: <b>'+score.toFixed(0)+'%</b></div>';
+    }
+    res += '<div id="phrase-selection">Phrase search mode:&nbsp;<img id="phrase-off-icon" src="../images/switchOff.png" alt="enter phrase search mode" onclick="togglePhraseSearchMode()" title="search for phrases"/><img class="hidden" id="phrase-on-icon" src="../images/switchOn.png" alt="cancel phrase search" onclick="togglePhraseSearchMode()" title="cancel phrase search"/><span id="phrase-prompt" class="hidden">Select continuous phrase: </span></div>';
     
     var inputSentence = $('#search-input').val();
     var markedSentence = '';
@@ -104,7 +112,8 @@ function renderFragment(fragment, number) {
 
 function togglePhraseSearchMode() {
     $('#result-sentence').toggleClass('phrase-mode');
-    $('#phrase-icon').toggleClass('hidden');
+    $('#phrase-on-icon').toggleClass('hidden');
+    $('#phrase-off-icon').toggleClass('hidden');
     $('#phrase-prompt').toggleClass('hidden');
     clearTextSelections();
 }

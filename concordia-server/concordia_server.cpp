@@ -2,6 +2,9 @@
 
 #include <sstream>
 #include <string>
+#include <iostream>
+#include <fstream>
+#include <ctime>
 
 #include <concordia/interval.hpp>
 
@@ -37,7 +40,7 @@ std::string ConcordiaServer::handleRequest(std::string & requestString) {
     outputString << "Content-type: application/json\r\n\r\n";
     try {
         rapidjson::Document d;
-        Logger::logString("concordia request string", requestString);
+        // Logger::logString("concordia request string", requestString);
         bool hasError = d.Parse(requestString.c_str()).HasParseError();
 
         if (hasError) {
@@ -106,15 +109,13 @@ std::string ConcordiaServer::handleRequest(std::string & requestString) {
                 std::string pattern = _getStringParameter(d, PATTERN_PARAM);
                 int tmId = _getIntParameter(d, TM_ID_PARAM);
                 Logger::logString("concordia phrase search pattern", pattern);
+                _logPhrase(requestString);
                 std::vector<Interval> intervals;
                 const rapidjson::Value & intervalsArray = d[INTERVALS_PARAM];
                 for (rapidjson::SizeType i = 0; i < intervalsArray.Size(); i++) {
-                    Logger::logInt("interval size", intervalsArray[i].Size());
-                    Logger::logInt("search interval start", intervalsArray[i][0].GetInt());
-                    Logger::logInt("search interval end", intervalsArray[i][1].GetInt());
+                    intervals.push_back(Interval(intervalsArray[i][0].GetInt(), intervalsArray[i][1].GetInt()));
                 }                
-                
-                //_searcherController->concordiaPhraseSearch(jsonWriter, pattern, tmId);         
+                _searcherController->concordiaPhraseSearch(jsonWriter, pattern, intervals, tmId);         
             } else if (operation == ADD_TM_OP) {
                 int sourceLangId = _getIntParameter(d, SOURCE_LANG_PARAM);
                 int targetLangId = _getIntParameter(d, TARGET_LANG_PARAM);
@@ -177,3 +178,9 @@ void ConcordiaServer::_addTm(int tmId) {
     _concordiasMap->insert(tmId, new Concordia(indexPath.str(), _configFilePath));
 }
 
+void ConcordiaServer::_logPhrase(std::string phraseString) {
+    std::ofstream logFile;
+    logFile.open(PHRASE_LOG_FILE_PATH, std::ios::out | std::ios::app);
+    logFile << phraseString.substr(0, phraseString.size()-1) << ", \"timestamp\":" << std::time(0) << "}\n";
+    logFile.close();    
+}

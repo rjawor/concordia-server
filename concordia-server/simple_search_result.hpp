@@ -28,8 +28,16 @@ public:
         return _matchedPatternStart;
     }
 
+    void setMatchedPatternStart(int newStart) {
+        _matchedPatternStart = newStart;
+    }
+
     int getMatchedPatternEnd() const {
         return _matchedPatternEnd;
+    }
+
+    void setMatchedPatternEnd(int newEnd) {
+        _matchedPatternEnd = newEnd;
     }
 
     int getMatchedExampleStart() const {
@@ -53,6 +61,8 @@ public:
     }
     
     void addMatchedTargetFragment(const std::pair<int,int> & targetFragment);
+    
+    void offsetPattern(int offset);
     
 private:
     int _id;

@@ -116,7 +116,7 @@ void UnitDAO::_getResultsFromFragments(
             delete param;
         }
 
-        //TODO now add all target fragments matched with this fragment        
+        // now add all target fragments matched with this fragment        
         std::string targetQuery = "SELECT target_token_pos, target_tokens[2*target_token_pos+1], target_tokens[2*target_token_pos+2] FROM unit INNER JOIN alignment ON alignment.unit_id = unit.id AND unit.id = $1::integer AND source_token_pos between $2::integer and $3::integer ORDER BY target_token_pos";
         std::vector<QueryParam*> targetParams;
         targetParams.push_back(new IntParam(fragment.getExampleId()));

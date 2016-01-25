@@ -34,7 +34,13 @@
     display:none;
 }
 
-#phrase-icon {
+#phrase-on-icon {
+    cursor:pointer;
+    vertical-align:middle;
+    margin-right:20px;
+}
+
+#phrase-off-icon {
     cursor:pointer;
     vertical-align:middle;
     margin-right:20px;

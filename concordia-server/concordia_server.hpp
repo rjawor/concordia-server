@@ -30,6 +30,8 @@ public:
     std::string handleRequest(std::string & requestString);
 
 private:
+    void _logPhrase(std::string phraseString);
+
     std::string _getStringParameter(rapidjson::Document & d, const char * name) throw (ConcordiaException);
 
     int _getIntParameter(rapidjson::Document & d, const char * name) throw (ConcordiaException);

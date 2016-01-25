@@ -1,6 +1,7 @@
 build/
 logs/concordia-server.log
 logs/pgbouncer.log
+logs/phrase-searches.json
 concordia.cfg
 concordia-server/config.hpp
 index/

@@ -6,6 +6,7 @@
 #include <boost/ptr_container/ptr_map.hpp>
 #include <concordia/concordia.hpp>
 #include <concordia/concordia_exception.hpp>
+#include <concordia/interval.hpp>
 
 #include "unit_dao.hpp"
 #include "simple_search_result.hpp"
@@ -30,6 +31,10 @@ public:
                          std::string & pattern,
                          const int tmId);
 
+    void concordiaPhraseSearch(rapidjson::Writer<rapidjson::StringBuffer> & jsonWriter,
+                               std::string & pattern,
+                               const std::vector<Interval> & intervals,
+                               const int tmId);
 private:
 
     boost::shared_ptr<boost::ptr_map<int,Concordia> > _concordiasMap;

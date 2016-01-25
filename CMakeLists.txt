@@ -62,6 +62,7 @@ configure_file (
 
 set(CONFIG_FILE_PATH "${concordia-server_SOURCE_DIR}/concordia.cfg")
 set(LOG_FILE_PATH "${concordia-server_SOURCE_DIR}/logs/concordia-server.log")
+set(PHRASE_LOG_FILE_PATH "${concordia-server_SOURCE_DIR}/logs/phrase-searches.json")
 
 # --------------
 # db settings
