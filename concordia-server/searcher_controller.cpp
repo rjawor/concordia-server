@@ -2,8 +2,11 @@
 
 #include <boost/foreach.hpp>
 #include <vector>
+#include <climits>
 
 #include "json_generator.hpp"
+#include "logger.hpp"
+
 
 SearcherController::SearcherController(boost::shared_ptr<boost::ptr_map<int,Concordia> >concordiasMap)
                                                                      throw(ConcordiaException):
@@ -43,8 +46,11 @@ void SearcherController::concordiaPhraseSearch(rapidjson::Writer<rapidjson::Stri
     boost::ptr_map<int,Concordia>::iterator it = _concordiasMap->find(tmId);
     if (it != _concordiasMap->end()) {
         if (intervals.size() > 0) {
-            std::string shortPattern = pattern.substr(intervals[0].getStart(), intervals[0].getEnd() - intervals[0].getStart());
+//            std::string shortPattern = pattern.substr(intervals[0].getStart(), intervals[0].getEnd() - intervals[0].getStart());
+            std::string shortPattern = _substrUTF8(pattern, intervals[0].getStart(), intervals[0].getEnd() - intervals[0].getStart());
             
+            Logger::log("concordiaPhraseSearch");
+            Logger::logString("short pattern", shortPattern);
             std::vector<SimpleSearchResult> shortPatternResults = _unitDAO.getSearchResults(it->second->simpleSearch(shortPattern));
             
             
@@ -73,7 +79,7 @@ void SearcherController::concordiaPhraseSearch(rapidjson::Writer<rapidjson::Stri
                     currStart = interval.getEnd();
                 }
                 CompleteConcordiaSearchResult lastRestResult = _unitDAO.getConcordiaResult(
-                                                it->second->concordiaSearch(pattern.substr(currStart)));
+                                                it->second->concordiaSearch(_substrUTF8(pattern,currStart,INT_MAX)));
                 lastRestResult.offsetPattern(currStart);
                 bestOverlay.insert(bestOverlay.end(), lastRestResult.getBestOverlay().begin(), lastRestResult.getBestOverlay().end());
                 
@@ -128,4 +134,18 @@ void SearcherController::concordiaSearch(rapidjson::Writer<rapidjson::StringBuff
         JsonGenerator::signalError(jsonWriter, "no such tm!");        
     }            
 }
+
+std::string SearcherController::_substrUTF8(std::string source, int start, int length) {
+    UnicodeString s(source.c_str());
+
+    UnicodeString unicodeValue;
+    s.extract(start, length, unicodeValue);
+
+    std::string result;
+    unicodeValue.toUTF8String(result);
+
+    return result;
+}
+
+
 

@@ -37,6 +37,8 @@ public:
                                const int tmId);
 private:
 
+    std::string _substrUTF8(std::string source, int start, int length);
+
     boost::shared_ptr<boost::ptr_map<int,Concordia> > _concordiasMap;
     
     UnitDAO _unitDAO;
