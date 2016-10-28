@@ -38,7 +38,7 @@ with open('concordia_gate.php_pattern', 'r') as gate_pattern_file, open(root_dir
         gate_file.write(line)
 
 
-versions_dir = 'versions'
+versions_dir = 'versions_enabled'
 
 versions = []
 

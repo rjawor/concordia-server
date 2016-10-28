@@ -10,7 +10,7 @@ function searchHandle(tmid) {
     }
 
     $.ajax({
-        url: '/concordia_gate.php',
+        url: '/cat/concordia_gate.php',
         type: 'post',
         dataType: 'json',
         success: function (data) {
@@ -30,7 +30,7 @@ function phraseSearchHandle(tmid, intervals) {
 
 
     $.ajax({
-        url: '/concordia_gate.php',
+        url: '/cat/concordia_gate.php',
         type: 'post',
         dataType: 'json',
         success: function (data) {
