@@ -25,26 +25,11 @@ def add_data(data):
     req = urllib2.Request(address)
     req.add_header('Content-Type', 'application/json')
     json.loads(urllib2.urlopen(req, json.dumps(data)).read())
-    
+
 sourceFile = sys.argv[1]
-soURCeLangId = int(sys.argv[2])
-targetLangId = int(sys.argv[3])
-name = sys.argv[4]
+tmId = int(sys.argv[2])
 
 totalLines = file_len(sourceFile)
-
-data = {
-    'operation': 'addTm',
-    'sourceLangId':sourceLangId,
-    'targetLangId':targetLangId,
-    'name':name
-}
-
-req = urllib2.Request(address)
-req.add_header('Content-Type', 'application/json')
-response = json.loads(urllib2.urlopen(req, json.dumps(data)).read())
-tmId = int(response['newTmId'])
-print "Added new tm: %d" % tmId
 
 data = {
     'operation': 'addAlignedSentences',
@@ -72,12 +57,12 @@ with open(sourceFile) as sourceLines:
                 print "Added %d of %d sentences. Time elapsed: %.4f s, current speed: %.4f sentences/second" % ( (lineNumber+1)/3, totalLines/3, mark-start, (lineNumber+1)/(3*(mark-start)))
                 sentences = []
         lineNumber += 1
-                
+
 
 if len(sentences) > 0:
     data['sentences'] = sentences
     add_data(data)
-    
+
 end = time.time()
 print "Added all %d sentences. Time elapsed: %.4f s, overall speed: %.4f sentences/second" % ((lineNumber+1)/3, end-start, (lineNumber+1)/(3*(end-start)))
 
@@ -93,6 +78,3 @@ urllib2.urlopen(req, json.dumps(data)).read()
 
 end = time.time()
 print "Index regeneration complete. The operation took %.4f s" % (end - start)
-
-
-
