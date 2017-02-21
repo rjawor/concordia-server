@@ -37,7 +37,7 @@ $data = json_decode($response);
             $markedSentence = "";
             $fragments = array();
             $lastInsertedEnd = 0;
-            for($i=0; $i<count($data->result->bestOverlayScore);$i++) {
+            for($i=0; $i<2;$i++) {
                 $fragment = data->result->bestOverlay[i];
                 //previous unmarked fragment
                 $markedSentence += substr($inputSentence,$lastInsertedEnd, $fragment->matchedPatternStart - $lastInsertedEnd);
