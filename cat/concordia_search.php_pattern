@@ -29,7 +29,10 @@ $data = json_decode($response);
         </div>
         <div id="content">
             <div id="result">
+                <pre><?php print_r($data);?></pre>
             <?php
+
+
             if (!empty($data['result']['bestOverlayScore'])) {
                 $score = $data['result']['bestOverlayScore']*100;
                 ?>
