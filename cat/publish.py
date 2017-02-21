@@ -12,7 +12,7 @@ if not os.path.exists(root_dir):
 if not os.path.isdir(root_dir):
     print "%s is not a directory!" % root_dir
     sys.exit(1)
-    
+
 if len(os.listdir(root_dir))>0:
     print "%s is not empty!" % root_dir
     sys.exit(1)
@@ -37,6 +37,12 @@ with open('concordia_gate.php_pattern', 'r') as gate_pattern_file, open(root_dir
         line = re.sub('@concordia_port@', concordia_port, line)
         gate_file.write(line)
 
+with open('concordia_search.php_pattern', 'r') as search_pattern_file, open(root_dir+'/concordia_search.php', 'w') as search_file:
+    for line in search_pattern_file:
+        line = re.sub('@concordia_host@', concordia_host, line)
+        line = re.sub('@concordia_port@', concordia_port, line)
+        search_file.write(line)
+
 
 versions_dir = 'versions_enabled'
 
@@ -46,7 +52,7 @@ for version_file in os.listdir(versions_dir):
     version = {'suggestions':[]}
     with open(versions_dir+'/'+version_file) as v:
         for line in v:
-            
+
             field, value = line.strip().split('@#@')
             if field == 'suggestion':
                 version['suggestions'].append(value)
@@ -54,9 +60,9 @@ for version_file in os.listdir(versions_dir):
                 version[field] = value
     versions.append(version)
 
-        
-            
-                
+
+
+
 
 
 for version in versions:
