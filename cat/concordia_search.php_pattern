@@ -30,7 +30,6 @@ $data = json_decode($response);
         </div>
         <div id="content">
             <div id="result">
-                <pre><?php print_r($data);?></pre>
                 <div id="result-score">Concordia score: <b><?= round($data->result->bestOverlayScore*100) ?>%</b></div>
             <?php
 
@@ -55,7 +54,7 @@ $data = json_decode($response);
             $markedSentence += substr($inputSentence, $lastInsertedEnd);
 
             ?>
-                <div id="result-sentence"><?=$markedSentence ?></div>
+                <div id="result-sentence"><?=$inputSentence ?><?=$markedSentence ?></div>
                 <br/><br/><br/>
             </div>
         </div>
