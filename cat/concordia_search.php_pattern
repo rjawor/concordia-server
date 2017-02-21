@@ -14,5 +14,15 @@ $options = array(
 $context  = stream_context_create($options);
 $result = file_get_contents($url, false, $context);
 
-print $result;
 ?>
+
+<html>
+    <head>
+        <script src="js/jquery-1.11.3.min.js"></script>
+        <script src="js/cat.js"></script>
+		<link rel="stylesheet" href="css/iatagger.css" />
+        <meta charset="UTF-8">
+    </head>
+    <body onLoad="renderResult(JSON.parse('<?= $result ?>'))">
+    </body>
+</html>
