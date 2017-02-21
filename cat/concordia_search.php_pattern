@@ -32,6 +32,7 @@ $data = json_decode($response);
                 <pre><?php print_r($data);?></pre>
                 <div id="result-score">Concordia score: <b><?= round($data->result->bestOverlayScore*100) ?>%</b></div>
             <?php
+            /*
             $inputSentence = $_GET["pattern"];
             $markedSentence = "";
             $fragments = array();
@@ -51,7 +52,7 @@ $data = json_decode($response);
             }
             //remaining unmarked fragment
             $markedSentence += substr($inputSentence, $lastInsertedEnd);
-
+            */
             ?>
                 <div id="result-sentence" onMouseUp="phraseSearch(this)"><?=$markedSentence ?></div>
                 <br/><br/><br/>
