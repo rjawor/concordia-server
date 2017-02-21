@@ -25,43 +25,48 @@ $data = json_decode($response);
         <meta charset="UTF-8">
     </head>
     <body>
-        <?php
-        if (!empty($data['result']['bestOverlayScore'])) {
-            $score = $data['result']['bestOverlayScore']*100;
-            ?>
-            <div id="result-score">Concordia score: <b>'+<?= $score ?>%</b></div>
+        <div id="header">
+        </div>
+        <div id="content">
+            <div id="result">
             <?php
-        }
+            if (!empty($data['result']['bestOverlayScore'])) {
+                $score = $data['result']['bestOverlayScore']*100;
+                ?>
+                <div id="result-score">Concordia score: <b>'+<?= $score ?>%</b></div>
+                <?php
+            }
 
-        /*
-        res += '<div id="phrase-selection">Phrase search mode:&nbsp;<img id="phrase-off-icon" src="../images/switchOff.png" alt="enter phrase search mode" onclick="togglePhraseSearchMode()" title="search for phrases"/><img class="hidden" id="phrase-on-icon" src="../images/switchOn.png" alt="cancel phrase search" onclick="togglePhraseSearchMode()" title="cancel phrase search"/><span id="phrase-prompt" class="hidden">Select continuous phrase: </span></div>';
+            /*
+            res += '<div id="phrase-selection">Phrase search mode:&nbsp;<img id="phrase-off-icon" src="../images/switchOff.png" alt="enter phrase search mode" onclick="togglePhraseSearchMode()" title="search for phrases"/><img class="hidden" id="phrase-on-icon" src="../images/switchOn.png" alt="cancel phrase search" onclick="togglePhraseSearchMode()" title="cancel phrase search"/><span id="phrase-prompt" class="hidden">Select continuous phrase: </span></div>';
 
-        var inputSentence = $('#search-input').val();
-        var markedSentence = '';
-        var fragments = '';
-        lastInsertedEnd = 0;
-        for(var i = 0; i < data['result']['bestOverlay'].length; i++) {
-            var fragment = data['result']['bestOverlay'][i];
-            //previous unmarked fragment
-            markedSentence += inputSentence.slice(lastInsertedEnd, fragment['matchedPatternStart']);
+            var inputSentence = $('#search-input').val();
+            var markedSentence = '';
+            var fragments = '';
+            lastInsertedEnd = 0;
+            for(var i = 0; i < data['result']['bestOverlay'].length; i++) {
+                var fragment = data['result']['bestOverlay'][i];
+                //previous unmarked fragment
+                markedSentence += inputSentence.slice(lastInsertedEnd, fragment['matchedPatternStart']);
 
-            //the marked fragment
-            markedSentence += '<span onclick="displayDetails(this, '+i+')" class="matchedFragment">'+inputSentence.slice(fragment['matchedPatternStart'], fragment['matchedPatternEnd'])+'</span>';
+                //the marked fragment
+                markedSentence += '<span onclick="displayDetails(this, '+i+')" class="matchedFragment">'+inputSentence.slice(fragment['matchedPatternStart'], fragment['matchedPatternEnd'])+'</span>';
 
-            lastInsertedEnd = fragment['matchedPatternEnd'];
+                lastInsertedEnd = fragment['matchedPatternEnd'];
 
-            fragments += renderFragment(fragment, i);
-        }
+                fragments += renderFragment(fragment, i);
+            }
 
-        //remaining unmarked fragment
-        markedSentence += inputSentence.slice(lastInsertedEnd);
+            //remaining unmarked fragment
+            markedSentence += inputSentence.slice(lastInsertedEnd);
 
-        res += '<div id="result-sentence" onMouseUp="phraseSearch(this)">'+markedSentence+'</div>';
+            res += '<div id="result-sentence" onMouseUp="phraseSearch(this)">'+markedSentence+'</div>';
 
-        res += '<br/><br/><br/>'+fragments;
-        */
+            res += '<br/><br/><br/>'+fragments;
+            */
 
-        ?>
-
+            ?>
+            </div>
+        </div>
     </body>
 </html>
