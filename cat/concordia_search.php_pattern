@@ -30,7 +30,7 @@ $data = json_decode($response);
         <div id="content">
             <div id="result">
                 <pre><?php print_r($data);?></pre>
-                <div id="result-score">Concordia score: <b>'+<?= $data['result']['bestOverlayScore']*100 ?>%</b></div>
+                <div id="result-score">Concordia score: <b><?= $data->result->bestOverlayScore*100 ?>%</b></div>
             <?php
             /*
             res += '<div id="phrase-selection">Phrase search mode:&nbsp;<img id="phrase-off-icon" src="../images/switchOff.png" alt="enter phrase search mode" onclick="togglePhraseSearchMode()" title="search for phrases"/><img class="hidden" id="phrase-on-icon" src="../images/switchOn.png" alt="cancel phrase search" onclick="togglePhraseSearchMode()" title="cancel phrase search"/><span id="phrase-prompt" class="hidden">Select continuous phrase: </span></div>';
