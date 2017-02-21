@@ -1,7 +1,8 @@
 <?php
 
 $url = 'http://@concordia_host@:@concordia_port@';
-$data = array("operation" => "concordiaSearch","tmId" => intval($_GET["tmId"]),"pattern" => $_GET["pattern"]);
+$inputSentence = $_GET["pattern"];
+$data = array("operation" => "concordiaSearch","tmId" => intval($_GET["tmId"]),"pattern" => $inputSentence);
 
 // use key 'http' even if you send the request to https://...
 $options = array(
@@ -33,7 +34,6 @@ $data = json_decode($response);
                 <div id="result-score">Concordia score: <b><?= round($data->result->bestOverlayScore*100) ?>%</b></div>
             <?php
 
-            $inputSentence = $_GET["pattern"];
             $markedSentence = "";
             $fragments = array();
             $lastInsertedEnd = 0;
@@ -55,7 +55,7 @@ $data = json_decode($response);
             $markedSentence += substr($inputSentence, $lastInsertedEnd);
 
             ?>
-                <div id="result-sentence" onMouseUp="phraseSearch(this)"><?=$markedSentence ?></div>
+                <div id="result-sentence"><?=$markedSentence ?></div>
                 <br/><br/><br/>
             </div>
         </div>
