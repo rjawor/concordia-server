@@ -47,15 +47,20 @@ function phraseSearchHandle(tmid, intervals) {
 
 function renderResult(data) {
     var res = '';
-    
+
     if (typeof(data['result']['bestOverlayScore']) === 'undefined') {
-        // ignore    
+        // ignore
     } else {
         var score = data['result']['bestOverlayScore']*100;
         res += '<div id="result-score">Concordia score: <b>'+score.toFixed(0)+'%</b></div>';
     }
-    res += '<div id="phrase-selection">Phrase search mode:&nbsp;<img id="phrase-off-icon" src="../images/switchOff.png" alt="enter phrase search mode" onclick="togglePhraseSearchMode()" title="search for phrases"/><img class="hidden" id="phrase-on-icon" src="../images/switchOn.png" alt="cancel phrase search" onclick="togglePhraseSearchMode()" title="cancel phrase search"/><span id="phrase-prompt" class="hidden">Select continuous phrase: </span></div>';
-    
+
+    if (typeof disablePhraseSearch !== 'undefined') {
+        // ignore
+    } else {
+        res += '<div id="phrase-selection">Phrase search mode:&nbsp;<img id="phrase-off-icon" src="../images/switchOff.png" alt="enter phrase search mode" onclick="togglePhraseSearchMode()" title="search for phrases"/><img class="hidden" id="phrase-on-icon" src="../images/switchOn.png" alt="cancel phrase search" onclick="togglePhraseSearchMode()" title="cancel phrase search"/><span id="phrase-prompt" class="hidden">Select continuous phrase: </span></div>';
+    }
+
     var inputSentence = $('#search-input').val();
     var markedSentence = '';
     var fragments = '';
@@ -67,19 +72,19 @@ function renderResult(data) {
 
         //the marked fragment
         markedSentence += '<span onclick="displayDetails(this, '+i+')" class="matchedFragment">'+inputSentence.slice(fragment['matchedPatternStart'], fragment['matchedPatternEnd'])+'</span>';
-        
+
         lastInsertedEnd = fragment['matchedPatternEnd'];
-        
+
         fragments += renderFragment(fragment, i);
     }
-    
+
     //remaining unmarked fragment
     markedSentence += inputSentence.slice(lastInsertedEnd);
-    
+
     res += '<div id="result-sentence" onMouseUp="phraseSearch(this)">'+markedSentence+'</div>';
-    
+
     res += '<br/><br/><br/>'+fragments;
-    
+
     return res;
 }
 
@@ -93,7 +98,7 @@ function renderFragment(fragment, number) {
     result += sourceSegment.slice(fragment['matchedExampleStart'], fragment['matchedExampleEnd']);
     result += '</span>';
     result += sourceSegment.slice(fragment['matchedExampleEnd']);
-    
+
     // target segment
     result += '</td></tr><tr><td>';
     var targetSegment = fragment['targetSegment'];
@@ -140,15 +145,15 @@ function phraseSearch(caller) {
     if ($('#result-sentence').hasClass('phrase-mode')) {
         var phrase = getSelectedTextWithin(caller);
         if (phrase.length > 0) {
-        
+
             var intervalStarts = getIndicesOf(phrase, $("#search-input").val(), true);
             var intervals = [];
-            
+
             for (var i=0;i<intervalStarts.length;i++) {
-                
+
                 intervals.push([intervalStarts[i], intervalStarts[i]+phrase.length])
             }
-            
+
             phraseSearchHandle(currentTmId, intervals);
         }
     }

@@ -2,7 +2,8 @@
 
 $url = 'http://@concordia_host@:@concordia_port@';
 $inputSentence = $_GET["pattern"];
-$data = array("operation" => "concordiaSearch","tmId" => intval($_GET["tmId"]),"pattern" => $inputSentence);
+$tmId = intval($_GET["tmId"]);
+$data = array("operation" => "concordiaSearch","tmId" => $tmId,"pattern" => $inputSentence);
 
 // use key 'http' even if you send the request to https://...
 $options = array(
@@ -16,46 +17,104 @@ $context  = stream_context_create($options);
 $response = file_get_contents($url, false, $context);
 
 $data = json_decode($response);
+
+function sub($string, $start, $end = null) {
+    if (is_null($end)) {
+        return mb_substr($string, $start, null, 'UTF-8');
+    } else {
+        return mb_substr($string, $start, $end-$start, 'UTF-8');
+    }
+}
 ?>
 
 <html>
     <head>
         <script src="js/jquery-1.11.3.min.js"></script>
         <script src="js/cat.js"></script>
-		<link rel="stylesheet" href="css/iatagger.css" />
+		<link rel="stylesheet" href="css/concordia_cat.css" />
         <meta charset="UTF-8">
     </head>
     <body>
+        <script>
+        var concordiaUrl = 'http://@concordia_host@:@concordia_port@';
+        var currentTmId = <?= $tmId ?>;
+        var disablePhraseSearch = true;
+
+        $(document).ready(function() {
+            $('#search-input').bind("enterKey",function(e){
+                searchHandle(currentTmId);
+            });
+            $('#search-input').keyup(function(e){
+                if(e.keyCode == 13) {
+                    $(this).trigger("enterKey");
+                }
+            });
+        });
+
+        </script>
+
         <div id="header">
         </div>
         <div id="content">
+            <input id="search-input" type="text" value="<?= $inputSentence ?>" />
+            <img id="search-icon" src="images/search.png" alt="search" onclick="searchHandle(currentTmId)" title="search"/>
+            <img id="clear-icon" src="images/reset.png" alt="clear" onclick="$('#search-input').val('')" title="clear search field"/>
+
             <div id="result">
                 <div id="result-score">Concordia score: <b><?= round($data->result->bestOverlayScore*100) ?>%</b></div>
-            <?php
+                <div id="result-sentence"><?php
 
-            $markedSentence = "";
-            $fragments = array();
-            $lastInsertedEnd = 0;
+                $lastInsertedEnd = 0;
 
-            for($i=0; $i<count($data->result->bestOverlay);$i++) {
-                $fragment = $data->result->bestOverlay[i];
-                //previous unmarked fragment
-                $markedSentence += substr($inputSentence,$lastInsertedEnd, $fragment->matchedPatternStart - $lastInsertedEnd);
-
-                //the marked fragment
-                $markedSentence += '<span onclick="displayDetails(this, '+i+')" class="matchedFragment">'+substr($inputSentence,$fragment->matchedPatternStart, $fragment->matchedPatternEnd - $fragment->matchedPatternStart)+'</span>';
-
-                $lastInsertedEnd = $fragment->matchedPatternEnd;
-
-                //fragments += renderFragment(fragment, i);
-
-            }
-            //remaining unmarked fragment
-            $markedSentence += substr($inputSentence, $lastInsertedEnd);
-
-            ?>
-                <div id="result-sentence"><?=$inputSentence ?><?=$markedSentence ?></div>
+                for($i=0; $i<count($data->result->bestOverlay);$i++) {
+                    $fragment = $data->result->bestOverlay[$i];
+                    //previous unmarked fragment
+                    echo sub($inputSentence,$lastInsertedEnd, $fragment->matchedPatternStart);
+                    //the marked fragment
+                    ?><span onclick="displayDetails(this, <?= $i ?>)" class="matchedFragment"><?=  sub($inputSentence,$fragment->matchedPatternStart, $fragment->matchedPatternEnd) ?></span><?php
+                    $lastInsertedEnd = $fragment->matchedPatternEnd;
+                    //fragments += renderFragment(fragment, i);
+                }
+                //remaining unmarked fragment
+                echo sub($inputSentence, $lastInsertedEnd);
+                ?></div>
                 <br/><br/><br/>
+                <?php
+                $i=0;
+                foreach ($data->result->bestOverlay as $fragment) {
+                ?>
+                <div style="display:none" id="fragment<?= $i ?>" class="fragmentDetails">
+                    <table>
+                        <tr>
+                            <td><!-- source segment --->
+                                <?= sub($fragment->sourceSegment, 0, $fragment->matchedExampleStart) ?>
+                                <span class="matchedFragment"><?= sub($fragment->sourceSegment, $fragment->matchedExampleStart, $fragment->matchedExampleEnd) ?></span>
+                                <?= sub($fragment->sourceSegment, $fragment->matchedExampleEnd)?>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <?php
+                                    $currStart = 0;
+                                    foreach ($fragment->targetFragments as $targetFragment) {
+                                        ?>
+                                        <?= sub($fragment->targetSegment, $currStart, $targetFragment[0]); ?>
+                                        <span class="matchedFragment"><?= sub($fragment->targetSegment, $targetFragment[0], $targetFragment[1]); ?></span>
+                                        <?php
+                                        $currStart = $targetFragment[1];
+                                    }
+                                    echo sub($fragment->targetSegment, $currStart);
+                                ?>
+                            </td>
+                        </tr>
+                    </table>
+                    <?php
+                    $i++;
+                    ?>
+                </div>
+                <?php
+                }
+                ?>
             </div>
         </div>
     </body>

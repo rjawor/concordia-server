@@ -2,7 +2,7 @@
     <head>
         <script src="../js/jquery-1.11.3.min.js"></script>
         <script src="../js/cat.js"></script>
-		<link rel="stylesheet" href="../css/iatagger.css" />
+		<link rel="stylesheet" href="../css/concordia_cat.css" />
         <meta charset="UTF-8">
     </head>
     <body>
@@ -43,7 +43,7 @@
             <img id="search-icon" src="../images/search.png" alt="search" onclick="searchHandle(currentTmId)" title="search"/>
             <img id="help-icon" src="../images/help.png" alt="help" onclick="toggleHelp()" title="show/hide help"/>
             <div id="result">
-            
+
             </div>
         </div>
     </body>

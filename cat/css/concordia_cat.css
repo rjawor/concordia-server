@@ -56,6 +56,10 @@
     cursor:pointer;
 }
 
+#clear-icon {
+    cursor:pointer;
+}
+
 
 #help-icon {
     margin-left:20px;
@@ -122,7 +126,7 @@
     border-style: solid;
     border-width: 5px;
     border-color:#19424F;
-    border-radius: 10px;    
+    border-radius: 10px;
 }
 
 .fragmentDetails table {
@@ -173,9 +177,9 @@
 
 
 #result-sentence {
-    text-align:center;
-    font-size:24px;
-    white-space:pre;
+    text-align:left;
+    font-size:16px;
+    line-height: 40px;
 }
 
 /** General Style Info **/
@@ -432,7 +436,7 @@ td.selected .choice-available {
 
 .help-section {
     margin-top:20px;
-    margin-bottom:20px;    
+    margin-bottom:20px;
 }
 
 .suggestion-count-box {
