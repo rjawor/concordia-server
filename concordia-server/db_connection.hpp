@@ -1,5 +1,5 @@
-#ifndef DB_MANAGER_HDR
-#define DB_MANAGER_HDR
+#ifndef DB_CONNECTION_HDR
+#define DB_CONNECTION_HDR
 
 #include <libpq-fe.h>
 #include <string>
@@ -17,7 +17,7 @@ public:
     /*! Destructor.
     */
     virtual ~DBconnection();
-    
+
     void startTransaction() throw(ConcordiaException);
 
     void endTransaction() throw(ConcordiaException);
@@ -28,16 +28,16 @@ public:
                        std::vector<QueryParam*> params) throw(ConcordiaException);
 
     void clearResult(PGresult * result);
-    
+
     int getIntValue(PGresult * result, int row, int col)  throw (ConcordiaException);
-    
+
     std::string getStringValue(PGresult * result, int row, int col) throw (ConcordiaException);
 
     int getRowCount(PGresult * result)  throw (ConcordiaException);
 
 private:
     void close();
-    
+
     PGconn * _connection;
 };
 

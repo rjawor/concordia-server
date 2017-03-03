@@ -15,6 +15,7 @@ db/pgbouncer.pid
 db/pgbouncer.ini
 upstart/concordia-server.conf
 upstart/pgbouncer.conf
+upstart/lemmagen.conf
 cat/host.cfg
 mgiza-aligner/mgiza/mgizapp/CMakeCache.txt
 mgiza-aligner/mgiza/mgizapp/CMakeFiles/

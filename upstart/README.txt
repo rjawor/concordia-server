@@ -1,4 +1,4 @@
-In order to configure Concordia as upstart job, copy the 2 .conf files into your /etc/init and run:
+In order to configure Concordia as upstart job, copy the 3 .conf files into your /etc/init and run:
 
 sudo initctl reload-configuration
 

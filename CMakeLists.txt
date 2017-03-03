@@ -27,6 +27,7 @@ configure_file (
   )
 
 set(COMPILED_BINARIES_PATH "${concordia-server_SOURCE_DIR}/build/concordia-server")
+set(LEMMAGEN_BINARIES_PATH "${concordia-server_SOURCE_DIR}/LemmaGenSockets/LemmaGenSockets/bin/Debug")
 set(SCRIPTS_PATH "${concordia-server_SOURCE_DIR}/scripts")
 configure_file (
   "${concordia-server_SOURCE_DIR}/scripts/cmake_stubs/start.sh.in"
@@ -54,6 +55,12 @@ configure_file (
   "${concordia-server_SOURCE_DIR}/upstart/cmake_stubs/pgbouncer.conf.in"
   "${concordia-server_SOURCE_DIR}/upstart/pgbouncer.conf"
   )
+
+configure_file (
+  "${concordia-server_SOURCE_DIR}/upstart/cmake_stubs/lemmagen.conf.in"
+  "${concordia-server_SOURCE_DIR}/upstart/lemmagen.conf"
+  )
+
 
 configure_file (
   "${concordia-server_SOURCE_DIR}/db/pgbouncer.ini.in"
@@ -119,7 +126,7 @@ endif(EXISTS ${ICU_LIB} AND EXISTS ${ICU_INCLUDE})
 # ----------------------------------------------------
 set(Boost_USE_STATIC_LIBS OFF)
 set(Boost_USE_STATIC_RUNTIME OFF)
-find_package(Boost COMPONENTS 
+find_package(Boost COMPONENTS
       serialization unit_test_framework system filesystem program_options iostreams regex locale REQUIRED)
 
 # ----------------------------------------------------
@@ -214,8 +221,3 @@ if(EXISTS ${UTF8CASE_LIB})
 endif(EXISTS ${UTF8CASE_LIB})
 
 add_subdirectory(concordia-server)
-
-  
-
-
-

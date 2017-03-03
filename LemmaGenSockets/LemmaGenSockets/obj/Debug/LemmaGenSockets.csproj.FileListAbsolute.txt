@@ -1,0 +1,10 @@
+j:\documents\visual studio 2015\Projects\LemmaGenSockets\LemmaGenSockets\bin\Debug\LemmaGenSockets.exe.config
+j:\Documents\Visual Studio 2015\Projects\LemmaGenSockets\LemmaGenSockets\bin\Debug\LemmaGenSockets.exe
+j:\Documents\Visual Studio 2015\Projects\LemmaGenSockets\LemmaGenSockets\bin\Debug\LemmaGenSockets.pdb
+j:\Documents\Visual Studio 2015\Projects\LemmaGenSockets\LemmaGenSockets\bin\Debug\LemmaSharp.dll
+j:\Documents\Visual Studio 2015\Projects\LemmaGenSockets\LemmaGenSockets\bin\Debug\LemmaSharpPrebuilt.dll
+j:\Documents\Visual Studio 2015\Projects\LemmaGenSockets\LemmaGenSockets\bin\Debug\LemmaSharpPrebuiltCompact.dll
+j:\Documents\Visual Studio 2015\Projects\LemmaGenSockets\LemmaGenSockets\bin\Debug\Lzma#.dll
+j:\Documents\Visual Studio 2015\Projects\LemmaGenSockets\LemmaGenSockets\obj\Debug\LemmaGenSockets.csprojResolveAssemblyReference.cache
+j:\Documents\Visual Studio 2015\Projects\LemmaGenSockets\LemmaGenSockets\obj\Debug\LemmaGenSockets.exe
+j:\Documents\Visual Studio 2015\Projects\LemmaGenSockets\LemmaGenSockets\obj\Debug\LemmaGenSockets.pdb
