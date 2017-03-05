@@ -11,7 +11,6 @@
 #include "json_generator.hpp"
 #include "config.hpp"
 #include "logger.hpp"
-#include "socket_lemmatizer.hpp"
 #include "rapidjson/rapidjson.h"
 #include <boost/foreach.hpp>
 #include <boost/ptr_container/ptr_map.hpp>
@@ -28,6 +27,8 @@ ConcordiaServer::ConcordiaServer(const std::string & configFilePath)
     }
     _indexController = boost::shared_ptr<IndexController> (new IndexController(_concordiasMap));
     _searcherController = boost::shared_ptr<SearcherController> (new SearcherController(_concordiasMap));
+
+    _lemmatizerFacade = boost::shared_ptr<LemmatizerFacade> (new LemmatizerFacade());
 }
 
 ConcordiaServer::~ConcordiaServer() {
@@ -97,8 +98,7 @@ std::string ConcordiaServer::handleRequest(std::string & requestString) {
             } else if (operation == "lemmatize") {
                 std::string sentence = _getStringParameter(d, "sentence");
                 std::string languageCode = _getStringParameter(d, "languageCode");
-                SocketLemmatizer lemmatizer;
-                std::string lemmatizedSentence = lemmatizer.lemmatizeSentence(languageCode, sentence);
+                std::string lemmatizedSentence = _lemmatizerFacade->lemmatizeSentence(languageCode, sentence);
                 jsonWriter.StartObject();
                 jsonWriter.String("lemmatizedSentence");
                 jsonWriter.String(lemmatizedSentence.c_str());

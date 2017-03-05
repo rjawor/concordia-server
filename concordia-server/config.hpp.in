@@ -31,3 +31,4 @@
 #define CONCORDIA_PHRASE_SEARCH_OP "concordiaPhraseSearch"
 #define ADD_TM_OP "addTm"
 
+#define LEMMATIZER_DELIMITER "@#@"

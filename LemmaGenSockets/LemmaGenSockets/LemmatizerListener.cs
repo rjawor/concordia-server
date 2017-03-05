@@ -20,6 +20,7 @@ namespace LemmaGenSockets
         {
             lemmatizersDict.Add("pl", new LemmatizerPrebuiltCompact(LemmaSharp.LanguagePrebuilt.Polish));
             lemmatizersDict.Add("en", new LemmatizerPrebuiltCompact(LemmaSharp.LanguagePrebuilt.English));
+            lemmatizersDict.Add("hr", new LemmatizerPrebuiltCompact(LemmaSharp.LanguagePrebuilt.Serbian));
         }
 
         public LemmatizerListener()
@@ -29,15 +30,24 @@ namespace LemmaGenSockets
 
         private string lemmatizeSentence(string languageCode, string sentence)
         {
-            string[] tokens = sentence.Split(null);
-
-            string result = "";
-            foreach (string token in tokens)
+            if (lemmatizersDict.ContainsKey(languageCode))
             {
-                result += lemmatizeWord(languageCode, token) + " ";
-            }
+                string[] tokens = sentence.Split(null);
 
-            return result.Trim();
+                string result = "";
+                foreach (string token in tokens)
+                {
+                    result += lemmatizeWord(languageCode, token) + " ";
+                }
+
+                return result.Trim();
+            }
+            else
+            {
+                //if we can not lemmatize, let's not do it at all
+                //primum non nocere
+                return sentence;
+            }
         }
 
         private string lemmatizeWord(string languageCode, string word)

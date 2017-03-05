@@ -14,6 +14,8 @@
 #include "tm_dao.hpp"
 #include "index_controller.hpp"
 #include "searcher_controller.hpp"
+#include "lemmatizer_facade.hpp"
+
 
 class ConcordiaServer {
 public:
@@ -47,6 +49,8 @@ private:
     boost::shared_ptr<IndexController> _indexController;
 
     boost::shared_ptr<SearcherController> _searcherController;
+
+    boost::shared_ptr<LemmatizerFacade> _lemmatizerFacade;
 
 };
 

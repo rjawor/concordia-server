@@ -1,8 +1,10 @@
 #include "socket_lemmatizer.hpp"
 
-SocketLemmatizer::SocketLemmatizer() throw(ConcordiaException) :
-                    _sock(-1) {
-    _connect("127.0.0.1" , 11000);
+#include "config.hpp"
+#include <boost/lexical_cast.hpp>
+
+SocketLemmatizer::SocketLemmatizer(int port) throw(ConcordiaException) :
+                    _port(port) {
 }
 
 SocketLemmatizer::~SocketLemmatizer() {
@@ -11,16 +13,15 @@ SocketLemmatizer::~SocketLemmatizer() {
 /**
     Connect to a host on a certain port number
 */
-bool SocketLemmatizer::_connect(std::string address , int port)
-{
-    //create socket if it is not already created
-    if(_sock == -1) {
-        //Create socket
-        _sock = socket(AF_INET , SOCK_STREAM , 0);
-        if (_sock == -1) {
-            throw ConcordiaException("Could not create socket for the lemmatizer.");
-        }
+bool SocketLemmatizer::_connect() {
+
+    //Create socket
+    _sock = socket(AF_INET , SOCK_STREAM , 0);
+    if (_sock == -1) {
+        throw ConcordiaException("Could not create socket for the lemmatizer.");
     }
+
+    std::string address = "127.0.0.1";
 
     //setup address structure
     if(inet_addr(address.c_str()) == -1) {
@@ -45,14 +46,19 @@ bool SocketLemmatizer::_connect(std::string address , int port)
     }
 
     _server.sin_family = AF_INET;
-    _server.sin_port = htons(port);
+    _server.sin_port = htons(_port);
 
     //Connect to remote server
     if (connect(_sock , (struct sockaddr *) & _server , sizeof(_server)) < 0) {
-        throw ConcordiaException("connect failed. Error");
+        throw ConcordiaException("Connect failed. Error on address: "+address+":"+boost::lexical_cast<std::string>(_port));
     }
 
     return true;
+}
+
+bool SocketLemmatizer::_disconnect() {
+    close(_sock);
+    _sock = -1;
 }
 
 /**
@@ -84,7 +90,9 @@ std::string SocketLemmatizer::_receive(int size=512)
 }
 
 std::string SocketLemmatizer::lemmatizeSentence(std::string languageCode, std::string sentence) {
-    _send_data(languageCode+sentence+"@#@");
+    _connect();
+    _send_data(languageCode+sentence+LEMMATIZER_DELIMITER);
     std::string reply = _receive(512);
-    return reply.substr(0,reply.find("@#@"));
+    _disconnect();
+    return reply.substr(0,reply.find(LEMMATIZER_DELIMITER));
 }
