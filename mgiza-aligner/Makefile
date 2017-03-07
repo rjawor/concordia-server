@@ -8,6 +8,7 @@ all: corpora/$(CORPUS_NAME)/giza.cfg corpora/$(CORPUS_NAME)/src.low_trg.low.cooc
 
 clean:
 	rm -f corpora/$(CORPUS_NAME)/*.tok
+	rm -f corpora/$(CORPUS_NAME)/*.lem
 	rm -f corpora/$(CORPUS_NAME)/*.low
 	rm -f corpora/$(CORPUS_NAME)/*.classes
 	rm -f corpora/$(CORPUS_NAME)/*.classes.cats
@@ -29,8 +30,15 @@ corpora/$(CORPUS_NAME)/src.low_trg.low.snt corpora/$(CORPUS_NAME)/trg.low_src.lo
 corpora/$(CORPUS_NAME)/%.classes: corpora/$(CORPUS_NAME)/%.low
 	mgiza/mgizapp/bin/mkcls -n10 -p$< -V$@
 
-corpora/$(CORPUS_NAME)/%.low: corpora/$(CORPUS_NAME)/%.tok
+corpora/$(CORPUS_NAME)/%.low: corpora/$(CORPUS_NAME)/%.lem
 	tr '[:upper:]' '[:lower:]' < $< > $@
+
+corpora/$(CORPUS_NAME)/trg.lem: corpora/$(CORPUS_NAME)/trg.tok
+	mono LemmaGenSentenceLemmatizer/LemmaGenSentenceLemmatizer/bin/Debug/LemmaGenSentenceLemmatizer.exe $(TRG_LANG) < $< > $@
+
+
+corpora/$(CORPUS_NAME)/src.lem: corpora/$(CORPUS_NAME)/src.tok
+	mono LemmaGenSentenceLemmatizer/LemmaGenSentenceLemmatizer/bin/Debug/LemmaGenSentenceLemmatizer.exe $(SRC_LANG) < $< > $@
 
 corpora/$(CORPUS_NAME)/src.tok: corpora/$(CORPUS_NAME)/src.txt
 	europarl/tools/tokenizer.perl -l $(SRC_LANG) < $< > $@
