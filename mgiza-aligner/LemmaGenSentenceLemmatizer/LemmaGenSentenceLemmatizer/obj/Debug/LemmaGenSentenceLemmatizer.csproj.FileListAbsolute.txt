@@ -1,0 +1,10 @@
+j:\documents\visual studio 2015\Projects\LemmaGenSentenceLemmatizer\LemmaGenSentenceLemmatizer\bin\Debug\LemmaGenSentenceLemmatizer.exe.config
+j:\Documents\Visual Studio 2015\Projects\LemmaGenSentenceLemmatizer\LemmaGenSentenceLemmatizer\bin\Debug\LemmaGenSentenceLemmatizer.exe
+j:\Documents\Visual Studio 2015\Projects\LemmaGenSentenceLemmatizer\LemmaGenSentenceLemmatizer\bin\Debug\LemmaGenSentenceLemmatizer.pdb
+j:\Documents\Visual Studio 2015\Projects\LemmaGenSentenceLemmatizer\LemmaGenSentenceLemmatizer\bin\Debug\LemmaSharp.dll
+j:\Documents\Visual Studio 2015\Projects\LemmaGenSentenceLemmatizer\LemmaGenSentenceLemmatizer\bin\Debug\LemmaSharpPrebuilt.dll
+j:\Documents\Visual Studio 2015\Projects\LemmaGenSentenceLemmatizer\LemmaGenSentenceLemmatizer\bin\Debug\LemmaSharpPrebuiltCompact.dll
+j:\Documents\Visual Studio 2015\Projects\LemmaGenSentenceLemmatizer\LemmaGenSentenceLemmatizer\bin\Debug\Lzma#.dll
+j:\Documents\Visual Studio 2015\Projects\LemmaGenSentenceLemmatizer\LemmaGenSentenceLemmatizer\obj\Debug\LemmaGenSentenceLemmatizer.csprojResolveAssemblyReference.cache
+j:\Documents\Visual Studio 2015\Projects\LemmaGenSentenceLemmatizer\LemmaGenSentenceLemmatizer\obj\Debug\LemmaGenSentenceLemmatizer.exe
+j:\Documents\Visual Studio 2015\Projects\LemmaGenSentenceLemmatizer\LemmaGenSentenceLemmatizer\obj\Debug\LemmaGenSentenceLemmatizer.pdb
