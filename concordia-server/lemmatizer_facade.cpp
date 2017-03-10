@@ -1,5 +1,7 @@
 #include "lemmatizer_facade.hpp"
 
+#include <boost/foreach.hpp>
+
 
 LemmatizerFacade::LemmatizerFacade() throw(ConcordiaException) {
     _lemmatizersMap = boost::ptr_map<std::string,SocketLemmatizer>();
@@ -25,6 +27,29 @@ std::string LemmatizerFacade::lemmatizeSentence(std::string languageCode, std::s
         return it->second->lemmatizeSentence(languageCode, sentence);
     } else {
         throw ConcordiaException("lemmatizer for language: "+languageCode+" not found.");
+    }
+
+}
+
+std::string LemmatizerFacade::lemmatizeIfNeeded(std::string pattern, int tmId) {
+    std::pair<bool, std::string> tmInfo = _tmDAO.getTmInfo(tmId);
+    if (tmInfo.first) {
+        return lemmatizeSentence(tmInfo.second, pattern);
+    } else {
+        return pattern;
+    }
+}
+
+std::vector<std::string> LemmatizerFacade::lemmatizeSentencesIfNeeded(std::vector<std::string> patterns, int tmId) {
+    std::pair<bool, std::string> tmInfo = _tmDAO.getTmInfo(tmId);
+    if (tmInfo.first) {
+        std::vector<std::string> result;
+        BOOST_FOREACH(std::string & pattern, patterns) {
+            result.push_back(lemmatizeSentence(tmInfo.second, pattern));
+        }
+        return result;
+    } else {
+        return patterns;
     }
 
 }

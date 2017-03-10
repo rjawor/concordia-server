@@ -3,7 +3,8 @@ CREATE TABLE tm (
     id SERIAL PRIMARY KEY,
     source_lang_id integer,
     target_lang_id integer,
-    name varchar(40)
+    name varchar(40),
+    lemmatized bool DEFAULT false
 );
 
 DROP TABLE IF EXISTS language;

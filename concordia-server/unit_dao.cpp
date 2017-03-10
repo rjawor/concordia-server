@@ -22,7 +22,7 @@ int UnitDAO::addSentence(
      const TokenizedSentence & sourceSentence,
      const std::string & targetSentence,
      const int tmId) {
-    
+
     DBconnection connection;
     connection.startTransaction();
     int newId = _addSingleSentence(connection, sourceSentence, targetSentence, tmId);
@@ -38,7 +38,7 @@ std::vector<SUFFIX_MARKER_TYPE> UnitDAO::addSentences(
     std::vector<SUFFIX_MARKER_TYPE> newIds;
     connection.startTransaction();
     int index = 0;
-    BOOST_FOREACH(const TokenizedSentence & sourceSentence, sourceSentences) {    
+    BOOST_FOREACH(const TokenizedSentence & sourceSentence, sourceSentences) {
         newIds.push_back(_addSingleSentence(connection, sourceSentence, targetSentences.at(index), tmId));
         index++;
     }
@@ -50,7 +50,7 @@ std::vector<SUFFIX_MARKER_TYPE> UnitDAO::addAlignedSentences(
          const std::vector<TokenizedSentence> & sourceSentences,
          const std::vector<TokenizedSentence> & targetSentences,
          const std::vector<std::vector<std::vector<int> > > & allAlignments,
-         const int tmId) {
+         const int tmId) throw (ConcordiaException) {
 
     DBconnection connection;
     std::vector<SUFFIX_MARKER_TYPE> newIds;
@@ -59,9 +59,9 @@ std::vector<SUFFIX_MARKER_TYPE> UnitDAO::addAlignedSentences(
     for (int i=0; i< sourceSentences.size(); i++) {
         newIds.push_back(_addAlignedUnit(connection, sourceSentences.at(i), targetSentences.at(i), allAlignments.at(i), tmId));
     }
-    
+
     connection.endTransaction();
-    return newIds;      
+    return newIds;
 }
 
 std::vector<SimpleSearchResult> UnitDAO::getSearchResults(const std::vector<MatchedPatternFragment> & fragments) {
@@ -83,7 +83,7 @@ void UnitDAO::_getResultsFromFragments(
                               std::vector<SimpleSearchResult> & results,
                               const std::vector<MatchedPatternFragment> & fragments,
                               const TokenizedSentence & tokenizedPattern) {
-    
+
     DBconnection connection;
     connection.startTransaction();
 
@@ -95,9 +95,9 @@ void UnitDAO::_getResultsFromFragments(
             matchedPatternStart = tokenizedPattern.getTokens().at(fragment.getStart()).getStart();
             matchedPatternEnd = tokenizedPattern.getTokens().at(fragment.getStart()+fragment.getMatchedLength() - 1).getEnd();
         }
-        
-        
-        
+
+
+
         std::string query = "SELECT id, source_segment, target_segment, source_tokens[$1::integer], source_tokens[$2::integer] FROM unit WHERE id = $3::integer;";
         std::vector<QueryParam*> params;
         params.push_back(new IntParam(2*fragment.getExampleOffset()+1));
@@ -116,7 +116,7 @@ void UnitDAO::_getResultsFromFragments(
             delete param;
         }
 
-        // now add all target fragments matched with this fragment        
+        // now add all target fragments matched with this fragment
         std::string targetQuery = "SELECT target_token_pos, target_tokens[2*target_token_pos+1], target_tokens[2*target_token_pos+2] FROM unit INNER JOIN alignment ON alignment.unit_id = unit.id AND unit.id = $1::integer AND source_token_pos between $2::integer and $3::integer ORDER BY target_token_pos";
         std::vector<QueryParam*> targetParams;
         targetParams.push_back(new IntParam(fragment.getExampleId()));
@@ -127,12 +127,12 @@ void UnitDAO::_getResultsFromFragments(
         int prevPos = -2;
         int currStart = -1;
         int currEnd = -1;
-        
+
         for (int i=0;i<connection.getRowCount(targetResult);i++) {
             int targetPos = connection.getIntValue(targetResult, i, 0);
             int targetStart = connection.getIntValue(targetResult, i, 1);
             int targetEnd = connection.getIntValue(targetResult, i, 2);
-            
+
             if (prevPos < targetPos - 1) { // beginning of detached fragment
                 // check if there is a fragment to end
                 if (currStart >= 0) {
@@ -141,7 +141,7 @@ void UnitDAO::_getResultsFromFragments(
                 currStart = targetStart;
             }
 
-            currEnd = targetEnd;            
+            currEnd = targetEnd;
             prevPos = targetPos;
         }
 
@@ -154,9 +154,9 @@ void UnitDAO::_getResultsFromFragments(
         BOOST_FOREACH (QueryParam * param, targetParams) {
             delete param;
         }
-        
+
         results.push_back(ssResult);
-    }    
+    }
     connection.endTransaction();
 }
 
@@ -181,25 +181,29 @@ int UnitDAO::_addSingleSentence(
     params.push_back(new StringParam(targetSentence));
     params.push_back(new IntParam(tmId));
     params.push_back(new IntArrayParam(_getTokenPositions(sourceSentence)));
-    
+
     PGresult * result = connection.execute(query, params);
     int newId = connection.getIntValue(result, 0, 0);
     connection.clearResult(result);
     BOOST_FOREACH (QueryParam * param, params) {
         delete param;
     }
-    
+
     return newId;
 }
 
 
-int UnitDAO::_addAlignedUnit(
+int UnitDAO::_addAlignedUnit (
      DBconnection & connection,
      const TokenizedSentence & sourceSentence,
      const TokenizedSentence & targetSentence,
      const std::vector<std::vector<int> > & alignments,
-     const int tmId) {
-        
+     const int tmId) throw(ConcordiaException) {
+
+    if (sourceSentence.getTokens().size() != alignments.size()) {
+        throw ConcordiaException("The size of source sentence does not match the size of alignments array.");
+    }
+
     std::string query = "INSERT INTO unit(source_segment, target_segment, tm_id, source_tokens, target_tokens) values($1::text,$2::text,$3::integer,$4,$5) RETURNING id";
     std::vector<QueryParam*> params;
     params.push_back(new StringParam(sourceSentence.getSentence()));
@@ -207,14 +211,14 @@ int UnitDAO::_addAlignedUnit(
     params.push_back(new IntParam(tmId));
     params.push_back(new IntArrayParam(_getTokenPositions(sourceSentence)));
     params.push_back(new IntArrayParam(_getTokenPositions(targetSentence)));
-    
+
     PGresult * result = connection.execute(query, params);
     int newId = connection.getIntValue(result, 0, 0);
     connection.clearResult(result);
     BOOST_FOREACH (QueryParam * param, params) {
         delete param;
     }
-    
+
     // add alignments
     bool nonEmpty = false;
     std::stringstream alignmentsQuery;
@@ -230,10 +234,8 @@ int UnitDAO::_addAlignedUnit(
         query = alignmentsQuery.str();
         query = query.substr(0, query.length()-1);
         PGresult * result = connection.execute(query);
-        connection.clearResult(result);    
+        connection.clearResult(result);
     }
 
     return newId;
 }
-
-

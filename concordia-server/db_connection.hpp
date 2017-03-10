@@ -31,6 +31,8 @@ public:
 
     int getIntValue(PGresult * result, int row, int col)  throw (ConcordiaException);
 
+    bool getBoolValue(PGresult * result, int row, int col)  throw (ConcordiaException);
+
     std::string getStringValue(PGresult * result, int row, int col) throw (ConcordiaException);
 
     int getRowCount(PGresult * result)  throw (ConcordiaException);

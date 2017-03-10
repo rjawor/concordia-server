@@ -16,7 +16,8 @@ data = {
     'operation': 'addTm',
     'sourceLangId':int(sys.argv[1]),
     'targetLangId':int(sys.argv[2]),
-    'name':sys.argv[3]
+    'name':sys.argv[3],
+    'tmLemmatized':bool(int(sys.argv[4]))
 }
 
 req = urllib2.Request(address)

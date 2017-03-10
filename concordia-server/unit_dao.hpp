@@ -9,6 +9,7 @@
 #include <concordia/substring_occurence.hpp>
 #include <concordia/matched_pattern_fragment.hpp>
 #include <concordia/concordia_search_result.hpp>
+#include <concordia/concordia_exception.hpp>
 #include <boost/shared_ptr.hpp>
 
 #include "simple_search_result.hpp"
@@ -33,13 +34,13 @@ public:
              const std::vector<TokenizedSentence> & sourceSentences,
              const std::vector<std::string> & targetSentences,
              const int tmId);
-             
+
     std::vector<SUFFIX_MARKER_TYPE> addAlignedSentences(
              const std::vector<TokenizedSentence> & sourceSentences,
              const std::vector<TokenizedSentence> & targetSentences,
              const std::vector<std::vector<std::vector<int> > > & allAlignments,
-             const int tmId);
-    
+             const int tmId) throw (ConcordiaException);
+
     std::vector<SimpleSearchResult> getSearchResults(const std::vector<MatchedPatternFragment> & fragments);
 
     CompleteConcordiaSearchResult getConcordiaResult(boost::shared_ptr<ConcordiaSearchResult> rawConcordiaResult);
@@ -50,7 +51,7 @@ private:
                                   const TokenizedSentence & tokenizedPattern);
 
     std::vector<int> _getTokenPositions(const TokenizedSentence & ts);
-    
+
     int _addSingleSentence(
          DBconnection & connection,
          const TokenizedSentence & sourceSentence,
@@ -62,7 +63,7 @@ private:
          const TokenizedSentence & sourceSentence,
          const TokenizedSentence & targetSentence,
          const std::vector<std::vector<int> > & alignments,
-         const int tmId);
+         const int tmId) throw(ConcordiaException);
 };
 
 #endif

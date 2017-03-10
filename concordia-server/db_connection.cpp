@@ -17,7 +17,7 @@ DBconnection::DBconnection() throw(ConcordiaException) {
         ss << "Connection string: " << connectionInfo;
         throw ConcordiaException(ss.str());
     }
-    
+
 }
 
 DBconnection::~DBconnection() {
@@ -90,8 +90,8 @@ PGresult * DBconnection::execute(std::string query,
             paramFormats[index] = param->isBinary();
             index++;
         }
-        
-        
+
+
         PGresult * result = PQexecParams(_connection,
                                          query.c_str(),
                                          params.size(),
@@ -129,7 +129,18 @@ int DBconnection::getIntValue(PGresult * result, int row, int col) throw (Concor
     } catch (std::exception & e) {
         std::stringstream ss;
         ss << "Error getting int value. Message: " << e.what();
-        throw ConcordiaException(ss.str());    
+        throw ConcordiaException(ss.str());
+    }
+}
+
+bool DBconnection::getBoolValue(PGresult * result, int row, int col) throw (ConcordiaException) {
+    try {
+        char * valueStr = PQgetvalue(result,row,col);
+        return std::string(valueStr) == "t";
+    } catch (std::exception & e) {
+        std::stringstream ss;
+        ss << "Error getting bool value. Message: " << e.what();
+        throw ConcordiaException(ss.str());
     }
 }
 
@@ -150,7 +161,6 @@ int DBconnection::getRowCount(PGresult * result) throw (ConcordiaException) {
     } catch (std::exception & e) {
         std::stringstream ss;
         ss << "Error getting int value. Message: " << e.what();
-        throw ConcordiaException(ss.str());    
+        throw ConcordiaException(ss.str());
     }
 }
-

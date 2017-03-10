@@ -10,6 +10,8 @@
 
 
 #include "unit_dao.hpp"
+#include "lemmatizer_facade.hpp"
+
 
 #include "rapidjson/writer.h"
 
@@ -17,7 +19,8 @@ class IndexController {
 public:
     /*! Constructor.
     */
-    explicit IndexController(boost::shared_ptr<boost::ptr_map<int,Concordia> >concordiasMap)
+    explicit IndexController(boost::shared_ptr<boost::ptr_map<int,Concordia> >concordiasMap,
+                             boost::shared_ptr<LemmatizerFacade> lemmatizerFacade)
                                                                    throw(ConcordiaException);
     /*! Destructor.
     */
@@ -38,9 +41,16 @@ public:
                              const std::vector<std::string> & targetSentences,
                              const int tmId);
 
+    void addAlignedLemmatizedSentences(
+                          rapidjson::Writer<rapidjson::StringBuffer> & jsonWriter,
+                          const std::vector<std::string> & sourceSentences,
+                          const std::vector<std::string> & targetSentences,
+                          const std::vector<std::string> & alignmentStrings,
+                          const int tmId);
+
     void refreshIndexFromRAM(rapidjson::Writer<rapidjson::StringBuffer> & jsonWriter,
                              const int tmId);
-    
+
 private:
     void _getSourceSentencesAndAlignments(
                             std::vector<std::string> & sourceSentences,
@@ -48,7 +58,9 @@ private:
                             const std::vector<std::string> & rawSourceSentences);
 
     boost::shared_ptr<boost::ptr_map<int,Concordia> > _concordiasMap;
-    
+
+    boost::shared_ptr<LemmatizerFacade> _lemmatizerFacade;
+
     UnitDAO _unitDAO;
 };
 

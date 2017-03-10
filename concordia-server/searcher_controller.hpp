@@ -10,6 +10,7 @@
 
 #include "unit_dao.hpp"
 #include "simple_search_result.hpp"
+#include "lemmatizer_facade.hpp"
 #include "rapidjson/writer.h"
 
 
@@ -17,8 +18,9 @@ class SearcherController {
 public:
     /*! Constructor.
     */
-    explicit SearcherController(boost::shared_ptr<boost::ptr_map<int,Concordia> >concordiasMap)
-                                                                      throw(ConcordiaException);
+    explicit SearcherController(boost::shared_ptr<boost::ptr_map<int,Concordia> > concordiasMap,
+                                boost::shared_ptr<LemmatizerFacade> LemmatizerFacade)
+                                                            throw(ConcordiaException);
     /*! Destructor.
     */
     virtual ~SearcherController();
@@ -40,7 +42,9 @@ private:
     std::string _substrUTF8(std::string source, int start, int length);
 
     boost::shared_ptr<boost::ptr_map<int,Concordia> > _concordiasMap;
-    
+
+    boost::shared_ptr<LemmatizerFacade> _lemmatizerFacade;
+
     UnitDAO _unitDAO;
 };
 

@@ -5,6 +5,7 @@
 #include <iostream>
 #include <fstream>
 #include <ctime>
+#include <utility>
 
 #include <concordia/interval.hpp>
 
@@ -19,16 +20,17 @@
 ConcordiaServer::ConcordiaServer(const std::string & configFilePath)
                                          throw(ConcordiaException) :
                                          _configFilePath(configFilePath) {
+
     std::vector<int> tmIds = _tmDAO.getTmIds();
     _concordiasMap = boost::shared_ptr<boost::ptr_map<int,Concordia> >(new boost::ptr_map<int,Concordia>());
 
     BOOST_FOREACH(int & tmId, tmIds) {
         _addTm(tmId);
     }
-    _indexController = boost::shared_ptr<IndexController> (new IndexController(_concordiasMap));
-    _searcherController = boost::shared_ptr<SearcherController> (new SearcherController(_concordiasMap));
-
     _lemmatizerFacade = boost::shared_ptr<LemmatizerFacade> (new LemmatizerFacade());
+
+    _indexController = boost::shared_ptr<IndexController> (new IndexController(_concordiasMap, _lemmatizerFacade));
+    _searcherController = boost::shared_ptr<SearcherController> (new SearcherController(_concordiasMap, _lemmatizerFacade));
 }
 
 ConcordiaServer::~ConcordiaServer() {
@@ -95,6 +97,27 @@ std::string ConcordiaServer::handleRequest(std::string & requestString) {
                     }
                 }
                 _indexController->addAlignedSentences(jsonWriter, sourceSentences, targetSentences, tmId);
+            } else if (operation == ADD_ALIGNED_LEMMATIZED_SENTENCES_OP) {
+                std::vector<std::string> sourceSentences;
+                std::vector<std::string> targetSentences;
+                std::vector<std::string> alignmentStrings;
+                int tmId = d[TM_ID_PARAM].GetInt();
+                // loading data from json
+                const rapidjson::Value & sentencesArray = d[EXAMPLES_PARAM];
+                Logger::log("addAlignedLemmatizedSentences");
+                Logger::logInt("lemmatized sentences to add", sentencesArray.Size());
+                Logger::logInt("tm id", tmId);
+                for (rapidjson::SizeType i = 0; i < sentencesArray.Size(); i++) {
+                    if (sentencesArray[i].Size() != 3) {
+                        JsonGenerator::signalError(jsonWriter, "sentence should be an array of 3 elements");
+                        break;
+                    } else {
+                        sourceSentences.push_back(sentencesArray[i][0].GetString());
+                        targetSentences.push_back(sentencesArray[i][1].GetString());
+                        alignmentStrings.push_back(sentencesArray[i][2].GetString());
+                    }
+                }
+                _indexController->addAlignedLemmatizedSentences(jsonWriter, sourceSentences, targetSentences, alignmentStrings, tmId);
             } else if (operation == "lemmatize") {
                 std::string sentence = _getStringParameter(d, "sentence");
                 std::string languageCode = _getStringParameter(d, "languageCode");
@@ -130,7 +153,8 @@ std::string ConcordiaServer::handleRequest(std::string & requestString) {
                 int sourceLangId = _getIntParameter(d, SOURCE_LANG_PARAM);
                 int targetLangId = _getIntParameter(d, TARGET_LANG_PARAM);
                 std::string name = _getStringParameter(d, NAME_PARAM);
-                int newId = _tmDAO.addTm(sourceLangId, targetLangId, name);
+                bool lemmatized = _getBoolParameter(d, TM_LEMMATIZED_PARAM);
+                int newId = _tmDAO.addTm(sourceLangId, targetLangId, name, lemmatized);
                 _addTm(newId);
 
                 jsonWriter.StartObject();
@@ -173,6 +197,17 @@ int ConcordiaServer::_getIntParameter(rapidjson::Document & d, const char * name
     rapidjson::Value::ConstMemberIterator itr = d.FindMember(name);
     if (itr != d.MemberEnd()) {
         int value = itr->value.GetInt();
+        return value;
+    } else {
+        throw ConcordiaException("missing parameter: " + std::string(name));
+    }
+}
+
+int ConcordiaServer::_getBoolParameter(rapidjson::Document & d, const char * name)
+                                                       throw (ConcordiaException) {
+    rapidjson::Value::ConstMemberIterator itr = d.FindMember(name);
+    if (itr != d.MemberEnd()) {
+        bool value = itr->value.GetBool();
         return value;
     } else {
         throw ConcordiaException("missing parameter: " + std::string(name));

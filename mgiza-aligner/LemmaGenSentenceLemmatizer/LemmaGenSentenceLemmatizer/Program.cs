@@ -12,12 +12,20 @@ namespace LemmaGenSentenceLemmatizer
         {
             if (args.Length == 1)
             {
-                SentenceLemmatizer lemmatizer = new SentenceLemmatizer(args[0]);
-                string line = Console.ReadLine();
-                while (!string.IsNullOrEmpty(line))
+                try
                 {
-                    Console.WriteLine(lemmatizer.lemmatizeSentence(line));
-                    line = Console.ReadLine();
+                    SentenceLemmatizer lemmatizer = new SentenceLemmatizer(args[0]);
+                    string line = Console.ReadLine();
+                    while (line != null)
+                    {
+                        Console.WriteLine(lemmatizer.lemmatizeSentence(line));
+                        line = Console.ReadLine();
+                    }
+
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine("Exception occurred: " + ex.Message);
                 }
 
 

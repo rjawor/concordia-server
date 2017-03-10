@@ -38,6 +38,8 @@ private:
 
     int _getIntParameter(rapidjson::Document & d, const char * name) throw (ConcordiaException);
 
+    int _getBoolParameter(rapidjson::Document & d, const char * name) throw (ConcordiaException);
+
     void _addTm(int tmId);
 
     std::string _configFilePath;

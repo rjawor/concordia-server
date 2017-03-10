@@ -21,10 +21,15 @@ def file_len(fname):
             pass
     return i + 1
 
-def add_data(data):
+def add_examples(examplesData):
     req = urllib2.Request(address)
     req.add_header('Content-Type', 'application/json')
-    json.loads(urllib2.urlopen(req, json.dumps(data)).read())
+    response = json.loads(urllib2.urlopen(req, json.dumps(examplesData)).read())
+    if response['status'] == 'error':
+        raise Exception(response['message'])
+
+if len(sys.argv) != 7:
+    raise Exception("wrong number of arguments")
 
 name = sys.argv[1]
 sourceFile = sys.argv[2]
@@ -40,13 +45,14 @@ if (file_len(alignmentsFile) != 3*file_len(sourceFile)):
     raise Exception("alignments file is not exactly 3 times longer than source and target")
 
 
-totalLines = file_len(sourceFile)
+totalExamples = file_len(sourceFile)
 
 data = {
     'operation': 'addTm',
     'sourceLangId':sourceLangId,
     'targetLangId':targetLangId,
-    'name':name
+    'name':name,
+    'tmLemmatized':True
 }
 
 req = urllib2.Request(address)
@@ -60,35 +66,35 @@ data = {
     'tmId':tmId
 }
 
-sentences = []
+examples = []
 start = time.time()
-with open(sourceFile) as sourceLines, open(targetFile) as targetLines, open(alignmentsFile) as alignmentsLines:
+with open(sourceFile) as sf, open(targetFile) as tf, open(alignmentsFile) as af:
+    for lineNumber in range(totalExamples):
+        sourceSentence = sf.readline().strip()
+        targetSentence = tf.readline().strip()
 
-    lineNumber = 0
-    for line in sourceLines:
-        line = line.strip()
-        if lineNumber % 3 == 1:
-            currSentence.append(line)
-        elif lineNumber % 3 == 2:
-            currSentence.append(line)
-            currSentence.reverse()
-            sentences.append(currSentence)
-            currSentence = []
-            if len(sentences) >= BUFFER_SIZE:
-                data['sentences'] = sentences
-                add_data(data)
-                mark = time.time()
-                print "Added %d of %d sentences. Time elapsed: %.4f s, current speed: %.4f sentences/second" % ( (lineNumber+1)/3, totalLines/3, mark-start, (lineNumber+1)/(3*(mark-start)))
-                sentences = []
-        lineNumber += 1
+        # skip to lines of the alignments file, these are lemmatized and we need the raw sentences from the source and target files.
+        af.readline()
+        af.readline()
+
+        alignmentString = af.readline().strip()
+
+        examples.append([sourceSentence, targetSentence, alignmentString])
+
+        if len(examples) >= BUFFER_SIZE:
+            data['examples'] = examples
+            add_examples(data)
+            mark = time.time()
+            print "Added %d of %d lemmatized examples. Time elapsed: %.4f s, current speed: %.4f examples/second" % ( (lineNumber+1), totalExamples, mark-start, (lineNumber+1)/(mark-start))
+            examples = []
 
 
-if len(sentences) > 0:
-    data['sentences'] = sentences
-    add_data(data)
+if len(examples) > 0:
+    data['examples'] = examples
+    add_examples(data)
 
 end = time.time()
-print "Added all %d sentences. Time elapsed: %.4f s, overall speed: %.4f sentences/second" % ((lineNumber+1)/3, end-start, (lineNumber+1)/(3*(end-start)))
+print "Added all %d lemmatized sentences. Time elapsed: %.4f s, overall speed: %.4f sentences/second" % ((lineNumber+1), end-start, (lineNumber+1)/(end-start))
 
 print "Generating index..."
 start = time.time()

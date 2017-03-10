@@ -1,10 +1,22 @@
 SRC_LANG=en
 TRG_LANG=pl
-CORPUS_NAME=europarl
+CORPUS_NAME=europarljrc
 
 all: corpora/$(CORPUS_NAME)/giza.cfg corpora/$(CORPUS_NAME)/src.low_trg.low.cooc corpora/$(CORPUS_NAME)/src.low_trg.low.snt corpora/$(CORPUS_NAME)/src.low.vcb corpora/$(CORPUS_NAME)/trg.low.vcb
 	mgiza/mgizapp/bin/mgiza corpora/$(CORPUS_NAME)/giza.cfg
-	cat corpora/$(CORPUS_NAME)/aligned*part* > corpora/$(CORPUS_NAME)/aligned.txt
+	cat corpora/$(CORPUS_NAME)/aligned*part* | ./sortGizaAlignments.py > corpora/$(CORPUS_NAME)/aligned.txt
+
+clean-intermediate-files:
+	rm -f corpora/$(CORPUS_NAME)/*.lem
+	rm -f corpora/$(CORPUS_NAME)/*.low
+	rm -f corpora/$(CORPUS_NAME)/*.classes
+	rm -f corpora/$(CORPUS_NAME)/*.classes.cats
+	rm -f corpora/$(CORPUS_NAME)/*.vcb
+	rm -f corpora/$(CORPUS_NAME)/*.snt
+	rm -f corpora/$(CORPUS_NAME)/*.cooc
+	rm -f corpora/$(CORPUS_NAME)/aligned*part*
+	rm -f corpora/$(CORPUS_NAME)/giza.cfg
+
 
 clean:
 	rm -f corpora/$(CORPUS_NAME)/*.tok
