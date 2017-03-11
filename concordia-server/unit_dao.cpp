@@ -1,6 +1,7 @@
 #include "unit_dao.hpp"
 
-#include<sstream>
+#include <sstream>
+#include <string>
 
 #include "query_param.hpp"
 #include "string_param.hpp"
@@ -200,8 +201,18 @@ int UnitDAO::_addAlignedUnit (
      const std::vector<std::vector<int> > & alignments,
      const int tmId) throw(ConcordiaException) {
 
-    if (sourceSentence.getTokens().size() != alignments.size()) {
-        throw ConcordiaException("The size of source sentence does not match the size of alignments array.");
+    if (sourceSentence.getTokens().size() < alignments.size()) {
+        // Here we check if the source sentence, taken from src.tok,
+        // is shorter than alignments array.
+        std::stringstream ss;
+        ss << "The size of source sentence is lower than the size of alignments array. Source sentence: " << sourceSentence.getSentence() << ", alignments size:" << alignments.size();
+        throw ConcordiaException(ss.str());
+    } else if (sourceSentence.getTokens().size() > alignments.size()) {
+        // On the other hand, alignments array can be shorter than the source tokenized
+        // sentence, because giza can truncate the sentence. In this case, we have to
+        // truncate the source sentence too.
+
+        
     }
 
     std::string query = "INSERT INTO unit(source_segment, target_segment, tm_id, source_tokens, target_tokens) values($1::text,$2::text,$3::integer,$4,$5) RETURNING id";

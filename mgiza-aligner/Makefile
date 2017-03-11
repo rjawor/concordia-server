@@ -1,8 +1,10 @@
 SRC_LANG=en
 TRG_LANG=pl
-CORPUS_NAME=europarljrc
+CORPUS_NAME=europarl_sample
 
-all: corpora/$(CORPUS_NAME)/giza.cfg corpora/$(CORPUS_NAME)/src.low_trg.low.cooc corpora/$(CORPUS_NAME)/src.low_trg.low.snt corpora/$(CORPUS_NAME)/src.low.vcb corpora/$(CORPUS_NAME)/trg.low.vcb
+all: corpora/$(CORPUS_NAME)/aligned.txt corpora/$(CORPUS_NAME)/src.tok corpora/$(CORPUS_NAME)/trg.tok
+
+corpora/$(CORPUS_NAME)/aligned.txt: corpora/$(CORPUS_NAME)/giza.cfg corpora/$(CORPUS_NAME)/src.low_trg.low.cooc corpora/$(CORPUS_NAME)/src.low_trg.low.snt corpora/$(CORPUS_NAME)/src.low.vcb corpora/$(CORPUS_NAME)/trg.low.vcb
 	mgiza/mgizapp/bin/mgiza corpora/$(CORPUS_NAME)/giza.cfg
 	cat corpora/$(CORPUS_NAME)/aligned*part* | ./sortGizaAlignments.py > corpora/$(CORPUS_NAME)/aligned.txt
 
@@ -52,8 +54,11 @@ corpora/$(CORPUS_NAME)/trg.lem: corpora/$(CORPUS_NAME)/trg.tok
 corpora/$(CORPUS_NAME)/src.lem: corpora/$(CORPUS_NAME)/src.tok
 	mono LemmaGenSentenceLemmatizer/LemmaGenSentenceLemmatizer/bin/Debug/LemmaGenSentenceLemmatizer.exe $(SRC_LANG) < $< > $@
 
-corpora/$(CORPUS_NAME)/src.tok: corpora/$(CORPUS_NAME)/src.txt
-	europarl/tools/tokenizer.perl -l $(SRC_LANG) < $< > $@
-
-corpora/$(CORPUS_NAME)/trg.tok: corpora/$(CORPUS_NAME)/trg.txt
-	europarl/tools/tokenizer.perl -l $(TRG_LANG) < $< > $@
+corpora/$(CORPUS_NAME)/src.tok corpora/$(CORPUS_NAME)/trg.tok: corpora/$(CORPUS_NAME)/src.txt corpora/$(CORPUS_NAME)/trg.txt
+	europarl/tools/tokenizer.perl -l $(SRC_LANG) < corpora/$(CORPUS_NAME)/src.txt > corpora/$(CORPUS_NAME)/$(CORPUS_NAME).$(SRC_LANG)
+	europarl/tools/tokenizer.perl -l $(TRG_LANG) < corpora/$(CORPUS_NAME)/trg.txt > corpora/$(CORPUS_NAME)/$(CORPUS_NAME).$(TRG_LANG)
+	./clean-corpus-n.perl corpora/$(CORPUS_NAME)/$(CORPUS_NAME) $(TRG_LANG) $(SRC_LANG) corpora/$(CORPUS_NAME)/$(CORPUS_NAME)_clean 0 100
+	mv corpora/$(CORPUS_NAME)/$(CORPUS_NAME)_clean.$(SRC_LANG) corpora/$(CORPUS_NAME)/src.tok
+	mv corpora/$(CORPUS_NAME)/$(CORPUS_NAME)_clean.$(TRG_LANG) corpora/$(CORPUS_NAME)/trg.tok
+	rm corpora/$(CORPUS_NAME)/$(CORPUS_NAME).$(SRC_LANG)
+	rm corpora/$(CORPUS_NAME)/$(CORPUS_NAME).$(TRG_LANG)

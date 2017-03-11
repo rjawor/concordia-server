@@ -1,6 +1,6 @@
 #!/bin/sh
 
-CORPUS_NAME="europarl_sample"
+CORPUS_NAME="europarljrc"
 SRC_LANG_ID=2
 TRG_LANG_ID=1
 
