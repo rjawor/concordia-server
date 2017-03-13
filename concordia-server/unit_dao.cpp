@@ -80,6 +80,15 @@ CompleteConcordiaSearchResult UnitDAO::getConcordiaResult(boost::shared_ptr<Conc
     return result;
 }
 
+CompleteConcordiaSearchResult UnitDAO::getConcordiaResult(boost::shared_ptr<ConcordiaSearchResult> rawConcordiaResult, TokenizedSentence originalPattern) {
+    CompleteConcordiaSearchResult result(rawConcordiaResult->getBestOverlayScore());
+    _getResultsFromFragments(result.getBestOverlay(),
+                             rawConcordiaResult->getBestOverlay(),
+                             originalPattern);
+    return result;
+}
+
+
 void UnitDAO::_getResultsFromFragments(
                               std::vector<SimpleSearchResult> & results,
                               const std::vector<MatchedPatternFragment> & fragments,
@@ -212,7 +221,7 @@ int UnitDAO::_addAlignedUnit (
         // sentence, because giza can truncate the sentence. In this case, we have to
         // truncate the source sentence too.
 
-        
+
     }
 
     std::string query = "INSERT INTO unit(source_segment, target_segment, tm_id, source_tokens, target_tokens) values($1::text,$2::text,$3::integer,$4,$5) RETURNING id";

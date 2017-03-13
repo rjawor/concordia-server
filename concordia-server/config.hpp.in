@@ -23,6 +23,7 @@
 #define TARGET_LANG_PARAM "targetLangId"
 #define NAME_PARAM "name"
 #define INTERVALS_PARAM "intervals"
+#define GET_TMS_INFO_PARAM "getTmsInfo"
 
 #define ADD_SENTENCE_OP "addSentence"
 #define ADD_SENTENCES_OP "addSentences"

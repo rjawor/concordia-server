@@ -32,6 +32,30 @@ std::vector<int> TmDAO::getTmIds() {
     return result;
 }
 
+std::vector<Tm> TmDAO::getTms() {
+    std::vector<Tm> result;
+    DBconnection connection;
+    connection.startTransaction();
+    std::string query = "select tm.id, tm.name, src_lang.code as src_code, trg_lang.code as trg_code from tm inner join language as src_lang on src_lang.id = tm.source_lang_id inner join language as trg_lang on trg_lang.id = tm.target_lang_id;";
+    PGresult * dbResult = connection.execute(query);
+    for (int i=0;i<connection.getRowCount(dbResult);i++) {
+        int id = connection.getIntValue(dbResult, i, 0);
+        std::string name = connection.getStringValue(dbResult, i, 1);
+        std::string sourceLanguageCode = connection.getStringValue(dbResult, i, 2);
+        std::string targetLanguageCode = connection.getStringValue(dbResult, i, 3);
+        result.push_back(Tm(id, name, sourceLanguageCode, targetLanguageCode));
+    }
+    connection.clearResult(dbResult);
+    connection.endTransaction();
+
+    return result;
+
+}
+
+
+
+
+
 int TmDAO::addTm(const int sourceLangId, const int targetLangId, const std::string name) {
     addTm(sourceLangId, targetLangId, name, false);
 }

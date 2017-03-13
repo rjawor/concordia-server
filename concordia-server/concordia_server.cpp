@@ -12,6 +12,7 @@
 #include "json_generator.hpp"
 #include "config.hpp"
 #include "logger.hpp"
+#include "tm.hpp"
 #include "rapidjson/rapidjson.h"
 #include <boost/foreach.hpp>
 #include <boost/ptr_container/ptr_map.hpp>
@@ -118,6 +119,30 @@ std::string ConcordiaServer::handleRequest(std::string & requestString) {
                     }
                 }
                 _indexController->addAlignedLemmatizedSentences(jsonWriter, sourceSentences, targetSentences, alignmentStrings, tmId);
+            } else if (operation == GET_TMS_INFO_PARAM) {
+                std::vector<Tm> tms = _tmDAO.getTms();
+
+                jsonWriter.StartObject();
+                jsonWriter.String("status");
+                jsonWriter.String("success");
+                jsonWriter.String("tms");
+                jsonWriter.StartArray();
+                BOOST_FOREACH(Tm & tm, tms) {
+                    jsonWriter.StartObject();
+                    jsonWriter.String("id");
+                    jsonWriter.Int(tm.getId());
+                    jsonWriter.String("name");
+                    jsonWriter.String(tm.getName().c_str());
+                    jsonWriter.String("sourceLanguageCode");
+                    jsonWriter.String(tm.getSourceLanguageCode().c_str());
+                    jsonWriter.String("targetLanguageCode");
+                    jsonWriter.String(tm.getTargetLanguageCode().c_str());
+                    jsonWriter.EndObject();
+                }
+                jsonWriter.EndArray();
+                jsonWriter.EndObject();
+
+
             } else if (operation == "lemmatize") {
                 std::string sentence = _getStringParameter(d, "sentence");
                 std::string languageCode = _getStringParameter(d, "languageCode");

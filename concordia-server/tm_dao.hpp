@@ -7,6 +7,7 @@
 
 #include <concordia/common/config.hpp>
 #include "db_connection.hpp"
+#include "tm.hpp"
 
 class TmDAO {
 public:
@@ -22,6 +23,8 @@ public:
     int addTm(const int sourceLangId, const int targetLangId, const std::string name, bool lemmatized);
 
     std::vector<int> getTmIds();
+
+    std::vector<Tm> getTms();
 
     std::pair<bool, std::string> getTmInfo(int tmId);
 

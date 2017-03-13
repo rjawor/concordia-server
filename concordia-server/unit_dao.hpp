@@ -45,6 +45,8 @@ public:
 
     CompleteConcordiaSearchResult getConcordiaResult(boost::shared_ptr<ConcordiaSearchResult> rawConcordiaResult);
 
+    CompleteConcordiaSearchResult getConcordiaResult(boost::shared_ptr<ConcordiaSearchResult> rawConcordiaResult, TokenizedSentence originalPattern);
+
 private:
     void _getResultsFromFragments(std::vector<SimpleSearchResult> & results,
                                   const std::vector<MatchedPatternFragment> & fragments,

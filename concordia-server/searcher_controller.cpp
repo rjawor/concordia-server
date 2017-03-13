@@ -115,8 +115,9 @@ void SearcherController::concordiaSearch(rapidjson::Writer<rapidjson::StringBuff
 
     boost::ptr_map<int,Concordia>::iterator it = _concordiasMap->find(tmId);
     if (it != _concordiasMap->end()) {
-        pattern = _lemmatizerFacade->lemmatizeIfNeeded(pattern, tmId);
-        CompleteConcordiaSearchResult result = _unitDAO.getConcordiaResult(it->second->concordiaSearch(pattern));
+        std::string lemmatizedPattern = _lemmatizerFacade->lemmatizeIfNeeded(pattern, tmId);
+        TokenizedSentence originalPattern = it->second->tokenize(pattern, true, false);
+        CompleteConcordiaSearchResult result = _unitDAO.getConcordiaResult(it->second->concordiaSearch(lemmatizedPattern), originalPattern);
 
         jsonWriter.StartObject();
         jsonWriter.String("status");

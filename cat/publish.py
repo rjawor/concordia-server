@@ -43,6 +43,12 @@ with open('concordia_search.php_pattern', 'r') as search_pattern_file, open(root
         line = re.sub('@concordia_port@', concordia_port, line)
         search_file.write(line)
 
+with open('tm_info.php_pattern', 'r') as tm_info_pattern_file, open(root_dir+'/tm_info.php', 'w') as tm_info_file:
+    for line in tm_info_pattern_file:
+        line = re.sub('@concordia_host@', concordia_host, line)
+        line = re.sub('@concordia_port@', concordia_port, line)
+        tm_info_file.write(line)
+
 
 versions_dir = 'versions_enabled'
 

@@ -1,0 +1,25 @@
+<?php
+
+$url = 'http://@concordia_host@:@concordia_port@';
+$request = array("operation" => "getTmsInfo");
+
+// use key 'http' even if you send the request to https://...
+$options = array(
+    'http' => array(
+        'header'  => "Content-type: application/x-www-form-urlencoded\r\n",
+        'method'  => 'POST',
+        'content' => json_encode($request),
+    ),
+);
+$context  = stream_context_create($options);
+$response = file_get_contents($url, false, $context);
+
+
+$data = json_decode($response);
+
+foreach ($data->tms as $tm) {
+    echo $tm->id."\t".$tm->name." (".$tm->sourceLanguageCode."-> ".$tm->targetLanguageCode.")\n";
+}
+
+
+?>
