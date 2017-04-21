@@ -63,7 +63,10 @@ function sub($string, $start, $end = null) {
             <input id="search-input" type="text" value="<?= $inputSentence ?>" />
             <img id="search-icon" src="images/search.png" alt="search" onclick="searchHandle(currentTmId)" title="search"/>
             <img id="clear-icon" src="images/reset.png" alt="clear" onclick="$('#search-input').val('')" title="clear search field"/>
-
+            <img style="cursor:pointer" src="images/help.png" alt="help" onclick="toggleHelp()" title="show/hide help"/>
+            <div id="help" class="hidden">
+Welcome to the search window of Concordia Desktop. When Concordia Desktop is running in the tray, select a portion of text no longer than 500 characters (e.g. a sentence) from any application and press ctrl+q. This will search the selected text in Concordia and open your browser on Concordia search results (that is - this page). You can also press ctrl+w to select all the text in your application and search for it. After searching in Concordia, the text you selected remains in the clipboard, ready to be pasted into any other searcher.            
+            </div>
             <div id="result">
                 <div id="result-score">Concordia score: <b><?= round($data->result->bestOverlayScore*100) ?>%</b></div>
                 <div id="result-sentence"><?php
