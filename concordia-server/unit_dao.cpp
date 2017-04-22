@@ -8,6 +8,7 @@
 #include "int_param.hpp"
 #include "int_array_param.hpp"
 #include "logger.hpp"
+#include "example_occurence.hpp"
 
 #include <libpq-fe.h>
 #include <boost/foreach.hpp>
@@ -65,58 +66,61 @@ std::vector<SUFFIX_MARKER_TYPE> UnitDAO::addAlignedSentences(
     return newIds;
 }
 
-std::vector<SimpleSearchResult> UnitDAO::getSearchResults(const std::vector<MatchedPatternFragment> & fragments) {
-    std::vector<SimpleSearchResult> results;
+SimpleSearchResult UnitDAO::getSimpleSearchResult(const MatchedPatternFragment & fragment) {
+    SimpleSearchResult result(fragment.getStart(), fragment.getEnd());
     TokenizedSentence ts("");
-    _getResultsFromFragments(results, fragments, ts);
-    return results;
+    return _getResultFromFragment(fragment, ts);
 }
 
 CompleteConcordiaSearchResult UnitDAO::getConcordiaResult(boost::shared_ptr<ConcordiaSearchResult> rawConcordiaResult) {
     CompleteConcordiaSearchResult result(rawConcordiaResult->getBestOverlayScore());
-    _getResultsFromFragments(result.getBestOverlay(),
-                             rawConcordiaResult->getBestOverlay(),
-                             rawConcordiaResult->getTokenizedPattern());
+    BOOST_FOREACH(MatchedPatternFragment fragment, rawConcordiaResult->getBestOverlay()) {
+        result.addToBestOverlay(_getResultFromFragment(fragment, rawConcordiaResult->getTokenizedPattern()));
+    }
     return result;
 }
 
 CompleteConcordiaSearchResult UnitDAO::getConcordiaResult(boost::shared_ptr<ConcordiaSearchResult> rawConcordiaResult, TokenizedSentence originalPattern) {
+    Logger::log("getConcordiaResult with original pattern");
     CompleteConcordiaSearchResult result(rawConcordiaResult->getBestOverlayScore());
-    _getResultsFromFragments(result.getBestOverlay(),
-                             rawConcordiaResult->getBestOverlay(),
-                             originalPattern);
+    BOOST_FOREACH(MatchedPatternFragment fragment, rawConcordiaResult->getBestOverlay()) {
+        Logger::log("Working on fragment:");
+        Logger::logFragment(fragment);
+        result.addToBestOverlay(_getResultFromFragment(fragment, originalPattern));
+    }
     return result;
 }
 
+SimpleSearchResult UnitDAO::_getResultFromFragment(
+                                const MatchedPatternFragment & fragment,
+                                const TokenizedSentence & tokenizedPattern) {
 
-void UnitDAO::_getResultsFromFragments(
-                              std::vector<SimpleSearchResult> & results,
-                              const std::vector<MatchedPatternFragment> & fragments,
-                              const TokenizedSentence & tokenizedPattern) {
-
+    Logger::log("getResultFromFragment");
     DBconnection connection;
     connection.startTransaction();
 
-    BOOST_FOREACH(const MatchedPatternFragment & fragment, fragments) {
-        int matchedPatternStart = 0;
-        int matchedPatternEnd = 0;
-        if (tokenizedPattern.getTokens().size() > 0) {
-            // if it is concordia searching
-            matchedPatternStart = tokenizedPattern.getTokens().at(fragment.getStart()).getStart();
-            matchedPatternEnd = tokenizedPattern.getTokens().at(fragment.getStart()+fragment.getMatchedLength() - 1).getEnd();
-        }
+    int matchedPatternStart = 0;
+    int matchedPatternEnd = 0;
+    if (tokenizedPattern.getTokens().size() > 0) {
+        // if it is concordia searching
+        Logger::logInt("tokenizedPattern size",tokenizedPattern.getTokens().size());
+        Logger::logInt("fragment start",fragment.getStart());
+        Logger::logInt("fragment matched length",fragment.getMatchedLength());
+        matchedPatternStart = tokenizedPattern.getTokens().at(fragment.getStart()).getStart();
+        matchedPatternEnd = tokenizedPattern.getTokens().at(fragment.getStart()+fragment.getMatchedLength() - 1).getEnd();
+    }
 
+    SimpleSearchResult ssResult(matchedPatternStart, matchedPatternEnd);
+    Logger::log("simple search result created");
 
-
+    BOOST_FOREACH(SubstringOccurence sOccurence, fragment.getOccurences()) {
         std::string query = "SELECT id, source_segment, target_segment, source_tokens[$1::integer], source_tokens[$2::integer] FROM unit WHERE id = $3::integer;";
         std::vector<QueryParam*> params;
-        params.push_back(new IntParam(2*fragment.getExampleOffset()+1));
-        params.push_back(new IntParam(2*(fragment.getExampleOffset()+fragment.getMatchedLength())));
-        params.push_back(new IntParam(fragment.getExampleId()));
+        params.push_back(new IntParam(2*sOccurence.getOffset()+1));
+        params.push_back(new IntParam(2*(sOccurence.getOffset()+fragment.getMatchedLength())));
+        params.push_back(new IntParam(sOccurence.getId()));
         PGresult * result = connection.execute(query, params);
-        SimpleSearchResult ssResult(connection.getIntValue(result,0,0),      // example id
-                                    matchedPatternStart,
-                                    matchedPatternEnd,
+        ExampleOccurence occurence(connection.getIntValue(result,0,0),      // example id
                                     connection.getIntValue(result,0,3),      // matched example start
                                     connection.getIntValue(result,0,4),      // matched example end
                                     connection.getStringValue(result,0,1),   // source segment
@@ -129,9 +133,9 @@ void UnitDAO::_getResultsFromFragments(
         // now add all target fragments matched with this fragment
         std::string targetQuery = "SELECT target_token_pos, target_tokens[2*target_token_pos+1], target_tokens[2*target_token_pos+2] FROM unit INNER JOIN alignment ON alignment.unit_id = unit.id AND unit.id = $1::integer AND source_token_pos between $2::integer and $3::integer ORDER BY target_token_pos";
         std::vector<QueryParam*> targetParams;
-        targetParams.push_back(new IntParam(fragment.getExampleId()));
-        targetParams.push_back(new IntParam(fragment.getExampleOffset()));
-        targetParams.push_back(new IntParam(fragment.getExampleOffset() + fragment.getMatchedLength() - 1));
+        targetParams.push_back(new IntParam(sOccurence.getId()));
+        targetParams.push_back(new IntParam(sOccurence.getOffset()));
+        targetParams.push_back(new IntParam(sOccurence.getOffset() + fragment.getMatchedLength() - 1));
         PGresult * targetResult = connection.execute(targetQuery, targetParams);
 
         int prevPos = -2;
@@ -146,7 +150,7 @@ void UnitDAO::_getResultsFromFragments(
             if (prevPos < targetPos - 1) { // beginning of detached fragment
                 // check if there is a fragment to end
                 if (currStart >= 0) {
-                    ssResult.addMatchedTargetFragment(std::pair<int,int>(currStart,currEnd));
+                    occurence.addMatchedTargetFragment(std::pair<int,int>(currStart,currEnd));
                 }
                 currStart = targetStart;
             }
@@ -157,7 +161,7 @@ void UnitDAO::_getResultsFromFragments(
 
         // check if there are remaining fragments
         if (currStart >= 0) {
-            ssResult.addMatchedTargetFragment(std::pair<int,int>(currStart,currEnd));
+            occurence.addMatchedTargetFragment(std::pair<int,int>(currStart,currEnd));
         }
 
         connection.clearResult(targetResult);
@@ -165,9 +169,13 @@ void UnitDAO::_getResultsFromFragments(
             delete param;
         }
 
-        results.push_back(ssResult);
+        ssResult.addOccurence(occurence);
+
     }
+
     connection.endTransaction();
+
+    return ssResult;
 }
 
 

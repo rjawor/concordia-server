@@ -25,17 +25,12 @@ void SearcherController::simpleSearch(rapidjson::Writer<rapidjson::StringBuffer>
     boost::ptr_map<int,Concordia>::iterator it = _concordiasMap->find(tmId);
     if (it != _concordiasMap->end()) {
         pattern = _lemmatizerFacade->lemmatizeIfNeeded(pattern, tmId);
-        std::vector<SimpleSearchResult> results = _unitDAO.getSearchResults(it->second->simpleSearch(pattern));
-
+        SimpleSearchResult result = _unitDAO.getSimpleSearchResult(it->second->simpleSearch(pattern, true));
         jsonWriter.StartObject();
         jsonWriter.String("status");
         jsonWriter.String("success");
-        jsonWriter.String("results");
-        jsonWriter.StartArray();
-        BOOST_FOREACH(SimpleSearchResult & result, results) {
-            JsonGenerator::writeSearchResult(jsonWriter, result);
-        }
-        jsonWriter.EndArray();
+        jsonWriter.String("result");
+        JsonGenerator::writeSimpleSearchResult(jsonWriter, result);
         jsonWriter.EndObject();
     } else {
         JsonGenerator::signalError(jsonWriter, "no such tm!");
@@ -55,7 +50,7 @@ void SearcherController::concordiaPhraseSearch(rapidjson::Writer<rapidjson::Stri
 
             Logger::log("concordiaPhraseSearch");
             Logger::logString("short pattern", shortPattern);
-            std::vector<SimpleSearchResult> shortPatternResults = _unitDAO.getSearchResults(it->second->simpleSearch(shortPattern));
+            SimpleSearchResult shortPatternResult = _unitDAO.getSimpleSearchResult(it->second->simpleSearch(shortPattern));
 
 
 
@@ -63,7 +58,7 @@ void SearcherController::concordiaPhraseSearch(rapidjson::Writer<rapidjson::Stri
             jsonWriter.String("status");
             jsonWriter.String("success");
             jsonWriter.String("found");
-            if (shortPatternResults.size() > 0) {
+            if (shortPatternResult.getOccurences().size() > 0) {
                 jsonWriter.Bool(true);
 
 
@@ -76,10 +71,9 @@ void SearcherController::concordiaPhraseSearch(rapidjson::Writer<rapidjson::Stri
                     restResult.offsetPattern(currStart);
                     bestOverlay.insert(bestOverlay.end(), restResult.getBestOverlay().begin(), restResult.getBestOverlay().end());
 
-                    SimpleSearchResult shortPatternresult = shortPatternResults[0];
-                    shortPatternresult.setMatchedPatternStart(interval.getStart());
-                    shortPatternresult.setMatchedPatternEnd(interval.getEnd());
-                    bestOverlay.push_back(shortPatternresult);
+                    shortPatternResult.setMatchedPatternStart(interval.getStart());
+                    shortPatternResult.setMatchedPatternEnd(interval.getEnd());
+                    bestOverlay.push_back(shortPatternResult);
                     currStart = interval.getEnd();
                 }
                 CompleteConcordiaSearchResult lastRestResult = _unitDAO.getConcordiaResult(
@@ -92,7 +86,7 @@ void SearcherController::concordiaPhraseSearch(rapidjson::Writer<rapidjson::Stri
                 jsonWriter.String("bestOverlay");
                 jsonWriter.StartArray();
                 BOOST_FOREACH(SimpleSearchResult & simpleResult, bestOverlay) {
-                    JsonGenerator::writeSearchResult(jsonWriter, simpleResult);
+                    JsonGenerator::writeSimpleSearchResult(jsonWriter, simpleResult);
                 }
                 jsonWriter.EndArray();
                 jsonWriter.EndObject();
@@ -112,12 +106,18 @@ void SearcherController::concordiaPhraseSearch(rapidjson::Writer<rapidjson::Stri
 void SearcherController::concordiaSearch(rapidjson::Writer<rapidjson::StringBuffer> & jsonWriter,
                                          std::string & pattern,
                                          const int tmId) {
-
+    Logger::log("concordiaSearch");
     boost::ptr_map<int,Concordia>::iterator it = _concordiasMap->find(tmId);
     if (it != _concordiasMap->end()) {
         std::string lemmatizedPattern = _lemmatizerFacade->lemmatizeIfNeeded(pattern, tmId);
+        Logger::logString("pattern lemmatized", lemmatizedPattern);
         TokenizedSentence originalPattern = it->second->tokenize(pattern, true, false);
-        CompleteConcordiaSearchResult result = _unitDAO.getConcordiaResult(it->second->concordiaSearch(lemmatizedPattern), originalPattern);
+        Logger::logInt("original pattern tokenized, token count", originalPattern.getTokens().size());
+        boost::shared_ptr<ConcordiaSearchResult> rawConcordiaResult = it->second->concordiaSearch(lemmatizedPattern, true);
+        Logger::log("concordia searched, result:");
+        Logger::logConcordiaSearchResult(*rawConcordiaResult);
+        CompleteConcordiaSearchResult result = _unitDAO.getConcordiaResult(rawConcordiaResult, originalPattern);
+        Logger::log("result got");
 
         jsonWriter.StartObject();
         jsonWriter.String("status");
@@ -128,8 +128,8 @@ void SearcherController::concordiaSearch(rapidjson::Writer<rapidjson::StringBuff
         jsonWriter.Double(result.getBestOverlayScore());
         jsonWriter.String("bestOverlay");
         jsonWriter.StartArray();
-        BOOST_FOREACH(SimpleSearchResult & simpleResult, result.getBestOverlay()) {
-            JsonGenerator::writeSearchResult(jsonWriter, simpleResult);
+        BOOST_FOREACH(const SimpleSearchResult & simpleResult, result.getBestOverlay()) {
+            JsonGenerator::writeSimpleSearchResult(jsonWriter, simpleResult);
         }
         jsonWriter.EndArray();
         jsonWriter.EndObject();

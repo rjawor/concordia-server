@@ -22,11 +22,9 @@ data = {
 start = time.time()
 req = urllib2.Request(address)
 req.add_header('Content-Type', 'application/json')
-response = json.loads(urllib2.urlopen(req, json.dumps(data)).read())
+response = urllib2.urlopen(req, json.dumps(data)).read()
 end = time.time()
 
 print "Execution time: %.4f seconds." % (end-start)
 print "Result: "
 print response
-
-

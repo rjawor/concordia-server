@@ -19,8 +19,8 @@ public:
     static void signalError(rapidjson::Writer<rapidjson::StringBuffer> & jsonWriter,
                             const std::string & message);
 
-    static void writeSearchResult(rapidjson::Writer<rapidjson::StringBuffer> & jsonWriter,
-                                  const SimpleSearchResult & result);
+    static void writeSimpleSearchResult(rapidjson::Writer<rapidjson::StringBuffer> & jsonWriter,
+                                        const SimpleSearchResult & result);
 
 private:
 

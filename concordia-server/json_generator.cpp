@@ -1,6 +1,7 @@
 #include "json_generator.hpp"
 
 #include <boost/foreach.hpp>
+#include "example_occurence.hpp"
 
 JsonGenerator::JsonGenerator() {
 }
@@ -19,37 +20,42 @@ void JsonGenerator::signalError(rapidjson::Writer<rapidjson::StringBuffer> & jso
     jsonWriter.EndObject();
 }
 
-void JsonGenerator::writeSearchResult(rapidjson::Writer<rapidjson::StringBuffer> & jsonWriter,
+void JsonGenerator::writeSimpleSearchResult(rapidjson::Writer<rapidjson::StringBuffer> & jsonWriter,
                                       const SimpleSearchResult & result) {
     jsonWriter.StartObject();
-    jsonWriter.String("id");
-    jsonWriter.Int(result.getId());
     jsonWriter.String("matchedPatternStart");
     jsonWriter.Int(result.getMatchedPatternStart());
     jsonWriter.String("matchedPatternEnd");
     jsonWriter.Int(result.getMatchedPatternEnd());
-    jsonWriter.String("matchedExampleStart");
-    jsonWriter.Int(result.getMatchedExampleStart());
-    jsonWriter.String("matchedExampleEnd");
-    jsonWriter.Int(result.getMatchedExampleEnd());
-    jsonWriter.String("sourceSegment");
-    jsonWriter.String(result.getSourceSegment().c_str());
-    jsonWriter.String("targetSegment");
-    jsonWriter.String(result.getTargetSegment().c_str());
-    jsonWriter.String("targetFragments");
+    jsonWriter.String("occurences");
     jsonWriter.StartArray();
 
-    for (std::vector<std::pair<int,int> >::const_iterator it = result.getTargetFragments().begin(); 
-            it != result.getTargetFragments().end(); it++) {
-        jsonWriter.StartArray();
-        jsonWriter.Int(it->first);
-        jsonWriter.Int(it->second);
-        jsonWriter.EndArray();
-    }    
-    jsonWriter.EndArray();
+    BOOST_FOREACH(ExampleOccurence occurence, result.getOccurences()) {
+        jsonWriter.StartObject();
+        jsonWriter.String("id");
+        jsonWriter.Int(occurence.getId());
+        jsonWriter.String("matchedExampleStart");
+        jsonWriter.Int(occurence.getMatchedExampleStart());
+        jsonWriter.String("matchedExampleEnd");
+        jsonWriter.Int(occurence.getMatchedExampleEnd());
+        jsonWriter.String("sourceSegment");
+        jsonWriter.String(occurence.getSourceSegment().c_str());
+        jsonWriter.String("targetSegment");
+        jsonWriter.String(occurence.getTargetSegment().c_str());
+        jsonWriter.String("targetFragments");
+        jsonWriter.StartArray(); // all target fragments
+        for (std::vector<std::pair<int,int> >::const_iterator it = occurence.getTargetFragments().begin();
+                it != occurence.getTargetFragments().end(); it++) {
+            jsonWriter.StartArray(); // single target fragment
+            jsonWriter.Int(it->first);
+            jsonWriter.Int(it->second);
+            jsonWriter.EndArray(); // single target fragment
+        }
+        jsonWriter.EndArray(); // all target fragments
+        jsonWriter.EndObject(); // occurence
+    }
 
-    jsonWriter.EndObject();
+    jsonWriter.EndArray(); //occurences
+
+    jsonWriter.EndObject(); //simple search result
 }
-
-
-

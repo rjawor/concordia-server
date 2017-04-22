@@ -47,6 +47,7 @@ function phraseSearchHandle(tmid, intervals) {
 
 function renderResult(data) {
     var res = '';
+    var disablePhraseSearch = true;
 
     if (typeof(data['result']['bestOverlayScore']) === 'undefined') {
         // ignore
@@ -89,29 +90,35 @@ function renderResult(data) {
 }
 
 function renderFragment(fragment, number) {
-    var result = '<div style="display:none" id="fragment'+number+'" class="fragmentDetails"><table><tr><td>';
+    var result = '<div style="display:none" id="fragment'+number+'" class="fragmentDetails">';
 
-    // source segment
-    var sourceSegment = fragment['sourceSegment'];
-    result += sourceSegment.slice(0, fragment['matchedExampleStart']);
-    result += '<span class="matchedFragment">';
-    result += sourceSegment.slice(fragment['matchedExampleStart'], fragment['matchedExampleEnd']);
-    result += '</span>';
-    result += sourceSegment.slice(fragment['matchedExampleEnd']);
+    for (j=0;j<fragment['occurences'].length;j++) {
+        var occurence = fragment['occurences'][j];
+        result += '<table class="example"><tr><td>';
 
-    // target segment
-    result += '</td></tr><tr><td>';
-    var targetSegment = fragment['targetSegment'];
-    var currStart = 0;
-    for (i=0;i<fragment['targetFragments'].length;i++) {
-        result += targetSegment.slice(currStart, fragment['targetFragments'][i][0]);
+        // source segment
+        var sourceSegment = occurence['sourceSegment'];
+        result += sourceSegment.slice(0, ['matchedExampleStart']);
         result += '<span class="matchedFragment">';
-        result += targetSegment.slice(fragment['targetFragments'][i][0], fragment['targetFragments'][i][1]);
+        result += sourceSegment.slice(occurence['matchedExampleStart'], occurence['matchedExampleEnd']);
         result += '</span>';
-        currStart = fragment['targetFragments'][i][1];
+        result += sourceSegment.slice(occurence['matchedExampleEnd']);
+
+        // target segment
+        result += '</td></tr><tr><td>';
+        var targetSegment = occurence['targetSegment'];
+        var currStart = 0;
+        for (i=0;i<occurence['targetFragments'].length;i++) {
+            result += targetSegment.slice(currStart, occurence['targetFragments'][i][0]);
+            result += '<span class="matchedFragment">';
+            result += targetSegment.slice(occurence['targetFragments'][i][0], occurence['targetFragments'][i][1]);
+            result += '</span>';
+            currStart = occurence['targetFragments'][i][1];
+        }
+        result += targetSegment.slice(currStart);
+        result += '</td></tr></table>';
     }
-    result += targetSegment.slice(currStart);
-    result += '</td></tr></table></div>';
+    result += '</div>';
     return result;
 }
 

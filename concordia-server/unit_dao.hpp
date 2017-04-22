@@ -41,16 +41,16 @@ public:
              const std::vector<std::vector<std::vector<int> > > & allAlignments,
              const int tmId) throw (ConcordiaException);
 
-    std::vector<SimpleSearchResult> getSearchResults(const std::vector<MatchedPatternFragment> & fragments);
+    SimpleSearchResult getSimpleSearchResult(const MatchedPatternFragment & fragment);
 
     CompleteConcordiaSearchResult getConcordiaResult(boost::shared_ptr<ConcordiaSearchResult> rawConcordiaResult);
 
     CompleteConcordiaSearchResult getConcordiaResult(boost::shared_ptr<ConcordiaSearchResult> rawConcordiaResult, TokenizedSentence originalPattern);
 
 private:
-    void _getResultsFromFragments(std::vector<SimpleSearchResult> & results,
-                                  const std::vector<MatchedPatternFragment> & fragments,
-                                  const TokenizedSentence & tokenizedPattern);
+    SimpleSearchResult _getResultFromFragment(
+                                const MatchedPatternFragment & fragment,
+                                const TokenizedSentence & tokenizedPattern);
 
     std::vector<int> _getTokenPositions(const TokenizedSentence & ts);
 

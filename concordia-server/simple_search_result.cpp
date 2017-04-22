@@ -1,31 +1,20 @@
 #include "simple_search_result.hpp"
 
 SimpleSearchResult::SimpleSearchResult(
-                       const int id,
                        const int matchedPatternStart,
-                       const int matchedPatternEnd,
-                       const int matchedExampleStart,
-                       const int matchedExampleEnd,
-                       const std::string & sourceSegment,
-                       const std::string & targetSegment):
-                       _id(id),
+                       const int matchedPatternEnd):
                        _matchedPatternStart(matchedPatternStart),
-                       _matchedPatternEnd(matchedPatternEnd),
-                       _matchedExampleStart(matchedExampleStart),
-                       _matchedExampleEnd(matchedExampleEnd),
-                       _sourceSegment(sourceSegment),
-                       _targetSegment(targetSegment) {
+                       _matchedPatternEnd(matchedPatternEnd) {
 }
 
 SimpleSearchResult::~SimpleSearchResult() {
 }
 
-void SimpleSearchResult::addMatchedTargetFragment(const std::pair<int,int> & targetFragment) {
-    _targetFragments.push_back(targetFragment);
+void SimpleSearchResult::addOccurence(const ExampleOccurence & occurence) {
+    _occurences.push_back(occurence);
 }
 
 void SimpleSearchResult::offsetPattern(int offset) {
     _matchedPatternStart += offset;
     _matchedPatternEnd += offset;
 }
-

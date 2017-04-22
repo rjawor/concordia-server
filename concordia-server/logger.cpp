@@ -44,6 +44,26 @@ void Logger::logString(std::string name, std::string value) {
 	root.info(ss.str());
 }
 
+void Logger::logFragment(const MatchedPatternFragment & fragment) {
+    log4cpp::Category & root = log4cpp::Category::getRoot();
+    if (_initialized == 0) {
+        _initialize(root);
+ 	}
+ 	std::stringstream ss;
+ 	ss << fragment;
+	root.info(ss.str());
+}
+
+void Logger::logConcordiaSearchResult(const ConcordiaSearchResult & result) {
+    log4cpp::Category & root = log4cpp::Category::getRoot();
+    if (_initialized == 0) {
+        _initialize(root);
+ 	}
+ 	std::stringstream ss;
+ 	ss << result;
+	root.info(ss.str());
+}
+
 void Logger::_initialize(log4cpp::Category & root) {
     log4cpp::Appender *appender = new log4cpp::FileAppender("default", LOG_FILE_PATH);
     log4cpp::PatternLayout *layout = new log4cpp::PatternLayout();
@@ -52,8 +72,6 @@ void Logger::_initialize(log4cpp::Category & root) {
 
     root.setPriority(log4cpp::Priority::INFO);
     root.addAppender(appender);
-    
+
     _initialized = 1;
 }
-
-

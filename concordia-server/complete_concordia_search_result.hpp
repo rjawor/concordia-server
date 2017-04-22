@@ -14,20 +14,22 @@ public:
     /*! Destructor.
     */
     virtual ~CompleteConcordiaSearchResult();
-    
+
     const double getBestOverlayScore() {
         return _bestOverlayScore;
     }
 
-    std::vector<SimpleSearchResult> & getBestOverlay() {
+    std::vector<SimpleSearchResult> getBestOverlay() const {
         return _bestOverlay;
     }
-    
+
+    void addToBestOverlay(const SimpleSearchResult & result);
+
     void offsetPattern(int offset);
-    
+
 private:
     double _bestOverlayScore;
-    
+
     std::vector<SimpleSearchResult> _bestOverlay;
 };
 

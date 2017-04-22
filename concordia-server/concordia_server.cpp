@@ -66,9 +66,11 @@ std::string ConcordiaServer::handleRequest(std::string & requestString) {
                 int tmId = _getIntParameter(d, TM_ID_PARAM);
                 // loading data from json
                 const rapidjson::Value & sentencesArray = d[SENTENCES_PARAM];
+                /*
                 Logger::log("addSentences");
                 Logger::logInt("sentences to add", sentencesArray.Size());
                 Logger::logInt("tm id", tmId);
+                */
                 for (rapidjson::SizeType i = 0; i < sentencesArray.Size(); i++) {
                     if (sentencesArray[i].Size() != 2) {
                         JsonGenerator::signalError(jsonWriter, "sentence should be an array of 2 elements");
@@ -85,9 +87,11 @@ std::string ConcordiaServer::handleRequest(std::string & requestString) {
                 int tmId = d[TM_ID_PARAM].GetInt();
                 // loading data from json
                 const rapidjson::Value & sentencesArray = d[SENTENCES_PARAM];
+                /*
                 Logger::log("addAlignedSentences");
                 Logger::logInt("sentences to add", sentencesArray.Size());
                 Logger::logInt("tm id", tmId);
+                */
                 for (rapidjson::SizeType i = 0; i < sentencesArray.Size(); i++) {
                     if (sentencesArray[i].Size() != 2) {
                         JsonGenerator::signalError(jsonWriter, "sentence should be an array of 2 elements");
@@ -105,9 +109,11 @@ std::string ConcordiaServer::handleRequest(std::string & requestString) {
                 int tmId = d[TM_ID_PARAM].GetInt();
                 // loading data from json
                 const rapidjson::Value & sentencesArray = d[EXAMPLES_PARAM];
+                /*
                 Logger::log("addAlignedLemmatizedSentences");
                 Logger::logInt("lemmatized sentences to add", sentencesArray.Size());
                 Logger::logInt("tm id", tmId);
+                */
                 for (rapidjson::SizeType i = 0; i < sentencesArray.Size(); i++) {
                     if (sentencesArray[i].Size() != 3) {
                         JsonGenerator::signalError(jsonWriter, "sentence should be an array of 3 elements");

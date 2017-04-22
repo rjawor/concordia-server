@@ -10,9 +10,14 @@ CompleteConcordiaSearchResult::CompleteConcordiaSearchResult(
 CompleteConcordiaSearchResult::~CompleteConcordiaSearchResult() {
 }
 
+void CompleteConcordiaSearchResult::addToBestOverlay(const SimpleSearchResult & result) {
+    _bestOverlay.push_back(result);
+}
+
+
 void CompleteConcordiaSearchResult::offsetPattern(int offset) {
     BOOST_FOREACH(SimpleSearchResult & simpleResult, _bestOverlay) {
         simpleResult.offsetPattern(offset);
-    }    
+    }
 
 }
