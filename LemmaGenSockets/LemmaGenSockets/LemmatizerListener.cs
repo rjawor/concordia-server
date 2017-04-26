@@ -52,6 +52,10 @@ namespace LemmaGenSockets
 
         private string lemmatizeWord(string languageCode, string word)
         {
+            if (word.StartsWith("ne_") || word == "i" || word == "o" || word == "do")
+            {
+                return word;
+            }
             string[] parts = word.Split(wordInnerSeparator);
             if (parts.Length == 2)
             {

@@ -46,6 +46,10 @@ namespace LemmaGenSentenceLemmatizer
 
         private string lemmatizeWord(string word)
         {
+            if (word.StartsWith("ne_") || word == "i" || word == "o" || word=="do")
+            {
+                return word;
+            }
             string result = "";
             string[] parts = word.Split(wordInnerSeparator);
             if (parts.Length == 2)
