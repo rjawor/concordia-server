@@ -98,7 +98,7 @@ function renderFragment(fragment, number) {
 
         // source segment
         var sourceSegment = occurence['sourceSegment'];
-        result += sourceSegment.slice(0, ['matchedExampleStart']);
+        result += sourceSegment.slice(0, occurence['matchedExampleStart']);
         result += '<span class="matchedFragment">';
         result += sourceSegment.slice(occurence['matchedExampleStart'], occurence['matchedExampleEnd']);
         result += '</span>';
