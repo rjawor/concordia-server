@@ -81,11 +81,8 @@ CompleteConcordiaSearchResult UnitDAO::getConcordiaResult(boost::shared_ptr<Conc
 }
 
 CompleteConcordiaSearchResult UnitDAO::getConcordiaResult(boost::shared_ptr<ConcordiaSearchResult> rawConcordiaResult, TokenizedSentence originalPattern) {
-    Logger::log("getConcordiaResult with original pattern");
     CompleteConcordiaSearchResult result(rawConcordiaResult->getBestOverlayScore());
     BOOST_FOREACH(MatchedPatternFragment fragment, rawConcordiaResult->getBestOverlay()) {
-        Logger::log("Working on fragment:");
-        Logger::logFragment(fragment);
         result.addToBestOverlay(_getResultFromFragment(fragment, originalPattern));
     }
     return result;
@@ -95,7 +92,6 @@ SimpleSearchResult UnitDAO::_getResultFromFragment(
                                 const MatchedPatternFragment & fragment,
                                 const TokenizedSentence & tokenizedPattern) {
 
-    Logger::log("getResultFromFragment");
     DBconnection connection;
     connection.startTransaction();
 
@@ -103,15 +99,11 @@ SimpleSearchResult UnitDAO::_getResultFromFragment(
     int matchedPatternEnd = 0;
     if (tokenizedPattern.getTokens().size() > 0) {
         // if it is concordia searching
-        Logger::logInt("tokenizedPattern size",tokenizedPattern.getTokens().size());
-        Logger::logInt("fragment start",fragment.getStart());
-        Logger::logInt("fragment matched length",fragment.getMatchedLength());
         matchedPatternStart = tokenizedPattern.getTokens().at(fragment.getStart()).getStart();
         matchedPatternEnd = tokenizedPattern.getTokens().at(fragment.getStart()+fragment.getMatchedLength() - 1).getEnd();
     }
 
     SimpleSearchResult ssResult(matchedPatternStart, matchedPatternEnd);
-    Logger::log("simple search result created");
 
     BOOST_FOREACH(SubstringOccurence sOccurence, fragment.getOccurences()) {
         std::string query = "SELECT id, source_segment, target_segment, source_tokens[$1::integer], source_tokens[$2::integer] FROM unit WHERE id = $3::integer;";
@@ -218,24 +210,18 @@ int UnitDAO::_addAlignedUnit (
      const std::vector<std::vector<int> > & alignments,
      const int tmId) throw(ConcordiaException) {
 
-    if (sourceSentence.getTokens().size() < alignments.size()) {
+    if (sourceSentence.getTokens().size() != alignments.size()) {
         // Here we check if the source sentence, taken from src.tok,
         // is shorter than alignments array.
         std::stringstream ss;
-        ss << "The size of source sentence is lower than the size of alignments array. Source sentence: " << sourceSentence.getSentence() << ", alignments size:" << alignments.size();
+        ss << "The size of source sentence is different than the size of alignments array. Source sentence: " << sourceSentence.getSentence() << ", alignments size:" << alignments.size();
         throw ConcordiaException(ss.str());
-    } else if (sourceSentence.getTokens().size() > alignments.size()) {
-        // On the other hand, alignments array can be shorter than the source tokenized
-        // sentence, because giza can truncate the sentence. In this case, we have to
-        // truncate the source sentence too.
-
-
     }
 
     std::string query = "INSERT INTO unit(source_segment, target_segment, tm_id, source_tokens, target_tokens) values($1::text,$2::text,$3::integer,$4,$5) RETURNING id";
     std::vector<QueryParam*> params;
-    params.push_back(new StringParam(sourceSentence.getSentence()));
-    params.push_back(new StringParam(targetSentence.getSentence()));
+    params.push_back(new StringParam(sourceSentence.getOriginalSentence()));
+    params.push_back(new StringParam(targetSentence.getOriginalSentence()));
     params.push_back(new IntParam(tmId));
     params.push_back(new IntArrayParam(_getTokenPositions(sourceSentence)));
     params.push_back(new IntArrayParam(_getTokenPositions(targetSentence)));

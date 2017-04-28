@@ -3,6 +3,8 @@
 #include <boost/foreach.hpp>
 #include <vector>
 #include <climits>
+#include <concordia/tokenized_sentence.hpp>
+
 
 #include "json_generator.hpp"
 #include "logger.hpp"
@@ -24,7 +26,8 @@ void SearcherController::simpleSearch(rapidjson::Writer<rapidjson::StringBuffer>
                                       const int tmId) {
     boost::ptr_map<int,Concordia>::iterator it = _concordiasMap->find(tmId);
     if (it != _concordiasMap->end()) {
-        pattern = _lemmatizerFacade->lemmatizeIfNeeded(pattern, tmId);
+        TokenizedSentence tokenizedPattern = it->second->tokenize(pattern, false, false);
+        pattern = _lemmatizerFacade->lemmatizeIfNeeded(tokenizedPattern.getTokenizedSentence(), tmId);
         SimpleSearchResult result = _unitDAO.getSimpleSearchResult(it->second->simpleSearch(pattern, true));
         jsonWriter.StartObject();
         jsonWriter.String("status");
@@ -106,18 +109,12 @@ void SearcherController::concordiaPhraseSearch(rapidjson::Writer<rapidjson::Stri
 void SearcherController::concordiaSearch(rapidjson::Writer<rapidjson::StringBuffer> & jsonWriter,
                                          std::string & pattern,
                                          const int tmId) {
-    Logger::log("concordiaSearch");
     boost::ptr_map<int,Concordia>::iterator it = _concordiasMap->find(tmId);
     if (it != _concordiasMap->end()) {
-        std::string lemmatizedPattern = _lemmatizerFacade->lemmatizeIfNeeded(pattern, tmId);
-        Logger::logString("pattern lemmatized", lemmatizedPattern);
-        TokenizedSentence originalPattern = it->second->tokenize(pattern, true, false);
-        Logger::logInt("original pattern tokenized, token count", originalPattern.getTokens().size());
+        TokenizedSentence originalPattern = it->second->tokenize(pattern, false, false);
+        std::string lemmatizedPattern = _lemmatizerFacade->lemmatizeIfNeeded(originalPattern.getTokenizedSentence(), tmId);
         boost::shared_ptr<ConcordiaSearchResult> rawConcordiaResult = it->second->concordiaSearch(lemmatizedPattern, true);
-        Logger::log("concordia searched, result:");
-        Logger::logConcordiaSearchResult(*rawConcordiaResult);
         CompleteConcordiaSearchResult result = _unitDAO.getConcordiaResult(rawConcordiaResult, originalPattern);
-        Logger::log("result got");
 
         jsonWriter.StartObject();
         jsonWriter.String("status");

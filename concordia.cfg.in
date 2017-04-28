@@ -2,30 +2,22 @@
 # Concordia configuration file
 #---------------------------
 #
-
-#-------------------------------------------------------------------------------
-# The following settings control the sentence anonymizer mechanism. It is used to
-# remove unnecessary symbols and possibly words from sentences added to index
-# and search patterns. Anonymizer removes html tags, substitutes predefined symbols
-# with a single space, removes stop words (if the option is enabled), as well as
-# named entities and special symbols. All these have to be listed in files.
-
 # File containing all html tags (one per line)
-html_tags_path = "@RESOURCES_DIRECTORY@/anonymizer/html_tags.txt"
+html_tags_path = "@RESOURCES_DIRECTORY@/tokenizer/html_tags.txt"
 
 # File containing all symbols to be replaced by spaces
-space_symbols_path = "@RESOURCES_DIRECTORY@/anonymizer/space_symbols.txt"
+space_symbols_path = "@RESOURCES_DIRECTORY@/tokenizer/space_symbols.txt"
 
 # If set to true, words from predefined list are removed
 stop_words_enabled = "@STOP_WORDS_ENABLED@"
 
 # If stop_words_enabled is true, set the path to the stop words file
-#stop_words_path = "@RESOURCES_DIRECTORY@/anonymizer/stop_words.txt"
+#stop_words_path = "@RESOURCES_DIRECTORY@/tokenizer/stop_words.txt"
 
 # File containing regular expressions that match named entities
-named_entities_path = "@RESOURCES_DIRECTORY@/anonymizer/named_entities.txt"
+named_entities_path = "@RESOURCES_DIRECTORY@/tokenizer/named_entities.txt"
 
 # File containing special symbols (one per line) to be removed
-stop_symbols_path = "@RESOURCES_DIRECTORY@/anonymizer/stop_symbols.txt"
+stop_symbols_path = "@RESOURCES_DIRECTORY@/tokenizer/stop_symbols.txt"
 
 ### eof

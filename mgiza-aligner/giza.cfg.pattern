@@ -1,8 +1,8 @@
 adbackoff 0
 compactadtable 1
 compactalignmentformat 0
-coocurrencefile corpora/CORPUS_NAME/src.low_trg.low.cooc
-corpusfile corpora/CORPUS_NAME/src.low_trg.low.snt
+coocurrencefile corpora/CORPUS_NAME/src.lem_trg.lem.cooc
+corpusfile corpora/CORPUS_NAME/src.lem_trg.lem.snt
 countcutoff 1e-06
 countcutoffal 1e-05
 countincreasecutoff 1e-06
@@ -84,13 +84,13 @@ probcutoff 1e-07
 probsmooth 1e-07
 readtableprefix
 restart 0
-sourcevocabularyfile corpora/CORPUS_NAME/src.low.vcb
+sourcevocabularyfile corpora/CORPUS_NAME/src.lem.vcb
 t1 1
 t2 0
 t2to3 0
 t3 0
 t345 0
-targetvocabularyfile corpora/CORPUS_NAME/trg.low.vcb
+targetvocabularyfile corpora/CORPUS_NAME/trg.lem.vcb
 tc
 testcorpusfile
 th 0

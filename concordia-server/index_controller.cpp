@@ -137,8 +137,8 @@ void IndexController::addAlignedLemmatizedSentences(
 
             std::vector<TokenizedSentence> tokenizedLemmatizedSourceSentences =
                 it->second->tokenizeAll(lemmatizedSourceSentences, true, true);
-            std::vector<TokenizedSentence> tokenizedSourceSentences = it->second->tokenizeAll(sourceSentences, true, false);
-            std::vector<TokenizedSentence> tokenizedTargetSentences = it->second->tokenizeAll(targetSentences, true, false);
+            std::vector<TokenizedSentence> tokenizedSourceSentences = it->second->tokenizeAll(sourceSentences, false, false);
+            std::vector<TokenizedSentence> tokenizedTargetSentences = it->second->tokenizeAll(targetSentences, false, false);
 
             std::vector<SUFFIX_MARKER_TYPE> sentenceIds =
                 _unitDAO.addAlignedSentences(tokenizedSourceSentences, tokenizedTargetSentences, allAlignments, tmId);

@@ -69,10 +69,10 @@ function renderResult(data) {
     for(var i = 0; i < data['result']['bestOverlay'].length; i++) {
         var fragment = data['result']['bestOverlay'][i];
         //previous unmarked fragment
-        markedSentence += inputSentence.slice(lastInsertedEnd, fragment['matchedPatternStart']);
+        markedSentence += htmlEncode(inputSentence.slice(lastInsertedEnd, fragment['matchedPatternStart']));
 
         //the marked fragment
-        markedSentence += '<span onclick="displayDetails(this, '+i+')" class="matchedFragment">'+inputSentence.slice(fragment['matchedPatternStart'], fragment['matchedPatternEnd'])+'</span>';
+        markedSentence += '<span onclick="displayDetails(this, '+i+')" class="matchedFragment">'+htmlEncode(inputSentence.slice(fragment['matchedPatternStart'], fragment['matchedPatternEnd']))+'</span>';
 
         lastInsertedEnd = fragment['matchedPatternEnd'];
 
@@ -80,13 +80,19 @@ function renderResult(data) {
     }
 
     //remaining unmarked fragment
-    markedSentence += inputSentence.slice(lastInsertedEnd);
+    markedSentence += htmlEncode(inputSentence.slice(lastInsertedEnd));
 
     res += '<div id="result-sentence" onMouseUp="phraseSearch(this)">'+markedSentence+'</div>';
 
     res += '<br/><br/><br/>'+fragments;
 
     return res;
+}
+
+function htmlEncode(value){
+  // Create a in-memory div, set its inner text (which jQuery automatically encodes)
+  // Then grab the encoded contents back out. The div never exists on the page.
+  return $('<div/>').text(value).html();
 }
 
 function renderFragment(fragment, number) {
