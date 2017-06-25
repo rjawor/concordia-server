@@ -12,6 +12,8 @@
 #include "rapidjson/error/en.h"
 
 #include "tm_dao.hpp"
+#include "request_dao.hpp"
+#include "language_dao.hpp"
 #include "index_controller.hpp"
 #include "searcher_controller.hpp"
 #include "lemmatizer_facade.hpp"
@@ -47,6 +49,10 @@ private:
     boost::shared_ptr<boost::ptr_map<int,Concordia> > _concordiasMap;
 
     TmDAO _tmDAO;
+
+    RequestDAO _requestDAO;
+
+    LanguageDAO _languageDAO;
 
     boost::shared_ptr<IndexController> _indexController;
 

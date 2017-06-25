@@ -13,6 +13,8 @@
 #include "config.hpp"
 #include "logger.hpp"
 #include "tm.hpp"
+#include "request.hpp"
+#include "language.hpp"
 #include "rapidjson/rapidjson.h"
 #include <boost/foreach.hpp>
 #include <boost/ptr_container/ptr_map.hpp>
@@ -125,7 +127,7 @@ std::string ConcordiaServer::handleRequest(std::string & requestString) {
                     }
                 }
                 _indexController->addAlignedLemmatizedSentences(jsonWriter, sourceSentences, targetSentences, alignmentStrings, tmId);
-            } else if (operation == GET_TMS_INFO_PARAM) {
+            } else if (operation == GET_TMS_INFO_OP) {
                 std::vector<Tm> tms = _tmDAO.getTms();
 
                 jsonWriter.StartObject();
@@ -148,6 +150,79 @@ std::string ConcordiaServer::handleRequest(std::string & requestString) {
                 jsonWriter.EndArray();
                 jsonWriter.EndObject();
 
+            } else if (operation == GET_REQUESTS_INFO_OP) {
+                std::vector<Request> requests = _requestDAO.getRequests();
+
+                jsonWriter.StartObject();
+                jsonWriter.String("status");
+                jsonWriter.String("success");
+                jsonWriter.String("requests");
+                jsonWriter.StartArray();
+                BOOST_FOREACH(Request & request, requests) {
+                    jsonWriter.StartObject();
+                    jsonWriter.String("id");
+                    jsonWriter.Int(request.getId());
+                    jsonWriter.String("sourceFilePath");
+                    jsonWriter.String(request.getSourceFilePath().c_str());
+                    jsonWriter.String("targetFilePath");
+                    jsonWriter.String(request.getTargetFilePath().c_str());
+                    jsonWriter.String("name");
+                    jsonWriter.String(request.getName().c_str());
+                    jsonWriter.String("sourceLanguageCode");
+                    jsonWriter.String(request.getSourceLanguageCode().c_str());
+                    jsonWriter.String("targetLanguageCode");
+                    jsonWriter.String(request.getTargetLanguageCode().c_str());
+                    jsonWriter.String("status");
+                    jsonWriter.Int(request.getStatus());
+                    jsonWriter.String("type");
+                    jsonWriter.Int(request.getType());
+                    jsonWriter.String("tmId");
+                    jsonWriter.Int(request.getTmId());
+                    jsonWriter.String("created");
+                    jsonWriter.String(request.getCreated().c_str());
+                    jsonWriter.EndObject();
+                }
+                jsonWriter.EndArray();
+                jsonWriter.EndObject();
+
+
+            } else if (operation == GET_LANGUAGES_OP) {
+                std::vector<Language> languages = _languageDAO.getLanguages();
+
+                jsonWriter.StartObject();
+                jsonWriter.String("status");
+                jsonWriter.String("success");
+                jsonWriter.String("languages");
+                jsonWriter.StartArray();
+                BOOST_FOREACH(Language & language, languages) {
+                    jsonWriter.StartObject();
+                    jsonWriter.String("id");
+                    jsonWriter.Int(language.getId());
+                    jsonWriter.String("code");
+                    jsonWriter.String(language.getCode().c_str());
+                    jsonWriter.String("name");
+                    jsonWriter.String(language.getName().c_str());
+                    jsonWriter.EndObject();
+                }
+                jsonWriter.EndArray();
+                jsonWriter.EndObject();
+
+
+            } else if (operation == ADD_REQUEST_OP) {
+                std::string sourceFilePath = _getStringParameter(d, SOURCE_FILE_PARAM);
+                std::string targetFilePath = _getStringParameter(d, TARGET_FILE_PARAM);
+                int sourceLangId = _getIntParameter(d, SOURCE_LANG_PARAM);
+                int targetLangId = _getIntParameter(d, TARGET_LANG_PARAM);
+                std::string name = _getStringParameter(d, NAME_PARAM);
+                int type = _getIntParameter(d, TYPE_PARAM);
+                int tmId = _getIntParameter(d, TM_ID_PARAM);
+                int newId = _requestDAO.addRequest(sourceFilePath, targetFilePath, sourceLangId, targetLangId, name, type, tmId);
+                jsonWriter.StartObject();
+                jsonWriter.String("status");
+                jsonWriter.String("success");
+                jsonWriter.String("newRequestId");
+                jsonWriter.Int(newId);
+                jsonWriter.EndObject();
 
             } else if (operation == "lemmatize") {
                 std::string sentence = _getStringParameter(d, "sentence");

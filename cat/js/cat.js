@@ -1,3 +1,28 @@
+function showNewTmOptions() {
+    showField('tm_name');
+    hideField('tm_id');
+    showField('src_lang_id');
+    showField('trg_lang_id');
+}
+
+function showExtendTmOptions() {
+    hideField('tm_name');
+    showField('tm_id');
+    hideField('src_lang_id');
+    hideField('trg_lang_id');
+}
+
+function hideField(fieldId) {
+    $('#'+fieldId).addClass('hidden');
+    $('label[for='+fieldId+']').addClass('hidden');
+}
+
+function showField(fieldId) {
+    $('#'+fieldId).removeClass('hidden');
+    $('label[for='+fieldId+']').removeClass('hidden');
+}
+
+
 function toggleHelp() {
     $('#help').toggleClass('hidden');
 }

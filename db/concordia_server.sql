@@ -7,6 +7,21 @@ CREATE TABLE tm (
     lemmatized bool DEFAULT false
 );
 
+DROP TABLE IF EXISTS request;
+CREATE TABLE request (
+    id SERIAL PRIMARY KEY,
+    source_file_path varchar(100),
+    target_file_path varchar(100),
+    source_lang_id integer,
+    target_lang_id integer,
+    name varchar(40),
+    status integer,
+    type integer,
+    tm_id integer,
+    created timestamp default now()
+);
+
+
 DROP TABLE IF EXISTS language;
 CREATE TABLE language (
     id SERIAL PRIMARY KEY,

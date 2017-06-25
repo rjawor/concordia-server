@@ -3,6 +3,13 @@
 
 import sys, os, shutil, re
 
+def config_file(config, file_name, root_dir):
+    with open(file_name+'_pattern', 'r') as pattern_file, open(root_dir+'/'+file_name, 'w') as out_file:
+        for line in pattern_file:
+            for field, value in config.iteritems():
+                line = re.sub('@'+field+'@', value, line)
+            out_file.write(line)
+
 root_dir = sys.argv[1]
 
 if not os.path.exists(root_dir):
@@ -23,31 +30,16 @@ shutil.copytree('images', root_dir+'/images')
 shutil.copy('favicon.ico', root_dir+'/favicon.ico')
 
 
+config = dict()
 with open('host.cfg', 'r') as host_file:
     for line in host_file:
         field, value = line.strip().split('@#@')
-        if field == 'concordia_host':
-            concordia_host = value
-        elif field == 'concordia_port':
-            concordia_port = value
+        config[field] = value
 
-with open('concordia_gate.php_pattern', 'r') as gate_pattern_file, open(root_dir+'/concordia_gate.php', 'w') as gate_file:
-    for line in gate_pattern_file:
-        line = re.sub('@concordia_host@', concordia_host, line)
-        line = re.sub('@concordia_port@', concordia_port, line)
-        gate_file.write(line)
-
-with open('concordia_search.php_pattern', 'r') as search_pattern_file, open(root_dir+'/concordia_search.php', 'w') as search_file:
-    for line in search_pattern_file:
-        line = re.sub('@concordia_host@', concordia_host, line)
-        line = re.sub('@concordia_port@', concordia_port, line)
-        search_file.write(line)
-
-with open('tm_info.php_pattern', 'r') as tm_info_pattern_file, open(root_dir+'/tm_info.php', 'w') as tm_info_file:
-    for line in tm_info_pattern_file:
-        line = re.sub('@concordia_host@', concordia_host, line)
-        line = re.sub('@concordia_port@', concordia_port, line)
-        tm_info_file.write(line)
+config_file(config, 'concordia_gate.php', root_dir)
+config_file(config, 'concordia_search.php', root_dir)
+config_file(config, 'tm_info.php', root_dir)
+config_file(config, 'tm_manager.php', root_dir)
 
 
 versions_dir = 'versions_enabled'

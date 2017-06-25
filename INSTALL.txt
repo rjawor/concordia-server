@@ -1,4 +1,4 @@
-- sudo apt-get install postgresql libfcgi-dev libpq-dev mono-complete
+- sudo apt-get install postgresql libfcgi-dev libpq-dev mono-complete python3-psycopg2
 - clone github repo, mkdir build, cd build, ../cmake.sh, make
 - sudo -u postgres psql postgres
 - create user concordia with encrypted password 'concordia';

@@ -1,0 +1,257 @@
+<?php
+
+function postJson($url, $request) {
+    $options = array(
+        'http' => array(
+            'header'  => "Content-type: application/x-www-form-urlencoded\r\n",
+            'method'  => 'POST',
+            'content' => json_encode($request),
+        ),
+    );
+    $context  = stream_context_create($options);
+    $response = file_get_contents($url, false, $context);
+
+
+    return json_decode($response);
+
+}
+
+function lineCount($file_name)
+{
+    $linecount = 0;
+    $handle = fopen($file_name, 'r');
+    while (!feof($handle)) {
+        $line = fgets($handle);
+        ++$linecount;
+    }
+
+    fclose($handle);
+
+    return $linecount;
+}
+
+function addRequest($url, $postArray, $filesArray) {
+    // add import request. Return empty string if no error occurred
+    if ($filesArray['src_file']['error'] != 0 && $filesArray['src_file']['size'] > 0) {
+        return "Error uploading source file or no source file given.";
+    }
+    if ($filesArray['trg_file']['error'] != 0 && $filesArray['trg_file']['size'] > 0) {
+        return "Error uploading target file or no target file given.";
+    }
+
+
+    $srcFilePath = "/tmp/".uniqid("srcFile", true);
+    $trgFilePath = "/tmp/".uniqid("trgFile", true);
+    move_uploaded_file($filesArray['src_file']['tmp_name'], $srcFilePath);
+    move_uploaded_file($filesArray['trg_file']['tmp_name'], $trgFilePath);
+
+    $srcLineCount = lineCount($srcFilePath);
+    $trgLineCount = lineCount($trgFilePath);
+
+    if ($srcLineCount != $trgLineCount) {
+        return "Files have different number of lines ($srcLineCount and $trgLineCount).";
+    }
+
+    $request = array (
+        "operation" => "addRequest",
+        "sourceFilePath" => $srcFilePath,
+        "targetFilePath" => $trgFilePath,
+        "sourceLangId" => intval($postArray['src_lang_id']),
+        "targetLangId" => intval($postArray['trg_lang_id']),
+        "name" => $postArray['tm_name'],
+        "type" => intval($postArray['tm_type']),
+        "tmId" => intval($postArray['tm_id'])
+    );
+    $response = postJson($url, $request);
+
+    return "";
+}
+
+$url = 'http://@concordia_host@:@concordia_port@';
+
+$errorMessage = "";
+if ($_SERVER['REQUEST_METHOD'] == 'POST' ) {
+    $errorMessage = addRequest($url, $_POST, $_FILES);
+}
+
+
+
+$tmsData = postJson($url, array("operation" =>"getTmsInfo"));
+$requestsData = postJson($url, array("operation" =>"getRequestsInfo"));
+$languagesData = postJson($url, array("operation" =>"getLanguages"));
+
+?>
+
+<html>
+    <head>
+        <script src="js/jquery-1.11.3.min.js"></script>
+        <script src="js/cat.js"></script>
+		<link rel="stylesheet" href="css/concordia_cat.css" />
+        <meta charset="UTF-8">
+    </head>
+    <body>
+        <div id="header">
+        </div>
+        <div id="content">
+            <section id="banner">
+                <h1>Concordia</h1>
+                <img class="banner-bg" src="images/banner-thin.png" alt="Banner">
+                <img class="banner-icon" src="images/concordia-thin.png" alt="Banner">
+            </section><!-- // end #banner -->
+            <?php
+            if ($errorMessage != "") {
+            ?>
+            <div class="error-message"><?= $errorMessage ?></div>
+            <?php
+            }
+            ?>
+
+            <h2>Available translation memories:</h2>
+            <table>
+                <tr>
+                    <th>Id</th>
+                    <th>Name</th>
+                    <th>Source language</th>
+                    <th>Target language</th>
+                </tr>
+                <?php
+                foreach ($tmsData->tms as $tm) {
+                ?>
+                <tr>
+                    <td><?= $tm->id ?></td>
+                    <td><?= $tm->name ?></td>
+                    <td><?= $tm->sourceLanguageCode ?></td>
+                    <td><?= $tm->targetLanguageCode ?></td>
+                </tr>
+                <?php
+                }
+                ?>
+
+            </table>
+            <h2>Import new translations</h2>
+            <form action="" method="POST" enctype="multipart/form-data">
+                <div class="radio">
+                    <input id="new_tm" type="radio" name="tm_type" value="0" checked onclick="showNewTmOptions()">
+                    <label for="new_tm">Create a new translation memory</label>
+                    <input id="extend_tm" type="radio" name="tm_type" value="1" onclick="showExtendTmOptions()">
+                    <label for="extend_tm">Extend existing translation memory</label>
+                </div>
+                <label for="tm_name">Name of the new translation memory:</label>
+                <input id="tm_name" type="text" name="tm_name">
+                <label class="hidden" for="tm_id">Choose translation memory to extend:</label>
+                <select class="hidden" id="tm_id" name="tm_id">
+                <?php
+                foreach ($tmsData->tms as $tm) {
+                ?>
+                <option value="<?=$tm->id?>"><?=$tm->name?> (<?=$tm->sourceLanguageCode?>&rarr;<?=$tm->targetLanguageCode?>)</option>
+                <?php
+                }
+                ?>
+                </select>
+
+                <table>
+                    <tr>
+                        <td width="70%">
+                            <label for="src_file">Source file (TXT)</label>
+                            <input id="src_file" name="src_file" type="file">
+                        </td>
+                        <td>
+                            <label for="src_lang_id">Source language</label>
+                            <select id="src_lang_id" name="src_lang_id">
+                            <?php
+                            foreach ($languagesData->languages as $language) {
+                            ?>
+                            <option value="<?=$language->id?>"><?=$language->name?> (<?=$language->code?>)</option>
+                            <?php
+                            }
+                            ?>
+                            </select>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <label for="trg_file">Target file (TXT)</label>
+                            <input id="trg_file" name="trg_file" type="file">
+                        </td>
+                        <td>
+                            <label for="trg_lang_id">Target language</label>
+                            <select id="trg_lang_id" name="trg_lang_id">
+                            <?php
+                            foreach ($languagesData->languages as $language) {
+                            ?>
+                            <option value="<?=$language->id?>"><?=$language->name?> (<?=$language->code?>)</option>
+                            <?php
+                            }
+                            ?>
+                            </select>
+                        </td>
+                    </tr>
+                </table>
+
+                <input type="submit" value="Import">
+            </form>
+            <h2>Latest import requests:</h2>
+            <table>
+                <tr>
+                    <th>Id</th>
+                    <th>Name</th>
+                    <th>Source language</th>
+                    <th>Target language</th>
+                    <th>Status</th>
+                    <th>Type</th>
+                    <th>TM id</th>
+                    <th>Created</th>
+                </tr>
+                <?php
+                foreach ($requestsData->requests as $request) {
+                ?>
+                <tr>
+                    <td><?= $request->id ?></td>
+                    <td><?= $request->name ?></td>
+                    <td>
+                        <?php
+                        if($request->type == 0) {
+                            echo $request->sourceLanguageCode;
+                        } else {
+                            echo "N/A";
+                        }
+                        ?>
+                    </td>
+                    <td>
+                        <?php
+                        if($request->type == 0) {
+                            echo $request->targetLanguageCode;
+                        } else {
+                            echo "N/A";
+                        }
+                        ?>
+                    </td>
+                    <td><?= $request->status ?></td>
+                    <td>
+                        <?php
+                        if($request->type == 0) {
+                            echo "new TM";
+                        } else {
+                            echo "extend TM";
+                        }
+                        ?>
+                    </td>
+                    <td>
+                        <?php
+                        if($request->type == 0) {
+                            echo "N/A";
+                        } else {
+                            echo $request->tmId;
+                        }
+                        ?>
+                    </td>
+                    <td><?= $request->created ?></td>
+                </tr>
+                <?php
+                }
+                ?>
+
+            </table>
+        </div>
+    </body>
+</html>

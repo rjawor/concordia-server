@@ -213,6 +213,7 @@ h2 {
 	color: #e32;
 	font-family:'Gill Sans','lucida grande', helvetica, arial, sans-serif;
 	font-size: 190%;
+	margin-top: 30px;
 }
 h3 {
 	color: #2c6877;
@@ -620,6 +621,7 @@ label {
 	display: block;
 	font-size: 110%;
 	margin-bottom:3px;
+	margin-top:15px;
 }
 input, textarea {
 	clear: both;
@@ -685,14 +687,14 @@ form .submit input[type=submit]:hover {
 	background: #5BA150;
 }
 /* Form errors */
-form .error {
+.error {
 	background: #FFDACC;
 	-moz-border-radius: 4px;
 	-webkit-border-radius: 4px;
 	border-radius: 4px;
 	font-weight: normal;
 }
-form .error-message {
+.error-message {
 	-moz-border-radius: none;
 	-webkit-border-radius: none;
 	border-radius: none;
@@ -702,8 +704,8 @@ form .error-message {
 	padding-left: 4px;
 	padding-right: 0;
 }
-form .error,
-form .error-message {
+.error,
+.error-message {
 	color: #9E2424;
 	-webkit-box-shadow: none;
 	-moz-box-shadow: none;
