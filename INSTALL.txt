@@ -88,3 +88,7 @@ mgiza-aligner:
 - cd mgiza, mgizapp
 - sudo apt-get install libboost-thread-dev
 - follow instructions in INSTALL
+
+import-requests:
+crontab -e
+* * * * * /path/to/handle_requests.py

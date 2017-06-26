@@ -48,3 +48,5 @@ CREATE TABLE alignment (
 );
 
 CREATE INDEX ON alignment(unit_id, source_token_pos);
+
+CREATE INDEX ON unit(tm_id);

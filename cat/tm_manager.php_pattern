@@ -74,7 +74,14 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' ) {
     $errorMessage = addRequest($url, $_POST, $_FILES);
 }
 
-
+$statusesDictionary = array(
+    0 => "new",
+    1 => "processing - word alignment",
+    2 => "processing - adding to Concordia",
+    3 => "processing - regenerating index",
+    4 => "complete",
+    5 => "error"
+);
 
 $tmsData = postJson($url, array("operation" =>"getTmsInfo"));
 $requestsData = postJson($url, array("operation" =>"getRequestsInfo"));
@@ -149,9 +156,9 @@ $languagesData = postJson($url, array("operation" =>"getLanguages"));
                 ?>
                 </select>
 
-                <table>
+                <table style="table-layout:fixed">
                     <tr>
-                        <td width="70%">
+                        <td style="min-width:500px">
                             <label for="src_file">Source file (TXT)</label>
                             <input id="src_file" name="src_file" type="file">
                         </td>
@@ -226,7 +233,7 @@ $languagesData = postJson($url, array("operation" =>"getLanguages"));
                         }
                         ?>
                     </td>
-                    <td><?= $request->status ?></td>
+                    <td><?= $statusesDictionary[$request->status] ?></td>
                     <td>
                         <?php
                         if($request->type == 0) {

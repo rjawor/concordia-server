@@ -320,7 +320,6 @@ th a.desc:after {
 }
 table tr td {
     line-height:200%;
-    max-width:200px;
 	padding: 6px;
 	text-align: left;
 	vertical-align: top;

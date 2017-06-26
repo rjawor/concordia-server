@@ -35,3 +35,4 @@ mgiza-aligner/mgiza/mgizapp/src/mkcls/CMakeFiles/
 mgiza-aligner/mgiza/mgizapp/src/mkcls/Makefile
 mgiza-aligner/mgiza/mgizapp/src/mkcls/cmake_install.cmake
 __pycache__
+import-requests/request_handler.log

@@ -66,11 +66,11 @@ corpora/$(CORPUS_NAME)/src_clean.lem: corpora/$(CORPUS_NAME)/src_clean.tok
 
 
 corpora/$(CORPUS_NAME)/trg.tok: corpora/$(CORPUS_NAME)/trg.txt
-	concordia-sentence-tokenizer -c ../concordia.cfg < $< > $@
+	/usr/local/bin/concordia-sentence-tokenizer -c ../concordia.cfg < $< > $@
 
 
 corpora/$(CORPUS_NAME)/src.tok: corpora/$(CORPUS_NAME)/src.txt
-	concordia-sentence-tokenizer -c ../concordia.cfg < $< > $@
+	/usr/local/bin/concordia-sentence-tokenizer -c ../concordia.cfg < $< > $@
 
 
 corpora/$(CORPUS_NAME)/src_clean.txt corpora/$(CORPUS_NAME)/trg_clean.txt corpora/$(CORPUS_NAME)/src_clean.tok corpora/$(CORPUS_NAME)/trg_clean.tok: corpora/$(CORPUS_NAME)/src.txt corpora/$(CORPUS_NAME)/trg.txt corpora/$(CORPUS_NAME)/src.tok corpora/$(CORPUS_NAME)/trg.tok
