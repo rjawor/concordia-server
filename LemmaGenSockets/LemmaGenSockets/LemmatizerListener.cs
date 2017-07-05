@@ -57,6 +57,8 @@ namespace LemmaGenSockets
                 return word;
             }
             string[] parts = word.Split(wordInnerSeparator);
+
+            string result = "";
             if (parts.Length == 2)
             {
                 string firstPart = parts[0];
@@ -65,11 +67,20 @@ namespace LemmaGenSockets
                     firstPart = lemmatizersDict[languageCode].Lemmatize(firstPart);
                 }
                 string secondPart = lemmatizersDict[languageCode].Lemmatize(parts[1]);
-                return firstPart + "-" + secondPart;
+                result = firstPart + "-" + secondPart;
             }
             else
             {
-                return lemmatizersDict[languageCode].Lemmatize(word);
+                result = lemmatizersDict[languageCode].Lemmatize(word);
+            }
+
+            if (result == "" || result.Contains(" "))
+            {
+                return word;
+            }
+            else
+            {
+                return result;
             }
         }
 
