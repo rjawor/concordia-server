@@ -1,6 +1,6 @@
-SRC_LANG=pl
-TRG_LANG=en
-CORPUS_NAME=europarl_sample
+SRC_LANG=en
+TRG_LANG=hr
+CORPUS_NAME=tmrepository_enhr
 SEPARATOR=@\#@
 DICTIONARY_WEIGHT=5
 
