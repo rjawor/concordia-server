@@ -10,15 +10,17 @@ all: corpora/$(CORPUS_NAME)/src_filtered.txt corpora/$(CORPUS_NAME)/trg_filtered
 corpora/$(CORPUS_NAME)/src_filtered.txt corpora/$(CORPUS_NAME)/trg_filtered.txt: corpora/$(CORPUS_NAME)/src_clean.txt corpora/$(CORPUS_NAME)/trg_clean.txt corpora/$(CORPUS_NAME)/corpus_lines.txt
 	./compile.py corpora/$(CORPUS_NAME)/src_clean.txt corpora/$(CORPUS_NAME)/trg_clean.txt corpora/$(CORPUS_NAME)/corpus_lines.txt corpora/$(CORPUS_NAME)/src_filtered.txt corpora/$(CORPUS_NAME)/trg_filtered.txt
 
-corpora/$(CORPUS_NAME)/corpus_lines.txt: index-corpus dictionaries/$(DICTIONARY_NAME).lem
+corpora/$(CORPUS_NAME)/corpus_lines.txt: corpora/$(CORPUS_NAME)/corpus.indexed dictionaries/$(DICTIONARY_NAME).lem
 	./get_corpus_lines.py dictionaries/$(DICTIONARY_NAME).lem corpora/$(CORPUS_NAME)/report.txt > $@
 
-index-corpus: split-corpus
+corpora/$(CORPUS_NAME)/corpus.indexed: corpora/$(CORPUS_NAME)/corpus.split
 	./load_corpus.sh corpora/$(CORPUS_NAME)/csv/
+	touch corpora/$(CORPUS_NAME)/corpus.indexed
 
-split-corpus: corpora/$(CORPUS_NAME)/src.csv
+corpora/$(CORPUS_NAME)/corpus.split: corpora/$(CORPUS_NAME)/src.csv
 	mkdir corpora/$(CORPUS_NAME)/csv
 	split -l $(CORPUS_CHUNK_SIZE) -d --additional-suffix=".csv" $< corpora/$(CORPUS_NAME)/csv/src
+	touch corpora/$(CORPUS_NAME)/corpus.split
 
 corpora/$(CORPUS_NAME)/src.csv: corpora/$(CORPUS_NAME)/src_clean.lem
 	./lem2csv.py $< > $@
@@ -42,7 +44,19 @@ corpora/$(CORPUS_NAME)/trg.tok: corpora/$(CORPUS_NAME)/trg.txt
 corpora/$(CORPUS_NAME)/src.tok: corpora/$(CORPUS_NAME)/src.txt
 	/usr/local/bin/concordia-sentence-tokenizer -c ../../concordia.cfg < $< > $@
 
+clean-filtering:
+	rm -f corpora/$(CORPUS_NAME)/src_filtered.txt
+	rm -f corpora/$(CORPUS_NAME)/trg_filtered.txt
+	rm -f corpora/$(CORPUS_NAME)/corpus_lines.txt
+	rm -f corpora/$(CORPUS_NAME)/report.txt
+	rm -f dictionaries/$(DICTIONARY_NAME).lem
+
+
 clean:
+	rm -f corpora/$(CORPUS_NAME)/src_filtered.txt
+	rm -f corpora/$(CORPUS_NAME)/trg_filtered.txt
+	rm -f corpora/$(CORPUS_NAME)/corpus.indexed
+	rm -f corpora/$(CORPUS_NAME)/corpus.split
 	rm -f corpora/$(CORPUS_NAME)/report.txt
 	./clear_solr_index.sh
 	rm -rf corpora/$(CORPUS_NAME)/csv
